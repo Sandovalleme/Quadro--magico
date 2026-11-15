@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Folha Mágica Gigante - Cores e Rolagem Sincronizada</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: sans-serif; background: #1f1f1f; color: #fff; margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; user-select: none; }
+  .toolbar { background: #181818; padding: 6px 10px; width: 100%; display: flex; gap: 5px; justify-content: center; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.7); flex-wrap: wrap; z-index: 30; border-bottom: 1px solid #333; }
+  button, input { padding: 5px 8px; border-radius: 4px; border: none; font-size: 12px; cursor: pointer; }
+  button { background: #333; color: #fff; transition: 0.15s; white-space: nowrap; }
+  button:hover { background: #4a4a4a; }
+  button.active { background: #0078d4; font-weight: bold; }
+  button.active-org { background: #2e7d32; font-weight: bold; }
+  button.btn-pdf { background: #a82424; }
+  button.btn-pdf:hover { background: #c92e2e; }
+  #statusApresentacao { background: #0d0d0d; padding: 5px 9px; border-radius: 4px; font-size: 12px; color: #4fc3f7; border: 1px solid #333; min-width: 165px; text-align: center; cursor: pointer; }
+  .pdf-nav { display: none; align-items: center; gap: 4px; background: #2c2c2c; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+  .workspace { flex: 1; width: 100%; height: 100%; overflow: scroll; position: relative; background: #ffffff; }
+  .workspace::-webkit-scrollbar { width: 14px; height: 14px; }
+  .workspace::-webkit-scrollbar-track { background: #e8e8e8; }
+  .workspace::-webkit-scrollbar-thumb { background: #9e9e9e; border-radius: 7px; border: 2px solid #e8e8e8; }
+  .workspace::-webkit-scrollbar-thumb:hover { background: #757575; }
+  #folhaGigante { position: relative; width: 4500px; height: 6000px; background: #ffffff; }
+  #viewportCanvasWrap { position: sticky; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+  canvas { position: absolute; top: 0; left: 0; display: block; }
+  #folhaPdfFundo { z-index: 1; pointer-events: none; }
+  #folhaBase { z-index: 2; pointer-events: none; }
+  #folhaInvisivel { z-index: 3; pointer-events: auto; cursor: crosshair; }
+  #popupEdicao { position: absolute; display: none; z-index: 50; background: #1e1e1e; border: 1px solid #555; border-radius: 6px; padding: 5px 7px; box-shadow: 0 4px 14px rgba(0,0,0,0.5); gap: 4px; align-items: center; flex-wrap: wrap; }
+  #popupEdicao button { padding: 4px 8px; font-size: 12px; font-weight: bold; background: #333; }
+  #popupEdicao button:hover { background: #0078d4; }
+  #popupEdicao button.btn-del:hover { background: #c62828; }
+  #popupLabel { font-size: 11px; color: #ccc; padding-right: 4px; font-weight: bold; }
+  .color-swatch { width: 18px !important; height: 18px !important; padding: 0 !important; border-radius: 50% !important; border: 2px solid #fff !important; cursor: pointer; display: inline-block; }
+  .color-swatch:hover { transform: scale(1.18); }
+  .popup-sep { width: 1px; height: 18px; background: #444; margin: 0 2px; }
+  #modalEntrada { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.65); display: none; justify-content: center; align-items: center; z-index: 100; }
+  .modal-box { background: #252526; border: 1px solid #454545; padding: 18px; border-radius: 8px; width: 420px; max-width: 90%; box-shadow: 0 10px 30px rgba(0,0,0,0.7); }
+  .modal-box h3 { margin: 0 0 10px 0; font-size: 15px; color: #fff; }
+  .modal-box input { width: 100%; padding: 9px; font-size: 15px; background: #111; color: #fff; border: 1px solid #555; border-radius: 4px; margin-bottom: 12px; user-select: text; cursor: text; }
+  .modal-actions { display: flex; justify-content: flex-end; gap: 8px; }
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <button class="btn-pdf" onclick="document.getElementById('pdfInput').click()" title="Abrir arquivo PDF na folha">📄 Abrir PDF</button>
+  <div class="pdf-nav" id="pdfNav"><button onclick="mudarPaginaPdf(-1)">◀</button><span id="pdfPageInfo">1/1</span><button onclick="mudarPaginaPdf(1)">▶</button></div>
+  <button onclick="document.getElementById('imgInput').click()" title="Inserir imagem ou use Ctrl+V">🖼️ + Imagem</button>
+  <button onclick="abrirModalTexto('formula')" title="Inserir fórmula matemática">∑ Fórmula</button>
+  <button id="btnDesenhar" class="active" onclick="setModo('desenhar')">✏️ 1. Desenhar</button>
+  <button onclick="abrirModalTexto('texto')">🔤 + Texto</button>
+  <button id="btnOrganizar" onclick="setModo('organizar')">✋ 2. Organizar</button>
+  <button id="btnMover" onclick="setModo('mover')">🪄 3. Caminho</button>
+  <button id="btnApresentar" onclick="setModo('apresentar')">▶️ 4. Apresentar</button>
+  <span id="statusApresentacao" onclick="if(modo==='apresentar') executarProximoPasso()">Modo: Desenho</span>
+  <label style="font-size:12px;">Vel.: <input type="range" id="velocidade" min="0.2" max="4" step="0.2" value="1" style="width:65px; vertical-align:middle;"></label>
+  <button onclick="irParaInicioRolagem()" title="Voltar a barra de rolagem para o topo esquerdo">↖ Topo</button>
+  <button onclick="salvarProjeto()">💾 Salvar</button>
+  <button onclick="document.getElementById('carregarInput').click()">📂 Abrir</button>
+  <button onclick="limparTudo()" style="background:#8a2424;">🗑️ Limpar</button>
+  <input type="file" id="pdfInput" style="display:none" accept="application/pdf,.pdf" onchange="carregarArquivoPdf(event)">
+  <input type="file" id="imgInput" style="display:none" accept="image/*" onchange="carregarImagemArquivo(event)">
+  <input type="file" id="carregarInput" style="display:none" accept=".json" onchange="carregarProjeto(event)">
+</div>
+<div class="workspace" id="workspaceArea">
+  <div id="folhaGigante">
+    <div id="viewportCanvasWrap"><canvas id="folhaPdfFundo"></canvas><canvas id="folhaBase"></canvas><canvas id="folhaInvisivel"></canvas></div>
+    <div id="popupEdicao" onmousedown="event.stopPropagation()">
+      <span id="popupLabel">Item</span>
+      <div id="grupoCoresPopup" style="display:flex; gap:4px; align-items:center;">
+        <button class="color-swatch" style="background:#111111;" onclick="mudarCorSelecionado('#111111')" title="Preto"></button>
+        <button class="color-swatch" style="background:#0b3d91;" onclick="mudarCorSelecionado('#0b3d91')" title="Azul Escuro"></button>
+        <button class="color-swatch" style="background:#d93025;" onclick="mudarCorSelecionado('#d93025')" title="Vermelho"></button>
+        <button class="color-swatch" style="background:#188038;" onclick="mudarCorSelecionado('#188038')" title="Verde"></button>
+        <button class="color-swatch" style="background:#e37400;" onclick="mudarCorSelecionado('#e37400')" title="Laranja"></button>
+        <button class="color-swatch" style="background:#7b1fa2;" onclick="mudarCorSelecionado('#7b1fa2')" title="Roxo"></button>
+        <input type="color" id="seletorCorLivre" value="#0b3d91" oninput="mudarCorSelecionado(this.value)" title="Escolher outra cor" style="width:22px; height:20px; padding:0; border:none; background:none; cursor:pointer;">
+        <span class="popup-sep"></span>
+      </div>
+      <button onclick="redimensionarSelecionado(1.15)" title="Aumentar tamanho/fonte">➕</button>
+      <button onclick="redimensionarSelecionado(0.87)" title="Diminuir tamanho/fonte">➖</button>
+      <button onclick="removerCaminhoSelecionado()" title="Apagar apenas o caminho gravado">↩️ Sem caminho</button>
+      <button class="btn-del" onclick="excluirSelecionado()" title="Excluir objeto">🗑️</button>
+    </div>
+  </div>
+</div>
+<div id="modalEntrada">
+  <div class="modal-box">
+    <h3 id="modalTitulo">Digite o texto:</h3>
+    <input type="text" id="modalInput" placeholder="Escreva aqui e aperte Enter...">
+    <div class="modal-actions">
+      <button onclick="fecharModalTexto()">Cancelar</button>
+      <button style="background:#0078d4; font-weight:bold;" onclick="confirmarModalTexto()">Inserir na Folha</button>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  const _0xd=_0xi=>document.getElementById(_0xi);
+  const _0xw=_0xd('workspaceArea'),_0xfg=_0xd('folhaGigante'),_0xvw=_0xd('viewportCanvasWrap'),_0xpe=_0xd('popupEdicao'),_0xpl=_0xd('popupLabel'),_0xgc=_0xd('grupoCoresPopup'),_0xsc=_0xd('seletorCorLivre');
+  const _0xcp=_0xd('folhaPdfFundo'),_0xctxp=_0xcp.getContext('2d'),_0xcb=_0xd('folhaBase'),_0xctxb=_0xcb.getContext('2d'),_0xct=_0xd('folhaInvisivel'),_0xctxt=_0xct.getContext('2d'),_0xst=_0xd('statusApresentacao');
+  const _0xLF=4500,_0xAF=6000;_0xfg.style.width=_0xLF+'px';_0xfg.style.height=_0xAF+'px';
+  window.modo='desenhar';
+  let _0xobs=[],_0xfil=[],_0xoa=null,_0xoai=-1,_0xisp=-1,_0xcmt=[],_0xdes=false,_0xarr=false,_0xpsf=0,_0xani=false,_0xumm={x:0,y:0},_0xtma='texto';
+  let _0xpd=null,_0xppa=1,_0xptp=0,_0xfdu=null,_0xfic=null;
+
+  function _0xaj(){
+    const _0xw1=_0xw.clientWidth,_0xh1=_0xw.clientHeight;
+    _0xvw.style.width=_0xw1+'px';_0xvw.style.height=_0xh1+'px';
+    if(_0xcb.width!==_0xw1||_0xcb.height!==_0xh1){_0xcp.width=_0xw1;_0xcp.height=_0xh1;_0xcb.width=_0xw1;_0xcb.height=_0xh1;_0xct.width=_0xw1;_0xct.height=_0xh1;_0xrt();}
+  }
+  window.addEventListener('resize',_0xaj);
+  _0xw.addEventListener('scroll',()=>{_0xrt();});
+  window.irParaInicioRolagem=function(){_0xw.scrollTo({left:0,top:0,behavior:'smooth'});};
+  function _0xgpm(_0xe){const _0xr=_0xw.getBoundingClientRect();return{x:(_0xe.clientX-_0xr.left)+_0xw.scrollLeft,y:(_0xe.clientY-_0xr.top)+_0xw.scrollTop};}
+
+  window.abrirModalTexto=function(_0xt){
+    _0xtma=_0xt;const _0xm=_0xd('modalEntrada'),_0xti=_0xd('modalTitulo'),_0xin=_0xd('modalInput');
+    _0xti.textContent=_0xt==='formula'?'Digite a fórmula (ex: x^2 + 5x - 6 = 0 ou \\Delta = b^2 - 4ac):':'Digite o caractere ou texto:';
+    _0xin.value='';_0xm.style.display='flex';setTimeout(()=>_0xin.focus(),30);
+  };
+  window.fecharModalTexto=function(){_0xd('modalEntrada').style.display='none';};
+  window.confirmarModalTexto=function(){
+    const _0xv=_0xd('modalInput').value;window.fecharModalTexto();if(!_0xv||!_0xv.trim())return;
+    const _0xc=_0xtma==='formula'?_0xfm(_0xv.trim()):_0xv.trim();
+    _0xobs.push({tipo:_0xtma,texto:_0xc,cor:_0xtma==='formula'?'#0b3d91':'#111111',tamanhoFonte:_0xtma==='formula'?32:34,x:_0xw.scrollLeft+140+(_0xobs.length%5)*30,y:_0xw.scrollTop+140+(_0xobs.length%5)*30,caminho:[],emMovimento:false,concluido:true});
+    window.setModo('organizar');_0xap(_0xobs.length-1);
+  };
+  _0xd('modalInput').addEventListener('keydown',_0xe=>{if(_0xe.key==='Enter'){_0xe.preventDefault();window.confirmarModalTexto();}if(_0xe.key==='Escape'){_0xe.preventDefault();window.fecharModalTexto();}});
+
+  function _0xap(_0xi){
+    if(_0xi<0||_0xi>=_0xobs.length||window.modo==='apresentar'){_0xfp();return;}
+    _0xisp=_0xi;const _0xo=_0xobs[_0xi],_0xc=_0xoca(_0xo),_0xnm={traco:'Desenho',texto:'Texto',formula:'Fórmula',imagem:'Imagem'};
+    _0xpl.textContent=_0xnm[_0xo.tipo]||'Objeto';
+    if(_0xo.tipo==='imagem'){_0xgc.style.display='none';}else{_0xgc.style.display='flex';const _0xca=_0xo.cor||(_0xo.tipo==='formula'?'#0b3d91':(_0xo.tipo==='traco'?'#d93025':'#111111'));if(_0xca.startsWith('#'))_0xsc.value=_0xca;}
+    _0xpe.style.display='flex';
+    let _0xpx=Math.max(8,Math.min(_0xc.x,_0xLF-420)),_0xpy=_0xc.y-46;if(_0xpy<8)_0xpy=_0xc.y+_0xc.h+8;
+    _0xpe.style.left=_0xpx+'px';_0xpe.style.top=_0xpy+'px';_0xrt();
+  }
+  function _0xfp(){_0xisp=-1;_0xpe.style.display='none';_0xrt();}
+  window.mudarCorSelecionado=function(_0xnc){if(_0xisp<0||!_0xobs[_0xisp])return;_0xobs[_0xisp].cor=_0xnc;_0xsc.value=_0xnc;_0xrt();};
+  window.redimensionarSelecionado=function(_0xft){
+    if(_0xisp<0||!_0xobs[_0xisp])return;const _0xo=_0xobs[_0xisp];
+    if(_0xo.tipo==='texto'||_0xo.tipo==='formula'){_0xo.tamanhoFonte=Math.max(12,Math.min(220,Math.round((_0xo.tamanhoFonte||34)*_0xft)));}
+    else if(_0xo.tipo==='imagem'){_0xo.w=Math.max(24,Math.round(_0xo.w*_0xft));_0xo.h=Math.max(24,Math.round(_0xo.h*_0xft));}
+    else if(_0xo.tipo==='traco'){
+      let _0xmx=Infinity,_0xmy=Infinity,_0xxx=-Infinity,_0xxy=-Infinity;
+      _0xo.pontos.forEach(_0xp=>{if(_0xp.x<_0xmx)_0xmx=_0xp.x;if(_0xp.y<_0xmy)_0xmy=_0xp.y;if(_0xp.x>_0xxx)_0xxx=_0xp.x;if(_0xp.y>_0xxy)_0xxy=_0xp.y;});
+      const _0xcx=(_0xmx+_0xxx)/2,_0xcy=(_0xmy+_0xxy)/2;
+      _0xo.pontos=_0xo.pontos.map(_0xp=>({x:_0xcx+(_0xp.x-_0xcx)*_0xft,y:_0xcy+(_0xp.y-_0xcy)*_0xft}));
+      _0xo.espessura=Math.max(1.5,Math.min(28,(_0xo.espessura||4)*(_0xft>1?1.08:0.93)));
+    }
+    _0xap(_0xisp);
+  };
+  window.removerCaminhoSelecionado=function(){if(_0xisp<0||!_0xobs[_0xisp])return;_0xobs[_0xisp].caminho=[];_0xfil=_0xfil.filter(_0xi=>_0xi!==_0xisp);_0xus();_0xrt();};
+  window.excluirSelecionado=function(){if(_0xisp<0||!_0xobs[_0xisp])return;const _0xir=_0xisp;_0xobs.splice(_0xir,1);_0xfil=_0xfil.filter(_0xi=>_0xi!==_0xir).map(_0xi=>_0xi>_0xir?_0xi-1:_0xi);_0xfp();_0xus();_0xrt();};
+
+  window.addEventListener('keydown',_0xe=>{
+    if(_0xd('modalEntrada').style.display==='flex')return;
+    if(_0xe.code==='Space'&&window.modo==='apresentar'){_0xe.preventDefault();window.executarProximoPasso();}
+    else if((_0xe.code==='Delete'||_0xe.code==='Backspace')&&_0xisp!==-1&&window.modo!=='apresentar'){_0xe.preventDefault();window.excluirSelecionado();}
+  });
+
+  window.carregarArquivoPdf=async function(_0xe){const _0xf=_0xe.target.files[0];if(!_0xf)return;await _0xpp(_0xf);_0xe.target.value='';};
+  async function _0xpp(_0xf){
+    if(!window.pdfjsLib){alert("A biblioteca de PDF não pôde ser baixada. Verifique se o computador está conectado à internet.");return;}
+    try{
+      _0xst.textContent='Carregando PDF...';
+      _0xpd=await pdfjsLib.getDocument({data:await _0xf.arrayBuffer(),disableWorker:true}).promise;
+      _0xptp=_0xpd.numPages;_0xppa=1;_0xd('pdfNav').style.display=_0xptp>1?'flex':'none';
+      await _0xrpp(_0xppa);_0xus();
+    }catch(_0xerr){alert("Erro ao ler o PDF: "+_0xerr.message);_0xus();}
+  }
+  window.mudarPaginaPdf=async function(_0xdl){if(!_0xpd)return;const _0xnv=_0xppa+_0xdl;if(_0xnv>=1&&_0xnv<=_0xptp){_0xppa=_0xnv;await _0xrpp(_0xppa);}};
+  async function _0xrpp(_0xnp){
+    const _0xpg=await _0xpd.getPage(_0xnp),_0xvp=_0xpg.getViewport({scale:1.5}),_0xtc=document.createElement('canvas');
+    _0xtc.width=Math.round(_0xvp.width);_0xtc.height=Math.round(_0xvp.height);
+    await _0xpg.render({canvasContext:_0xtc.getContext('2d'),viewport:_0xvp}).promise;
+    _0xfdu=_0xtc.toDataURL('image/png');
+    const _0xim=new Image();_0xim.onload=()=>{_0xfic=_0xim;_0xd('pdfPageInfo').textContent=`${_0xppa}/${_0xptp}`;_0xrt();};_0xim.src=_0xfdu;
+  }
+  function _0xpcf(){if(!_0xfdu){_0xfic=null;_0xrt();return;}const _0xim=new Image();_0xim.onload=()=>{_0xfic=_0xim;_0xrt();};_0xim.src=_0xfdu;}
+
+  document.addEventListener('paste',_0xe=>{
+    if(_0xd('modalEntrada').style.display==='flex')return;
+    const _0xcd=_0xe.clipboardData||window.clipboardData;if(!_0xcd)return;let _0xei=false;
+    if(_0xcd.items){for(let _0xi=0;_0xi<_0xcd.items.length;_0xi++){const _0xit=_0xcd.items[_0xi];if(_0xit.type.indexOf('image')!==-1){const _0xbl=_0xit.getAsFile();if(_0xbl){const _0xrd=new FileReader();_0xrd.onload=_0xev=>_0xiif(_0xev.target.result);_0xrd.readAsDataURL(_0xbl);_0xei=true;_0xe.preventDefault();}}}}
+    if(!_0xei){const _0xtx=_0xcd.getData('text/plain');if(_0xtx&&_0xtx.trim()!==''){_0xe.preventDefault();_0xobs.push({tipo:'formula',texto:_0xfm(_0xtx.trim()),cor:'#0b3d91',tamanhoFonte:32,x:_0xw.scrollLeft+150+(_0xobs.length%5)*30,y:_0xw.scrollTop+160+(_0xobs.length%5)*30,caminho:[],emMovimento:false,concluido:true});window.setModo('organizar');_0xap(_0xobs.length-1);}}
+  });
+  _0xfg.addEventListener('dragover',_0xe=>{_0xe.preventDefault();});
+  _0xfg.addEventListener('drop',async _0xe=>{
+    _0xe.preventDefault();const _0xf=_0xe.dataTransfer.files[0];if(!_0xf)return;
+    if(_0xf.type==='application/pdf'||_0xf.name.toLowerCase().endsWith('.pdf'))await _0xpp(_0xf);
+    else if(_0xf.type.startsWith('image/')){const _0xrd=new FileReader();_0xrd.onload=_0xev=>_0xiif(_0xev.target.result);_0xrd.readAsDataURL(_0xf);}
+  });
+  window.carregarImagemArquivo=function(_0xe){const _0xf=_0xe.target.files[0];if(!_0xf)return;const _0xrd=new FileReader();_0xrd.onload=_0xev=>_0xiif(_0xev.target.result);_0xrd.readAsDataURL(_0xf);_0xe.target.value='';};
+  function _0xiif(_0xdu){
+    const _0xim=new Image();_0xim.onload=()=>{
+      let _0xw1=_0xim.width,_0xh1=_0xim.height;if(_0xw1>520){const _0xes=520/_0xw1;_0xw1=Math.round(_0xw1*_0xes);_0xh1=Math.round(_0xh1*_0xes);}
+      _0xobs.push({tipo:'imagem',src:_0xdu,imgCache:_0xim,x:_0xw.scrollLeft+120,y:_0xw.scrollTop+120,w:_0xw1,h:_0xh1,caminho:[],emMovimento:false,concluido:true});
+      window.setModo('organizar');_0xap(_0xobs.length-1);
+    };_0xim.src=_0xdu;
+  }
+  function _0xfm(_0xs){return _0xs.replace(/\^2/g,'²').replace(/\^3/g,'³').replace(/\^n/g,'ⁿ').replace(/\\sqrt/g,'√').replace(/sqrt/g,'√').replace(/\\pi/g,'π').replace(/\\Delta/g,'Δ').replace(/\\pm/g,'±').replace(/\\times/g,'×').replace(/\\div/g,'÷').replace(/\\leq/g,'≤').replace(/\\geq/g,'≥').replace(/\\neq/g,'≠').replace(/\\approx/g,'≈');}
+
+  function _0xus(){
+    if(window.modo==='desenhar')_0xst.textContent='Modo: Desenho (Folha Gigante)';
+    else if(window.modo==='organizar')_0xst.textContent='Modo: Organizar';
+    else if(window.modo==='mover')_0xst.textContent=`Caminhos: ${_0xfil.length}`;
+    else if(window.modo==='apresentar'){
+      if(_0xfil.length===0)_0xst.textContent='Sem caminhos';
+      else if(_0xpsf>=_0xfil.length)_0xst.textContent='Fim (Clique 4 para repetir)';
+      else _0xst.textContent=`Passo ${_0xpsf+1} de ${_0xfil.length}`;
+    }
+  }
+  window.setModo=function(_0xnm){
+    window.modo=_0xnm;_0xani=false;_0xfp();
+    document.querySelectorAll('.toolbar button').forEach(_0xb=>{_0xb.classList.remove('active');_0xb.classList.remove('active-org');});
+    if(_0xnm==='desenhar'){_0xd('btnDesenhar').classList.add('active');_0xobs.forEach(_0xo=>{_0xo.emMovimento=false;_0xo.concluido=true;});_0xct.style.cursor='crosshair';}
+    else if(_0xnm==='organizar'){_0xd('btnOrganizar').classList.add('active-org');_0xobs.forEach(_0xo=>{_0xo.emMovimento=false;_0xo.concluido=true;});_0xct.style.cursor='move';}
+    else if(_0xnm==='mover'){_0xd('btnMover').classList.add('active');_0xobs.forEach(_0xo=>{_0xo.emMovimento=false;_0xo.concluido=true;});_0xct.style.cursor='grab';}
+    else if(_0xnm==='apresentar'){_0xd('btnApresentar').classList.add('active');_0xpa();_0xct.style.cursor='pointer';}
+    _0xus();_0xrt();
+  };
+  function _0xpa(){
+    _0xani=false;_0xpsf=0;_0xfil=_0xfil.filter(_0xi=>_0xobs[_0xi]&&_0xobs[_0xi].caminho&&_0xobs[_0xi].caminho.length>2);
+    _0xobs.forEach((_0xo,_0xi)=>{
+      if(_0xfil.includes(_0xi)){_0xo.emMovimento=false;_0xo.concluido=false;if(_0xo.tipo==='traco'){_0xo.dx=_0xo.caminho[0].x;_0xo.dy=_0xo.caminho[0].y;}else{_0xo.x=_0xo.caminho[0].x;_0xo.y=_0xo.caminho[0].y;}}
+      else{_0xo.emMovimento=false;_0xo.concluido=true;}
+    });
+    if(_0xfil.length>0){const _0xp0=_0xobs[_0xfil[0]].caminho[0];if(typeof _0xp0.scrollX==='number'&&typeof _0xp0.scrollY==='number')_0xw.scrollTo({left:_0xp0.scrollX,top:_0xp0.scrollY,behavior:'smooth'});}
+    _0xus();
+  }
+  function _0xcfc(_0xctx,_0xo){const _0xtm=_0xo.tamanhoFonte||(_0xo.tipo==='formula'?32:34);_0xctx.font=_0xo.tipo==='formula'?`italic bold ${_0xtm}px "Times New Roman", serif`:`bold ${_0xtm}px sans-serif`;return _0xtm;}
+  function _0xeio(_0xp){
+    for(let _0xi=_0xobs.length-1;_0xi>=0;_0xi--){
+      const _0xo=_0xobs[_0xi];
+      if(_0xo.tipo==='imagem'){if(_0xp.x>=_0xo.x&&_0xp.x<=_0xo.x+_0xo.w&&_0xp.y>=_0xo.y&&_0xp.y<=_0xo.y+_0xo.h)return _0xi;}
+      else if(_0xo.tipo==='texto'||_0xo.tipo==='formula'){const _0xtm=_0xcfc(_0xctxt,_0xo),_0xlg=_0xctxt.measureText(_0xo.texto).width;if(_0xp.x>=_0xo.x-15&&_0xp.x<=_0xo.x+_0xlg+15&&_0xp.y>=_0xo.y-_0xtm-6&&_0xp.y<=_0xo.y+15)return _0xi;}
+      else if(_0xo.tipo==='traco'){for(let _0xpt of _0xo.pontos){if(Math.hypot(_0xp.x-(_0xpt.x+_0xo.dx),_0xp.y-(_0xpt.y+_0xo.dy))<25)return _0xi;}}
+    }
+    return -1;
+  }
+  function _0xoca(_0xo){
+    if(_0xo.tipo==='imagem')return{x:_0xo.x-4,y:_0xo.y-4,w:_0xo.w+8,h:_0xo.h+8};
+    if(_0xo.tipo==='texto'||_0xo.tipo==='formula'){const _0xtm=_0xcfc(_0xctxt,_0xo);return{x:_0xo.x-8,y:_0xo.y-_0xtm,w:_0xctxt.measureText(_0xo.texto).width+16,h:_0xtm+12};}
+    let _0xmx=Infinity,_0xmy=Infinity,_0xxx=-Infinity,_0xxy=-Infinity;
+    _0xo.pontos.forEach(_0xp=>{const _0xpx=_0xp.x+_0xo.dx,_0xpy=_0xp.y+_0xo.dy;if(_0xpx<_0xmx)_0xmx=_0xpx;if(_0xpy<_0xmy)_0xmy=_0xpy;if(_0xpx>_0xxx)_0xxx=_0xpx;if(_0xpy>_0xxy)_0xxy=_0xpy;});
+    return{x:_0xmx-8,y:_0xmy-8,w:(_0xxx-_0xmx)+16,h:(_0xxy-_0xmy)+16};
+  }
+  function _0xoci(_0xo){
+    const _0xp0=_0xo.caminho[0];
+    if(_0xo.tipo==='imagem')return{x:_0xp0.x-4,y:_0xp0.y-4,w:_0xo.w+8,h:_0xo.h+8};
+    if(_0xo.tipo==='texto'||_0xo.tipo==='formula'){const _0xtm=_0xcfc(_0xctxt,_0xo);return{x:_0xp0.x-10,y:_0xp0.y-_0xtm-4,w:_0xctxt.measureText(_0xo.texto).width+20,h:_0xtm+14};}
+    let _0xmx=Infinity,_0xmy=Infinity,_0xxx=-Infinity,_0xxy=-Infinity;
+    _0xo.pontos.forEach(_0xp=>{const _0xpx=_0xp.x+_0xp0.x,_0xpy=_0xp.y+_0xp0.y;if(_0xpx<_0xmx)_0xmx=_0xpx;if(_0xpy<_0xmy)_0xmy=_0xpy;if(_0xpx>_0xxx)_0xxx=_0xpx;if(_0xpy>_0xxy)_0xxy=_0xpy;});
+    return{x:_0xmx-10,y:_0xmy-10,w:(_0xxx-_0xmx)+20,h:(_0xxy-_0xmy)+20};
+  }
+
+  _0xct.addEventListener('contextmenu',_0xe=>{if(window.modo==='apresentar')return;_0xe.preventDefault();const _0xi=_0xeio(_0xgpm(_0xe));if(_0xi!==-1)_0xap(_0xi);else _0xfp();});
+  _0xct.addEventListener('mousedown',_0xe=>{
+    if(_0xe.button===2)return;const _0xp=_0xgpm(_0xe);_0xumm=_0xp;
+    if(window.modo==='desenhar'){_0xfp();_0xdes=true;_0xoa={tipo:'traco',pontos:[_0xp],cor:'#d93025',espessura:4,dx:0,dy:0,caminho:[],emMovimento:false,concluido:true};_0xobs.push(_0xoa);}
+    else if(window.modo==='organizar'){const _0xi=_0xeio(_0xp);if(_0xi!==-1){_0xarr=true;_0xoai=_0xi;_0xoa=_0xobs[_0xi];_0xap(_0xi);}else _0xfp();}
+    else if(window.modo==='mover'){
+      const _0xi=_0xeio(_0xp);
+      if(_0xi!==-1){
+        _0xarr=true;_0xoai=_0xi;_0xoa=_0xobs[_0xi];
+        const _0xsx=_0xoa.tipo==='traco'?_0xoa.dx:_0xoa.x,_0xsy=_0xoa.tipo==='traco'?_0xoa.dy:_0xoa.y;
+        _0xoa.offsetX=_0xp.x-_0xsx;_0xoa.offsetY=_0xp.y-_0xsy;_0xcmt=[{x:_0xsx,y:_0xsy,scrollX:_0xw.scrollLeft,scrollY:_0xw.scrollTop}];_0xap(_0xi);
+      }else _0xfp();
+    }else if(window.modo==='apresentar')window.executarProximoPasso();
+  });
+
+  window.addEventListener('mousemove',_0xe=>{
+    const _0xp=_0xgpm(_0xe);
+    if(window.modo==='desenhar'&&_0xdes&&_0xoa){_0xoa.pontos.push(_0xp);_0xrt();}
+    else if(window.modo==='organizar'&&_0xarr&&_0xoa){
+      const _0xdx=_0xp.x-_0xumm.x,_0xdy=_0xp.y-_0xumm.y;_0xumm=_0xp;
+      if(_0xoa.tipo==='traco'){_0xoa.dx+=_0xdx;_0xoa.dy+=_0xdy;}else{_0xoa.x+=_0xdx;_0xoa.y+=_0xdy;}
+      if(_0xoa.caminho&&_0xoa.caminho.length>0)_0xoa.caminho=_0xoa.caminho.map(_0xpt=>({..._0xpt,x:_0xpt.x+_0xdx,y:_0xpt.y+_0xdy}));
+      _0xap(_0xoai);
+    }else if(window.modo==='mover'&&_0xarr&&_0xoa){
+      const _0xr=_0xw.getBoundingClientRect();
+      if(_0xe.clientX>_0xr.right-45)_0xw.scrollLeft+=18;if(_0xe.clientX<_0xr.left+45)_0xw.scrollLeft-=18;
+      if(_0xe.clientY>_0xr.bottom-45)_0xw.scrollTop+=18;if(_0xe.clientY<_0xr.top+45)_0xw.scrollTop-=18;
+      const _0xpa2=_0xgpm(_0xe),_0xnx=_0xpa2.x-_0xoa.offsetX,_0xny=_0xpa2.y-_0xoa.offsetY;
+      if(_0xoa.tipo==='traco'){_0xoa.dx=_0xnx;_0xoa.dy=_0xny;}else{_0xoa.x=_0xnx;_0xoa.y=_0xny;}
+      _0xcmt.push({x:_0xnx,y:_0xny,scrollX:_0xw.scrollLeft,scrollY:_0xw.scrollTop});_0xap(_0xoai);
+    }
+  });
+
+  window.addEventListener('mouseup',()=>{
+    if(window.modo==='mover'&&_0xarr&&_0xoa&&_0xoai!==-1){
+      const _0xin=_0xcmt[0],_0xfm=_0xcmt[_0xcmt.length-1];
+      if(Math.hypot(_0xfm.x-_0xin.x,_0xfm.y-_0xin.y)>15&&_0xcmt.length>2){
+        _0xfm.scrollX=_0xw.scrollLeft;_0xfm.scrollY=_0xw.scrollTop;_0xoa.caminho=[..._0xcmt];
+        _0xfil=_0xfil.filter(_0xi=>_0xi!==_0xoai);_0xfil.push(_0xoai);_0xus();
+      }
+    }
+    _0xdes=false;_0xarr=false;_0xoa=null;_0xoai=-1;_0xcmt=[];_0xrt();
+  });
+
+  window.executarProximoPasso=function(){
+    if(_0xani||_0xpsf>=_0xfil.length)return;
+    const _0xal=_0xobs[_0xfil[_0xpsf]];if(!_0xal||!_0xal.caminho||_0xal.caminho.length<2)return;
+    _0xal.emMovimento=true;_0xani=true;_0xst.textContent=`Movendo ${_0xpsf+1} de ${_0xfil.length}...`;let _0xps=0;
+    function _0xan(){
+      _0xps+=parseFloat(_0xd('velocidade').value);
+      const _0xip=Math.min(Math.floor(_0xps),_0xal.caminho.length-1),_0xpt=_0xal.caminho[_0xip];
+      if(_0xal.tipo==='traco'){_0xal.dx=_0xpt.x;_0xal.dy=_0xpt.y;}else{_0xal.x=_0xpt.x;_0xal.y=_0xpt.y;}
+      if(typeof _0xpt.scrollX==='number'&&typeof _0xpt.scrollY==='number'){_0xw.scrollLeft=_0xpt.scrollX;_0xw.scrollTop=_0xpt.scrollY;}
+      _0xrt();
+      if(_0xip<_0xal.caminho.length-1)requestAnimationFrame(_0xan);
+      else{
+        const _0xul=_0xal.caminho[_0xal.caminho.length-1];
+        if(typeof _0xul.scrollX==='number'&&typeof _0xul.scrollY==='number'){_0xw.scrollLeft=_0xul.scrollX;_0xw.scrollTop=_0xul.scrollY;}
+        _0xal.emMovimento=false;_0xal.concluido=true;_0xani=false;_0xpsf++;_0xrt();_0xus();
+      }
+    }
+    requestAnimationFrame(_0xan);
+  };
+
+  function _0xdoc(_0xctx,_0xo){
+    if(_0xo.tipo==='imagem'){
+      if(!_0xo.imgCache&&_0xo.src){const _0xim=new Image();_0xim.onload=()=>{_0xo.imgCache=_0xim;_0xrt();};_0xim.src=_0xo.src;return;}
+      if(_0xo.imgCache)_0xctx.drawImage(_0xo.imgCache,_0xo.x,_0xo.y,_0xo.w,_0xo.h);
+    }else if(_0xo.tipo==='formula'){_0xcfc(_0xctx,_0xo);_0xctx.fillStyle=_0xo.cor||'#0b3d91';_0xctx.fillText(_0xo.texto,_0xo.x,_0xo.y);}
+    else if(_0xo.tipo==='texto'){_0xcfc(_0xctx,_0xo);_0xctx.fillStyle=_0xo.cor||'#111111';_0xctx.fillText(_0xo.texto,_0xo.x,_0xo.y);}
+    else if(_0xo.tipo==='traco'){_0xctx.strokeStyle=_0xo.cor||'#d93025';_0xctx.lineWidth=_0xo.espessura||4;_0xctx.lineCap='round';_0xctx.beginPath();_0xo.pontos.forEach((_0xp,_0xi)=>{if(_0xi===0)_0xctx.moveTo(_0xp.x+_0xo.dx,_0xp.y+_0xo.dy);else _0xctx.lineTo(_0xp.x+_0xo.dx,_0xp.y+_0xo.dy);});_0xctx.stroke();}
+  }
+
+  function _0xrt(){
+    const _0xsx=_0xw.scrollLeft,_0xsy=_0xw.scrollTop;
+    _0xctxp.clearRect(0,0,_0xcp.width,_0xcp.height);_0xctxb.clearRect(0,0,_0xcb.width,_0xcb.height);_0xctxt.clearRect(0,0,_0xct.width,_0xct.height);
+    if(_0xfic){_0xctxp.save();_0xctxp.translate(-_0xsx,-_0xsy);_0xctxp.drawImage(_0xfic,0,0);_0xctxp.restore();}
+    _0xctxb.save();_0xctxb.translate(-_0xsx,-_0xsy);_0xctxt.save();_0xctxt.translate(-_0xsx,-_0xsy);
+    _0xobs.forEach((_0xo,_0xi)=>{
+      const _0xcm=(window.modo==='mover'&&_0xarr&&_0xoai===_0xi)?_0xcmt:_0xo.caminho;
+      if((window.modo==='mover'||window.modo==='organizar')&&_0xcm&&_0xcm.length>2){
+        _0xctxt.strokeStyle='rgba(0, 120, 212, 0.45)';_0xctxt.setLineDash([6,6]);_0xctxt.lineWidth=2;_0xctxt.beginPath();
+        _0xcm.forEach((_0xp,_0xj)=>{const _0xpx=_0xo.tipo==='traco'?_0xo.pontos[0].x+_0xp.x:(_0xo.tipo==='imagem'?_0xp.x+_0xo.w/2:_0xp.x),_0xpy=_0xo.tipo==='traco'?_0xo.pontos[0].y+_0xp.y:(_0xo.tipo==='imagem'?_0xp.y+_0xo.h/2:_0xp.y);if(_0xj===0)_0xctxt.moveTo(_0xpx,_0xpy);else _0xctxt.lineTo(_0xpx,_0xpy);});
+        _0xctxt.stroke();_0xctxt.setLineDash([]);
+        const _0xpf=_0xcm[_0xcm.length-1],_0xfx=_0xo.tipo==='traco'?_0xo.pontos[0].x+_0xpf.x:(_0xo.tipo==='imagem'?_0xpf.x+_0xo.w/2:_0xpf.x),_0xfy=_0xo.tipo==='traco'?_0xo.pontos[0].y+_0xpf.y:(_0xo.tipo==='imagem'?_0xpf.y+_0xo.h/2:_0xpf.y);
+        _0xctxt.fillStyle='rgba(0, 120, 212, 0.75)';_0xctxt.beginPath();_0xctxt.arc(_0xfx,_0xfy,5,0,Math.PI*2);_0xctxt.fill();
+      }
+      if(window.modo!=='apresentar'&&_0xisp===_0xi){const _0xc=_0xoca(_0xo);_0xctxt.save();_0xctxt.strokeStyle='#0078d4';_0xctxt.setLineDash([4,4]);_0xctxt.lineWidth=1.5;_0xctxt.strokeRect(_0xc.x,_0xc.y,_0xc.w,_0xc.h);_0xctxt.restore();}
+      if(window.modo==='apresentar'&&_0xo.caminho&&_0xo.caminho.length>2){
+        if(!_0xo.emMovimento&&!_0xo.concluido)return;
+        if(_0xo.emMovimento){const _0xpr=_0xoci(_0xo);_0xctxt.save();_0xctxt.beginPath();_0xctxt.rect(0,0,_0xLF,_0xAF);_0xctxt.rect(_0xpr.x,_0xpr.y,_0xpr.w,_0xpr.h);_0xctxt.clip('evenodd');_0xdoc(_0xctxt,_0xo);_0xctxt.restore();return;}
+      }
+      _0xdoc((_0xo.caminho&&_0xo.caminho.length>2)?_0xctxt:_0xctxb,_0xo);
+    });
+    _0xctxb.restore();_0xctxt.restore();
+  }
+
+  window.salvarProjeto=function(){
+    const _0xol=_0xobs.map(_0xo=>{const _0xcp={..._0xo};delete _0xcp.imgCache;return _0xcp;});
+    const _0xbl=new Blob([JSON.stringify({objetos:_0xol,filaIndices:_0xfil,fundoPdfDataUrl:_0xfdu})],{type:'application/json'});
+    const _0xa=document.createElement('a');_0xa.href=URL.createObjectURL(_0xbl);_0xa.download='folha_magica_gigante.json';_0xa.click();
+  };
+  window.carregarProjeto=function(_0xe){
+    const _0xf=_0xe.target.files[0];if(!_0xf)return;const _0xrd=new FileReader();
+    _0xrd.onload=_0xev=>{
+      const _0xdd=JSON.parse(_0xev.target.result);
+      if(Array.isArray(_0xdd)){_0xobs=_0xdd;_0xfil=[];_0xobs.forEach((_0xo,_0xi)=>{if(_0xo.caminho&&_0xo.caminho.length>2)_0xfil.push(_0xi);});_0xfdu=null;}
+      else{_0xobs=_0xdd.objetos||[];_0xfil=Array.isArray(_0xdd.filaIndices)?_0xdd.filaIndices:[];_0xfdu=_0xdd.fundoPdfDataUrl||null;}
+      _0xpcf();window.setModo('apresentar');
+    };
+    _0xrd.readAsText(_0xf);_0xe.target.value='';
+  };
+  window.limparTudo=function(){
+    if(confirm("Deseja apagar todos os desenhos, imagens, PDF e caminhos?")){
+      _0xobs=[];_0xfil=[];_0xpsf=0;_0xpd=null;_0xfdu=null;_0xfic=null;_0xfp();_0xd('pdfNav').style.display='none';_0xw.scrollTo(0,0);window.setModo('desenhar');
+    }
+  };
+  _0xaj();_0xrt();
+})();
+</script>
+</body>
+</html>
