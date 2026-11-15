@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerador de QR Code • Sala de Aula</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 16px;
+    }
+    .container {
+      max-width: 820px;
+      width: 100%;
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
+      padding: 32px;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 18px;
+      margin-bottom: 24px;
+    }
+    header h1 { font-size: 22px; font-weight: 800; color: #38bdf8; }
+    .btn-back {
+      background: #334155;
+      color: #f8fafc;
+      text-decoration: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .btn-back:hover { background: #475569; }
+    .grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 28px;
+      align-items: start;
+    }
+    @media (max-width: 720px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: #cbd5e1;
+      margin-bottom: 6px;
+    }
+    input[type="text"], select {
+      width: 100%;
+      background: #0f172a;
+      color: #f8fafc;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 10px;
+      padding: 11px 14px;
+      font-size: 14px;
+      margin-bottom: 16px;
+      outline: none;
+    }
+    input[type="text"]:focus, select:focus { border-color: #38bdf8; }
+    .presets {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+    .preset-btn {
+      background: rgba(56, 189, 248, 0.14);
+      color: #7dd3fc;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .preset-btn:hover { background: rgba(56, 189, 248, 0.25); }
+    .row-colors {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    input[type="color"] {
+      width: 100%;
+      height: 42px;
+      border: none;
+      border-radius: 8px;
+      background: #0f172a;
+      cursor: pointer;
+      padding: 2px;
+    }
+    .btn-primary {
+      width: 100%;
+      background: linear-gradient(135deg, #2563eb, #3b82f6);
+      color: white;
+      border: none;
+      padding: 13px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .btn-primary:hover { filter: brightness(1.08); }
+    .preview-card {
+      background: #0f172a;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .qr-frame {
+      background: #ffffff;
+      padding: 16px;
+      border-radius: 14px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+      margin-bottom: 14px;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .qr-caption {
+      color: #0f172a;
+      font-weight: 800;
+      font-size: 13px;
+      margin-top: 8px;
+      max-width: 220px;
+      word-break: break-word;
+    }
+    .action-btns {
+      display: flex;
+      gap: 8px;
+      width: 100%;
+      margin-top: 8px;
+    }
+    .btn-sec {
+      flex: 1;
+      background: #10b981;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-sec.amber { background: #f59e0b; color: #0f172a; }
+    .btn-sec:hover { filter: brightness(1.08); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>📱 Gerador de QR Code Educacional</h1>
+        <p style="font-size:13px; color:#94a3b8; margin-top:4px;">Crie códigos de acesso rápido para projetar na lousa ou imprimir nas atividades</p>
+      </div>
+      <a href="index.html" class="btn-back">⬅ Voltar ao Portal</a>
+    </header>
+
+    <div class="grid">
+      <div>
+        <label>Atalhos Rápidos do Repositório:</label>
+        <div class="presets">
+          <button class="preset-btn" onclick="usarAtalho('https://sandovalleme.github.io/Quadro--magico/', 'Portal Educacional')">🏠 Portal Principal</button>
+          <button class="preset-btn" onclick="usarAtalho('https://sandovalleme.github.io/Quadro--magico/QUADRO%20M%C3%81GICO.html', 'Quadro Mágico')">🖥️ Quadro Mágico</button>
+          <button class="preset-btn" onclick="usarAtalho('https://sandovalleme.github.io/Quadro--magico/LOSA%20M%C3%81GICA.html', 'Tela do Aluno')">📺 Losa Mágica</button>
+          <button class="preset-btn" onclick="usarAtalho('https://sandovalleme.github.io/Quadro--magico/FOLHA%20M%C3%81GICA.html', 'Folha Mágica')">🪄 Folha Mágica</button>
+        </div>
+
+        <label for="qrUrl">Endereço (URL) ou Texto:</label>
+        <input type="text" id="qrUrl" value="https://sandovalleme.github.io/Quadro--magico/" oninput="gerarQR()">
+
+        <label for="qrLabel">Legenda abaixo do QR Code (opcional):</label>
+        <input type="text" id="qrLabel" value="Aponte a câmera para acessar a aula" oninput="gerarQR()">
+
+        <div class="row-colors">
+          <div>
+            <label for="qrSize">Tamanho:</label>
+            <select id="qrSize" onchange="gerarQR()">
+              <option value="180">Pequeno (180px)</option>
+              <option value="230" selected>Médio (230px)</option>
+              <option value="300">Grande (300px)</option>
+            </select>
+          </div>
+          <div>
+            <label for="colorDark">Cor do Código:</label>
+            <input type="color" id="colorDark" value="#0f172a" onchange="gerarQR()">
+          </div>
+          <div>
+            <label for="colorLight">Cor de Fundo:</label>
+            <input type="color" id="colorLight" value="#ffffff" onchange="gerarQR()">
+          </div>
+        </div>
+
+        <button class="btn-primary" onclick="gerarQR()">🔄 Atualizar QR Code</button>
+      </div>
+
+      <div class="preview-card">
+        <div class="qr-frame" id="qrFrame">
+          <div id="qrcode"></div>
+          <div class="qr-caption" id="captionPreview">Aponte a câmera para acessar a aula</div>
+        </div>
+        <div class="action-btns">
+          <button class="btn-sec" onclick="baixarPNG()">⬇️ Baixar PNG</button>
+          <button class="btn-sec amber" onclick="copiarImagem()">📋 Copiar p/ Lousa</button>
+        </div>
+        <p id="statusMsg" style="font-size:12px; color:#34d399; margin-top:10px; min-height:16px;"></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function usarAtalho(url, legenda) {
+      document.getElementById('qrUrl').value = url;
+      document.getElementById('qrLabel').value = legenda;
+      gerarQR();
+    }
+
+    function gerarQR() {
+      const container = document.getElementById('qrcode');
+      const url = document.getElementById('qrUrl').value.trim() || 'https://sandovalleme.github.io/Quadro--magico/';
+      const legenda = document.getElementById('qrLabel').value.trim();
+      const tamanho = parseInt(document.getElementById('qrSize').value, 10);
+      const corEscura = document.getElementById('colorDark').value;
+      const corClara = document.getElementById('colorLight').value;
+
+      document.getElementById('qrFrame').style.background = corClara;
+      const cap = document.getElementById('captionPreview');
+      cap.textContent = legenda;
+      cap.style.color = corEscura;
+      cap.style.display = legenda ? 'block' : 'none';
+
+      container.innerHTML = '';
+      new QRCode(container, {
+        text: url,
+        width: tamanho,
+        height: tamanho,
+        colorDark: corEscura,
+        colorLight: corClara,
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    }
+
+    function gerarCanvasCompleto() {
+      const qrCanvas = document.querySelector('#qrcode canvas');
+      if (!qrCanvas) return null;
+
+      const legenda = document.getElementById('qrLabel').value.trim();
+      const corEscura = document.getElementById('colorDark').value;
+      const corClara = document.getElementById('colorLight').value;
+      const pad = 20;
+      const extraH = legenda ? 34 : 0;
+
+      const out = document.createElement('canvas');
+      out.width = qrCanvas.width + pad * 2;
+      out.height = qrCanvas.height + pad * 2 + extraH;
+      const ctx = out.getContext('2d');
+
+      ctx.fillStyle = corClara;
+      ctx.fillRect(0, 0, out.width, out.height);
+      ctx.drawImage(qrCanvas, pad, pad);
+
+      if (legenda) {
+        ctx.fillStyle = corEscura;
+        ctx.font = 'bold 14px Segoe UI, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(legenda, out.width / 2, qrCanvas.height + pad + 22);
+      }
+      return out;
+    }
+
+    function baixarPNG() {
+      const canvas = gerarCanvasCompleto();
+      if (!canvas) return;
+      const link = document.createElement('a');
+      link.download = 'qrcode-aula.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      mostrarStatus('✅ Imagem PNG baixada!');
+    }
+
+    async function copiarImagem() {
+      const canvas = gerarCanvasCompleto();
+      if (!canvas) return;
+      try {
+        canvas.toBlob(async (blob) => {
+          await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+          mostrarStatus('✅ Copiado! Cole direto no Quadro ou Folha Mágica (Ctrl+V).');
+        });
+      } catch (e) {
+        mostrarStatus('⚠️ Use o botão Baixar PNG neste navegador.');
+      }
+    }
+
+    function mostrarStatus(msg) {
+      const el = document.getElementById('statusMsg');
+      el.textContent = msg;
+      setTimeout(() => { el.textContent = ''; }, 3500);
+    }
+
+    window.onload = gerarQR;
+  </script>
+</body>
+</html>
