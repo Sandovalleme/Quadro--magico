@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portal Educacional • Apresentações & Ferramentas</title>
+  <title>Portal Educacional • Aulas & Apresentações Interativas</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -16,8 +16,9 @@
       flex-direction: column;
     }
 
+    /* Cabeçalho */
     header {
-      background: rgba(15, 23, 42, 0.92);
+      background: rgba(15, 23, 42, 0.94);
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       padding: 16px 28px;
       display: flex;
@@ -31,11 +32,12 @@
       width: 44px; height: 44px; border-radius: 12px;
       background: linear-gradient(135deg, #10b981, #3b82f6);
       display: flex; align-items: center; justify-content: center;
-      font-size: 22px;
+      font-size: 22px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
     }
     .brand h1 { font-size: 19px; font-weight: 800; }
     .brand p { font-size: 12px; color: #94a3b8; }
 
+    .header-actions { display: flex; gap: 10px; align-items: center; }
     .btn-dev-toggle {
       background: #1e293b;
       color: #fbbf24;
@@ -50,41 +52,145 @@
 
     main {
       max-width: 1180px; width: 100%; margin: 0 auto;
-      padding: 36px 22px 60px; flex: 1;
+      padding: 32px 22px 60px; flex: 1;
     }
     .hidden { display: none !important; }
 
-    /* ================= TELA PÚBLICA (SOMENTE ALUNO) ================= */
-    .public-box {
-      max-width: 680px;
-      margin: 30px auto;
+    /* =========================================================
+       1. ÁREA PÚBLICA DOS ESTUDANTES (ÍCONES + LISTA DE AULAS)
+       ========================================================= */
+    .student-banner {
+      background: rgba(30, 41, 59, 0.85);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 18px;
+      padding: 24px 28px;
+      margin-bottom: 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 18px;
+    }
+    .student-banner h2 { font-size: 24px; font-weight: 800; margin-bottom: 6px; }
+    .student-banner p { color: #cbd5e1; font-size: 14px; line-height: 1.55; max-width: 720px; }
+
+    /* Ícones dos 4 Aplicativos para o Aluno Escolher */
+    .app-icons-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 18px;
+      margin-bottom: 30px;
+    }
+    .app-icon-tile {
       background: #1e293b;
-      border: 1px solid rgba(16, 185, 129, 0.35);
-      border-radius: 20px;
-      padding: 36px 28px;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 18px;
+      padding: 24px 18px;
       text-align: center;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
     }
-    .public-icon {
-      width: 68px; height: 68px; border-radius: 18px;
-      background: rgba(16, 185, 129, 0.15); color: #34d399;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 34px; margin: 0 auto 18px;
+    .app-icon-tile:hover {
+      transform: translateY(-4px);
+      border-color: #38bdf8;
     }
-    .public-box h2 { font-size: 25px; font-weight: 800; margin-bottom: 12px; }
-    .public-box p { color: #cbd5e1; font-size: 15px; line-height: 1.6; margin-bottom: 24px; }
-    .btn-direct-player {
+    .app-icon-tile.selected {
+      background: linear-gradient(145deg, #1e293b, #0f172a);
+      border-color: #10b981;
+      box-shadow: 0 10px 28px rgba(16, 185, 129, 0.25);
+    }
+    .tile-emoji {
+      font-size: 46px;
+      margin-bottom: 12px;
+      display: block;
+    }
+    .tile-title {
+      font-size: 17px;
+      font-weight: 800;
+      margin-bottom: 6px;
+      color: #f8fafc;
+    }
+    .tile-sub {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-bottom: 12px;
+    }
+    .tile-count {
       display: inline-block;
+      background: rgba(56, 189, 248, 0.16);
+      color: #38bdf8;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    /* Lista de Aulas do Aplicativo Selecionado */
+    .lessons-panel {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 18px;
+      padding: 26px;
+    }
+    .lessons-panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-bottom: 16px;
+      margin-bottom: 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .lessons-panel-header h3 { font-size: 20px; color: #34d399; }
+
+    .lesson-row {
+      background: #0f172a;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+    .lesson-info h4 { font-size: 16px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
+    .lesson-info span { font-size: 12px; color: #94a3b8; }
+
+    .lesson-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn-play-lesson {
       background: linear-gradient(135deg, #059669, #10b981);
       color: #052e16;
       text-decoration: none;
-      padding: 13px 24px;
-      border-radius: 12px;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 13px;
       font-weight: 800;
-      font-size: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
+    .btn-qr-lesson {
+      background: #2563eb;
+      color: #ffffff;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-play-lesson:hover, .btn-qr-lesson:hover { filter: brightness(1.1); }
 
-    /* ================= LOGIN DESENVOLVEDOR ================= */
+    /* =========================================================
+       2. LOGIN DO DESENVOLVEDOR
+       ========================================================= */
     .login-card {
       max-width: 420px; margin: 40px auto;
       background: #1e293b; border: 1px solid rgba(251, 191, 36, 0.4);
@@ -105,7 +211,9 @@
       font-size: 14px; font-weight: 800; cursor: pointer;
     }
 
-    /* ================= PAINEL RESTRITO DO DESENVOLVEDOR ================= */
+    /* =========================================================
+       3. COFRE DO DESENVOLVEDOR (APLICATIVOS + CATÁLOGO DE AULAS)
+       ========================================================= */
     .dev-topbar {
       background: rgba(245, 158, 11, 0.12);
       border: 1px solid rgba(245, 158, 11, 0.35);
@@ -116,80 +224,71 @@
       background: #ef4444; color: white; border: none;
       padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 800; cursor: pointer;
     }
-
     .group-label {
-      font-size: 13px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-      color: #93c5fd;
-      margin-bottom: 12px;
+      font-size: 13px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.6px; color: #93c5fd; margin-bottom: 12px;
     }
-
-    .apps-grid {
+    .dev-apps-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(255px, 1fr));
-      gap: 18px;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
       margin-bottom: 30px;
     }
-    .app-card {
+    .dev-card {
       background: #1e293b; border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 16px; padding: 20px;
+      border-radius: 14px; padding: 18px;
       display: flex; flex-direction: column; justify-content: space-between;
-      transition: transform 0.2s, border-color 0.2s;
     }
-    .app-card:hover { transform: translateY(-3px); border-color: rgba(96, 165, 250, 0.45); }
-    .app-tag {
-      display: inline-block; padding: 3px 9px; border-radius: 6px;
-      font-size: 10px; font-weight: 800; text-transform: uppercase; margin-bottom: 8px;
-    }
-    .app-card h3 { font-size: 17px; margin-bottom: 7px; }
-    .app-card p { font-size: 13px; color: #94a3b8; line-height: 1.5; margin-bottom: 16px; }
-    .btn-open {
+    .dev-card h3 { font-size: 16px; margin-bottom: 6px; }
+    .dev-card p { font-size: 12px; color: #94a3b8; line-height: 1.45; margin-bottom: 14px; }
+    .btn-dev-open {
       display: block; text-align: center; text-decoration: none;
-      background: #2563eb; color: white; padding: 10px; border-radius: 9px;
+      background: #2563eb; color: white; padding: 9px; border-radius: 8px;
       font-size: 13px; font-weight: 700;
     }
-    .btn-open:hover { filter: brightness(1.1); }
 
-    /* Gerador de Aula Google Drive -> QR Code */
-    .drive-builder {
+    /* Publicador de Aulas no Catálogo */
+    .catalog-manager {
       background: #1e293b;
       border: 1px solid rgba(56, 189, 248, 0.35);
       border-radius: 18px;
-      padding: 26px;
+      padding: 24px;
+    }
+    .catalog-manager h3 { font-size: 19px; color: #38bdf8; margin-bottom: 8px; }
+    .form-grid-2 {
       display: grid;
-      grid-template-columns: 1.3fr 0.7fr;
-      gap: 24px;
-      align-items: center;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
     }
-    @media (max-width: 760px) {
-      .drive-builder { grid-template-columns: 1fr; }
+    .catalog-list-dev {
+      margin-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 16px;
     }
-    .drive-builder h3 { font-size: 19px; color: #38bdf8; margin-bottom: 8px; }
-    .drive-builder label { display: block; font-size: 12px; font-weight: 700; color: #cbd5e1; margin-bottom: 5px; }
-
-    .qr-result-card {
+    .catalog-item-dev {
       background: #0f172a;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 14px;
-      padding: 20px;
-      text-align: center;
+      padding: 12px 16px;
+      border-radius: 10px;
+      margin-bottom: 8px;
       display: flex;
-      flex-direction: column;
+      justify-content: space-between;
       align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
     }
-    .qr-white-box {
-      background: #ffffff;
-      padding: 14px;
-      border-radius: 12px;
-      margin-bottom: 12px;
+
+    /* Modal QR Code Gigante */
+    .qr-modal-overlay {
+      position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 9999; padding: 20px;
     }
-    .qr-label-preview {
-      color: #0f172a;
-      font-size: 12px;
-      font-weight: 800;
-      margin-top: 6px;
+    .qr-modal-card {
+      background: #ffffff; color: #0f172a;
+      padding: 28px; border-radius: 20px;
+      text-align: center; max-width: 400px; width: 100%;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
     }
 
     footer {
@@ -204,46 +303,91 @@
     <div class="brand">
       <div class="brand-icon">🎓</div>
       <div>
-        <h1>Portal Educacional • Apresentações Interativas</h1>
-        <p>Acesso Direto às Aulas via QR Code</p>
+        <h1>Portal Educacional • Aulas &amp; Jogos Interativos</h1>
+        <p>Área Pública de Apresentações &amp; Cofre Restrito do Desenvolvedor</p>
       </div>
     </div>
-    <button id="btnToggleDev" class="btn-dev-toggle" onclick="abrirLoginOuPainel()">🔒 Área do Desenvolvedor</button>
+    <div class="header-actions">
+      <button id="btnToggleDev" class="btn-dev-toggle" onclick="abrirLoginOuPainel()">🔒 Área do Desenvolvedor</button>
+    </div>
   </header>
 
   <main>
-    <!-- 1. TELA PÚBLICA (ALUNO - SOMENTE APRESENTAÇÕES) -->
+    <!-- =========================================================
+         1. ÁREA PÚBLICA DOS ESTUDANTES (SOMENTE APRESENTAÇÕES)
+         ========================================================= -->
     <div id="viewPublico">
-      <div class="public-box">
-        <div class="public-icon">📱</div>
-        <h2>Escaneie o QR Code da sua Aula</h2>
-        <p>
-          Cada aula (como <strong>Física Quântica</strong>, <strong>Matemática</strong> ou <strong>Programação</strong>) possui um QR Code exclusivo projetado pelo professor.<br><br>
-          Aponte a câmera do seu celular para o código da lousa para abrir diretamente a apresentação passo a passo da aula de hoje.
-        </p>
-        <a href="APRESENTACAO_ALUNO.html" class="btn-direct-player">📂 Abrir Visualizador de Apresentação</a>
-      </div>
+      <section class="student-banner">
+        <div>
+          <h2>📚 Escolha o Aplicativo e a Aula</h2>
+          <p>Clique em um dos ícones abaixo para ver a lista de aulas disponíveis. Você pode abrir a apresentação diretamente ou gerar o QR Code para acessar pelo celular.</p>
+        </div>
+      </section>
+
+      <!-- Ícones dos Programas -->
+      <section class="app-icons-grid">
+        <div class="app-icon-tile selected" id="tile-roleta" onclick="selecionarAppAluno('roleta')">
+          <span class="tile-emoji">🎡</span>
+          <div class="tile-title">Roleta de Quizzes</div>
+          <div class="tile-sub">Competição e revisão giratória</div>
+          <span class="tile-count" id="count-roleta">0 aulas</span>
+        </div>
+
+        <div class="app-icon-tile" id="tile-quiz" onclick="selecionarAppAluno('quiz')">
+          <span class="tile-emoji">❓</span>
+          <div class="tile-title">Quiz Projeção</div>
+          <div class="tile-sub">Perguntas e resolução comentada</div>
+          <span class="tile-count" id="count-quiz">0 aulas</span>
+        </div>
+
+        <div class="app-icon-tile" id="tile-quadro" onclick="selecionarAppAluno('quadro')">
+          <span class="tile-emoji">🖥️</span>
+          <div class="tile-title">Quadro / Losa Mágica</div>
+          <div class="tile-sub">Apresentação de aula passo a passo</div>
+          <span class="tile-count" id="count-quadro">0 aulas</span>
+        </div>
+
+        <div class="app-icon-tile" id="tile-magia" onclick="selecionarAppAluno('magia')">
+          <span class="tile-emoji">🪄</span>
+          <div class="tile-title">Folha Mágica</div>
+          <div class="tile-sub">Esquemas e animações na lousa</div>
+          <span class="tile-count" id="count-magia">0 aulas</span>
+        </div>
+      </section>
+
+      <!-- Lista de Aulas do Aplicativo Selecionado -->
+      <section class="lessons-panel">
+        <div class="lessons-panel-header">
+          <h3 id="tituloListaApp">🎡 Aulas Disponíveis — Roleta de Quizzes</h3>
+          <span style="font-size:12px; color:#94a3b8;">Clique na aula para abrir direto no modo apresentação</span>
+        </div>
+        <div id="containerListaAulas"></div>
+      </section>
     </div>
 
-    <!-- 2. TELA DE SENHA DO DESENVOLVEDOR -->
+    <!-- =========================================================
+         2. TELA DE LOGIN DO DESENVOLVEDOR
+         ========================================================= -->
     <div id="viewLogin" class="hidden">
       <div class="login-card">
         <div style="font-size:32px; margin-bottom:10px;">🔐</div>
         <h2>Área Restrita do Desenvolvedor</h2>
-        <p>Digite sua senha para acessar seus aplicativos de criação, quizzes interativos e gerar QR Codes das aulas do Google Drive.</p>
+        <p>Digite sua senha para acessar seus 6 aplicativos de criação e publicar novas aulas no portal.</p>
         <input type="password" id="senhaInput" class="input-field" style="text-align:center; letter-spacing:2px;" placeholder="••••••••" onkeydown="if(event.key==='Enter') validarSenha()">
         <div id="msgErro" style="color:#f87171; font-size:12px; font-weight:700; min-height:18px; margin-bottom:8px;"></div>
-        <button class="btn-amber" onclick="validarSenha()">🔓 Entrar no Painel</button>
-        <button onclick="voltarPublico()" style="margin-top:12px; background:none; border:none; color:#94a3b8; font-size:12px; cursor:pointer; text-decoration:underline;">Voltar</button>
+        <button class="btn-amber" onclick="validarSenha()">🔓 Entrar no Cofre</button>
+        <button onclick="voltarPublico()" style="margin-top:12px; background:none; border:none; color:#94a3b8; font-size:12px; cursor:pointer; text-decoration:underline;">Voltar para Área do Aluno</button>
       </div>
     </div>
 
-    <!-- 3. COFRE DO DESENVOLVEDOR (TODOS OS 6 APLICATIVOS + GERADOR DRIVE) -->
+    <!-- =========================================================
+         3. COFRE DO DESENVOLVEDOR (TODOS OS PROGRAMAS + CATÁLOGO)
+         ========================================================= -->
     <div id="viewDev" class="hidden">
       <div class="dev-topbar">
         <div>
-          <strong style="color:#fbbf24;">🔓 Painel do Desenvolvedor Ativo</strong>
-          <p style="font-size:12px; color:#cbd5e1;">Todos os seus aplicativos de lousa, animação e quizzes estão protegidos neste espaço.</p>
+          <strong style="color:#fbbf24;">🔓 Cofre do Desenvolvedor Desbloqueado</strong>
+          <p style="font-size:12px; color:#cbd5e1;">Abra os programas para criar suas aulas e publique abaixo o link salvo no Google Drive.</p>
         </div>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
           <a href="https://drive.google.com" target="_blank" rel="noopener" style="background:#334155; color:white; text-decoration:none; padding:8px 12px; border-radius:8px; font-size:12px; font-weight:700;">☁️ Google Drive</a>
@@ -252,206 +396,406 @@
         </div>
       </div>
 
-      <!-- Grupo 1: Lousa Digital & Animações -->
-      <div class="group-label">🖥️ Lousa Digital, Animações &amp; Compartilhamento</div>
-      <div class="apps-grid">
-        <div class="app-card">
+      <div class="group-label">🛠️ Seus Aplicativos de Criação &amp; Controle</div>
+      <div class="dev-apps-grid">
+        <div class="dev-card">
           <div>
-            <span class="app-tag" style="background:rgba(59,130,246,0.2); color:#60a5fa;">Controle Professor</span>
+            <h3>🎡 Roleta de Quizzes</h3>
+            <p>Crie questões, configure equipes e salve o arquivo para os alunos.</p>
+          </div>
+          <a href="ROLETA_QUIZ.html" class="btn-dev-open" style="background:#e11d48;">Abrir Roleta ➔</a>
+        </div>
+
+        <div class="dev-card">
+          <div>
+            <h3>❓ Quiz Projeção</h3>
+            <p>Monte perguntas com imagem de questão e resolução comentada.</p>
+          </div>
+          <a href="QUIZ_PROJECAO.html" class="btn-dev-open" style="background:#0284c7;">Abrir Quiz ➔</a>
+        </div>
+
+        <div class="dev-card">
+          <div>
             <h3>🖥️ Quadro Mágico</h3>
-            <p>Painel principal de aula com máscaras reveláveis, vídeos, imagens e exportação.</p>
+            <p>Monte aulas com máscaras reveláveis, vídeos e imagens.</p>
           </div>
-          <a href="QUADRO%20M%C3%81GICO.html" class="btn-open">Abrir Quadro Mágico ➔</a>
+          <a href="QUADRO%20M%C3%81GICO.html" class="btn-dev-open">Abrir Quadro Mágico ➔</a>
         </div>
 
-        <div class="app-card">
+        <div class="dev-card">
           <div>
-            <span class="app-tag" style="background:rgba(245,158,11,0.2); color:#fbbf24;">Estúdio de Animação</span>
             <h3>🪄 Folha Mágica (Magia)</h3>
-            <p>Lousa infinita para desenhar esquemas, fórmulas e gravar trajetórias passo a passo.</p>
+            <p>Desenhe esquemas e grave animações passo a passo.</p>
           </div>
-          <a href="Magia.html" class="btn-open" style="background:#d97706;">Abrir Magia.html ➔</a>
+          <a href="Magia.html" class="btn-dev-open" style="background:#d97706;">Abrir Magia.html ➔</a>
         </div>
 
-        <div class="app-card">
+        <div class="dev-card">
           <div>
-            <span class="app-tag" style="background:rgba(16,185,129,0.2); color:#34d399;">2º Monitor / Projetor</span>
             <h3>📺 Losa Mágica</h3>
-            <p>Janela espelhada limpa para projeção simultânea em sala de aula.</p>
+            <p>Janela limpa de projeção simultânea em sala de aula.</p>
           </div>
-          <a href="LOSA%20M%C3%81GICA.html" target="_blank" class="btn-open" style="background:#059669;">Abrir Losa Mágica ↗</a>
+          <a href="LOSA%20M%C3%81GICA.html" target="_blank" class="btn-dev-open" style="background:#059669;">Abrir Losa Mágica ↗</a>
         </div>
 
-        <div class="app-card">
+        <div class="dev-card">
           <div>
-            <span class="app-tag" style="background:rgba(168,85,247,0.2); color:#c084fc;">Divulgação</span>
-            <h3>📱 Gerador QR Completo</h3>
-            <p>Ferramenta completa para criar e baixar QR Codes personalizados em PNG.</p>
+            <h3>📱 Gerador QR Code</h3>
+            <p>Ferramenta avulsa para gerar QR Codes personalizados.</p>
           </div>
-          <a href="GERADOR%20QR%20CODE.html" class="btn-open" style="background:#7c3aed;">Abrir Gerador QR ➔</a>
+          <a href="GERADOR%20QR%20CODE.html" class="btn-dev-open" style="background:#7c3aed;">Abrir Gerador QR ➔</a>
         </div>
       </div>
 
-      <!-- Grupo 2: Novos Programas de Perguntas e Respostas -->
-      <div class="group-label">🎯 Programas de Perguntas &amp; Respostas (Quizzes)</div>
-      <div class="apps-grid">
-        <div class="app-card">
+      <!-- Publicador de Aulas na Lista dos Estudantes -->
+      <section class="catalog-manager">
+        <h3>➕ Adicionar Aula na Lista dos Estudantes</h3>
+        <p style="font-size:13px; color:#94a3b8; line-height:1.5;">
+          Após salvar o arquivo da aula pelo botão <strong>"Salvar Aula para o Portal"</strong> dentro do aplicativo e subir no Google Drive (compartilhado como <em>"Qualquer pessoa com o link"</em>), cadastre-a abaixo:
+        </p>
+
+        <div class="form-grid-2">
           <div>
-            <span class="app-tag" style="background:rgba(244,63,94,0.2); color:#fda4af;">Competição 1 a 4 Equipes</span>
-            <h3>🎡 Roleta Interativa de Quizzes</h3>
-            <p>Roleta giratória de palco com luzes, sons, confetes, banco de questões LaTeX e cronômetro circular.</p>
+            <label style="font-size:12px; font-weight:700; display:block; margin-bottom:4px;">Aplicativo da Aula:</label>
+            <select id="novaAulaApp" class="input-field">
+              <option value="roleta">🎡 Roleta de Quizzes</option>
+              <option value="quiz">❓ Quiz Projeção</option>
+              <option value="quadro">🖥️ Quadro / Losa Mágica</option>
+              <option value="magia">🪄 Folha Mágica (Animações)</option>
+            </select>
           </div>
-          <a href="ROLETA_QUIZ.html" class="btn-open" style="background:linear-gradient(135deg, #e11d48, #f43f5e);">Abrir Roleta de Quizzes ➔</a>
-        </div>
 
-        <div class="app-card">
           <div>
-            <span class="app-tag" style="background:rgba(14,165,233,0.2); color:#7dd3fc;">Projeção &amp; Correção</span>
-            <h3>❓ Quiz Interativo (Modo Projeção)</h3>
-            <p>Perguntas sorteadas com imagem da questão, imagem de explicação/resolução em tela cheia e cronômetro.</p>
-          </div>
-          <a href="QUIZ_PROJECAO.html" class="btn-open" style="background:linear-gradient(135deg, #0284c7, #0ea5e9);">Abrir Quiz Projeção ➔</a>
-        </div>
-      </div>
-
-      <!-- Grupo 3: Gerador de QR Code por Aula do Google Drive -->
-      <section class="drive-builder">
-        <div>
-          <h3>🚀 Gerar QR Code de Aula do Google Drive</h3>
-          <p style="font-size:13px; color:#94a3b8; margin-bottom:16px; line-height:1.5;">
-            1. Salve o arquivo da aula no Google Drive e deixe compartilhado como <strong>"Qualquer pessoa com o link"</strong>.<br>
-            2. Cole o link abaixo para gerar o QR Code que abre <strong>somente</strong> essa apresentação para os alunos.
-          </p>
-
-          <label for="aulaTituloInput">Nome da Aula (ex: Física Quântica - Aula 01):</label>
-          <input type="text" id="aulaTituloInput" class="input-field" value="Física Quântica - Introdução" oninput="gerarQrAulaDrive()">
-
-          <label for="driveLinkInput">Link de Compartilhamento do Arquivo no Google Drive:</label>
-          <input type="text" id="driveLinkInput" class="input-field" placeholder="https://drive.google.com/file/d/1A2B3C4D5E.../view?usp=sharing" oninput="gerarQrAulaDrive()">
-
-          <div style="font-size:11px; color:#38bdf8; word-break:break-all; background:#0f172a; padding:10px; border-radius:8px;" id="linkFinalGerado">
-            Link do aluno: https://sandovalleme.github.io/Quadro--magico/APRESENTACAO_ALUNO.html
+            <label style="font-size:12px; font-weight:700; display:block; margin-bottom:4px;">Disciplina / Turma:</label>
+            <input type="text" id="novaAulaDisc" class="input-field" placeholder="Ex: Física • 3º Ano EM">
           </div>
         </div>
 
-        <div class="qr-result-card">
-          <div class="qr-white-box">
-            <div id="qrAulaBox"></div>
-            <div class="qr-label-preview" id="qrAulaLegenda">Física Quântica - Introdução</div>
+        <div class="form-grid-2">
+          <div>
+            <label style="font-size:12px; font-weight:700; display:block; margin-bottom:4px;">Título da Aula:</label>
+            <input type="text" id="novaAulaTitulo" class="input-field" placeholder="Ex: Física Quântica - Efeito Fotoelétrico">
           </div>
-          <div style="display:flex; gap:8px; width:100%;">
-            <button onclick="baixarQrAula()" style="flex:1; background:#10b981; color:#052e16; border:none; padding:10px; border-radius:8px; font-weight:800; font-size:12px; cursor:pointer;">⬇️ Baixar QR Code</button>
-            <a id="btnTestarAula" href="APRESENTACAO_ALUNO.html" target="_blank" style="flex:1; background:#3b82f6; color:white; text-decoration:none; padding:10px; border-radius:8px; font-weight:800; font-size:12px;">👁️ Testar Aula</a>
+
+          <div>
+            <label style="font-size:12px; font-weight:700; display:block; margin-bottom:4px;">Link do Arquivo no Google Drive:</label>
+            <input type="text" id="novaAulaDrive" class="input-field" placeholder="https://drive.google.com/file/d/1A2B3C.../view?usp=sharing">
           </div>
         </div>
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:6px;">
+          <button onclick="adicionarAulaCatalogo()" style="background:#10b981; color:#052e16; border:none; padding:11px 20px; border-radius:10px; font-weight:800; font-size:13px; cursor:pointer;">
+            ✅ Adicionar na Lista dos Alunos
+          </button>
+          <button onclick="exportarCatalogoJSON()" style="background:#3b82f6; color:white; border:none; padding:11px 20px; border-radius:10px; font-weight:800; font-size:13px; cursor:pointer;">
+            ⬇️ Baixar aulas_catalogo.json (Para subir no GitHub)
+          </button>
+        </div>
+
+        <div class="catalog-list-dev" id="listaCatalogoDev"></div>
       </section>
     </div>
   </main>
+
+  <!-- Modal de QR Code da Aula Selecionada -->
+  <div id="qrModalOverlay" class="qr-modal-overlay hidden" onclick="fecharQrModal()">
+    <div class="qr-modal-card" onclick="event.stopPropagation()">
+      <span id="qrModalBadge" style="display:inline-block; background:#dbeafe; color:#1e40af; padding:4px 12px; border-radius:20px; font-size:11px; font-weight:800; margin-bottom:10px;">AULA INTERATIVA</span>
+      <h3 id="qrModalTitulo" style="font-size:19px; margin-bottom:14px;">Título da Aula</h3>
+      <div id="qrModalCanvasBox" style="display:flex; justify-content:center; margin-bottom:14px;"></div>
+      <p style="font-size:12px; color:#475569; margin-bottom:16px;">Aponte a câmera do celular para abrir esta apresentação diretamente.</p>
+      <div style="display:flex; gap:8px; justify-content:center;">
+        <button onclick="baixarQrModalPNG()" style="background:#10b981; color:#052e16; border:none; padding:10px 16px; border-radius:8px; font-weight:800; cursor:pointer;">⬇️ Baixar PNG</button>
+        <button onclick="fecharQrModal()" style="background:#0f172a; color:white; border:none; padding:10px 18px; border-radius:8px; font-weight:700; cursor:pointer;">Fechar</button>
+      </div>
+    </div>
+  </div>
 
   <footer>
     Portal Educacional • Sandovalleme/Quadro--magico
   </footer>
 
   <script>
-    // Senha do Desenvolvedor (altere aqui quando quiser)
     const SENHA_DESENVOLVEDOR = "prof2026";
-    let autenticado = sessionStorage.getItem('dev_auth') === 'true';
+    const CATALOG_STORAGE_KEY = "portal_aulas_catalogo_v1";
+    const BASE_URL = "https://sandovalleme.github.io/Quadro--magico/";
 
+    const MAPA_APPS = {
+      roleta: {
+        nome: "Roleta de Quizzes",
+        icone: "🎡",
+        arquivo: "ROLETA_QUIZ.html"
+      },
+      quiz: {
+        nome: "Quiz Projeção",
+        icone: "❓",
+        arquivo: "QUIZ_PROJECAO.html"
+      },
+      quadro: {
+        nome: "Quadro / Losa Mágica",
+        icone: "🖥️",
+        arquivo: "LOSA%20M%C3%81GICA.html"
+      },
+      magia: {
+        nome: "Folha Mágica",
+        icone: "🪄",
+        arquivo: "Magia.html"
+      }
+    };
+
+    let catalogoAulas = [];
+    let appSelecionadoAluno = "roleta";
+    let autenticado = sessionStorage.getItem("dev_auth") === "true";
+
+    // Carrega catálogo do arquivo aulas_catalogo.json do GitHub (se existir) + localStorage
+    async function inicializarCatalogo() {
+      try {
+        const local = JSON.parse(localStorage.getItem(CATALOG_STORAGE_KEY) || "[]");
+        if (Array.isArray(local)) catalogoAulas = local;
+      } catch (e) {}
+
+      try {
+        const resp = await fetch("aulas_catalogo.json?t=" + Date.now());
+        if (resp.ok) {
+          const remoto = await resp.json();
+          if (Array.isArray(remoto) && remoto.length > 0) {
+            // Mescla aulas remotas com eventuais novas locais sem duplicar
+            const idsRemotos = new Set(remoto.map(a => a.id));
+            const apenasLocais = catalogoAulas.filter(a => !idsRemotos.has(a.id));
+            catalogoAulas = [...remoto, ...apenasLocais];
+          }
+        }
+      } catch (e) {}
+
+      atualizarContadoresETela();
+    }
+
+    function extrairIdDrive(link) {
+      if (!link) return "";
+      const m1 = link.match(/\/d\/([a-zA-Z0-9_-]+)/);
+      if (m1) return m1[1];
+      const m2 = link.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+      if (m2) return m2[1];
+      return link.trim();
+    }
+
+    function montarUrlApresentacao(aula) {
+      const appInfo = MAPA_APPS[aula.app] || MAPA_APPS.roleta;
+      const params = new URLSearchParams();
+      params.set("modo", "show");
+      params.set("titulo", aula.titulo);
+      if (aula.driveId) {
+        params.set("drive", aula.driveId);
+      }
+      return `${BASE_URL}${appInfo.arquivo}?${params.toString()}`;
+    }
+
+    function selecionarAppAluno(appKey) {
+      appSelecionadoAluno = appKey;
+      ["roleta", "quiz", "quadro", "magia"].forEach(k => {
+        document.getElementById(`tile-${k}`).classList.toggle("selected", k === appKey);
+      });
+      renderizarListaAluno();
+    }
+
+    function atualizarContadoresETela() {
+      ["roleta", "quiz", "quadro", "magia"].forEach(k => {
+        const qtd = catalogoAulas.filter(a => a.app === k).length;
+        document.getElementById(`count-${k}`).textContent = `${qtd} ${qtd === 1 ? "aula" : "aulas"}`;
+      });
+      renderizarListaAluno();
+      renderizarListaDev();
+    }
+
+    function renderizarListaAluno() {
+      const appInfo = MAPA_APPS[appSelecionadoAluno];
+      document.getElementById("tituloListaApp").textContent = `${appInfo.icone} Aulas Disponíveis — ${appInfo.nome}`;
+
+      const listaEl = document.getElementById("containerListaAulas");
+      const filtradas = catalogoAulas.filter(a => a.app === appSelecionadoAluno);
+
+      if (filtradas.length === 0) {
+        listaEl.innerHTML = `
+          <div style="text-align:center; padding:32px 16px; color:#94a3b8;">
+            <p style="font-size:15px; margin-bottom:8px;">Nenhuma aula publicada em <strong>${appInfo.nome}</strong> ainda.</p>
+            <p style="font-size:12px;">O professor pode publicar aulas através da Área do Desenvolvedor.</p>
+          </div>
+        `;
+        return;
+      }
+
+      listaEl.innerHTML = "";
+      filtradas.forEach(aula => {
+        const urlShow = montarUrlApresentacao(aula);
+        const row = document.createElement("div");
+        row.className = "lesson-row";
+        row.innerHTML = `
+          <div class="lesson-info">
+            <h4>${aula.titulo}</h4>
+            <span>${aula.disciplina || "Aula Interativa"} • Abre direto no modo apresentação</span>
+          </div>
+          <div class="lesson-buttons">
+            <a href="${urlShow}" class="btn-play-lesson">▶ Abrir Apresentação</a>
+            <button type="button" class="btn-qr-lesson" onclick="abrirQrAula('${aula.id}')">📱 QR Code</button>
+          </div>
+        `;
+        listaEl.appendChild(row);
+      });
+    }
+
+    /* =========================================================
+       GERENCIAMENTO DO DESENVOLVEDOR
+       ========================================================= */
     function abrirLoginOuPainel() {
-      document.getElementById('viewPublico').classList.add('hidden');
+      document.getElementById("viewPublico").classList.add("hidden");
       if (autenticado) {
-        document.getElementById('viewLogin').classList.add('hidden');
-        document.getElementById('viewDev').classList.remove('hidden');
-        gerarQrAulaDrive();
+        document.getElementById("viewLogin").classList.add("hidden");
+        document.getElementById("viewDev").classList.remove("hidden");
+        renderizarListaDev();
       } else {
-        document.getElementById('viewLogin').classList.remove('hidden');
-        document.getElementById('viewDev').classList.add('hidden');
-        document.getElementById('senhaInput').value = '';
-        document.getElementById('msgErro').textContent = '';
-        setTimeout(() => document.getElementById('senhaInput').focus(), 100);
+        document.getElementById("viewLogin").classList.remove("hidden");
+        document.getElementById("viewDev").classList.add("hidden");
+        document.getElementById("senhaInput").value = "";
+        document.getElementById("msgErro").textContent = "";
+        setTimeout(() => document.getElementById("senhaInput").focus(), 100);
       }
     }
 
     function validarSenha() {
-      const val = document.getElementById('senhaInput').value;
+      const val = document.getElementById("senhaInput").value;
       if (val === SENHA_DESENVOLVEDOR) {
         autenticado = true;
-        sessionStorage.setItem('dev_auth', 'true');
+        sessionStorage.setItem("dev_auth", "true");
         abrirLoginOuPainel();
       } else {
-        document.getElementById('msgErro').textContent = '❌ Senha incorreta.';
+        document.getElementById("msgErro").textContent = "❌ Senha incorreta.";
       }
     }
 
     function trancarPainel() {
       autenticado = false;
-      sessionStorage.removeItem('dev_auth');
+      sessionStorage.removeItem("dev_auth");
       voltarPublico();
     }
 
     function voltarPublico() {
-      document.getElementById('viewPublico').classList.remove('hidden');
-      document.getElementById('viewLogin').classList.add('hidden');
-      document.getElementById('viewDev').classList.add('hidden');
+      document.getElementById("viewPublico").classList.remove("hidden");
+      document.getElementById("viewLogin").classList.add("hidden");
+      document.getElementById("viewDev").classList.add("hidden");
+      atualizarContadoresETela();
     }
 
-    function extrairIdDrive(link) {
-      if (!link) return '';
-      const match1 = link.match(/\/d\/([a-zA-Z0-9_-]+)/);
-      if (match1) return match1[1];
-      const match2 = link.match(/[?&]id=([a-zA-Z0-9_-]+)/);
-      if (match2) return match2[1];
-      return link.trim();
-    }
+    function adicionarAulaCatalogo() {
+      const app = document.getElementById("novaAulaApp").value;
+      const disciplina = document.getElementById("novaAulaDisc").value.trim();
+      const titulo = document.getElementById("novaAulaTitulo").value.trim();
+      const linkDrive = document.getElementById("novaAulaDrive").value.trim();
 
-    function gerarQrAulaDrive() {
-      const titulo = document.getElementById('aulaTituloInput').value.trim() || 'Aula Interativa';
-      const linkBruto = document.getElementById('driveLinkInput').value.trim();
-      const idDrive = extrairIdDrive(linkBruto);
-
-      const base = 'https://sandovalleme.github.io/Quadro--magico/APRESENTACAO_ALUNO.html';
-      let urlFinal = `${base}?titulo=${encodeURIComponent(titulo)}`;
-      if (idDrive) {
-        urlFinal += `&drive=${encodeURIComponent(idDrive)}`;
+      if (!titulo || !linkDrive) {
+        alert("Preencha o Título da Aula e o Link do arquivo no Google Drive.");
+        return;
       }
 
-      document.getElementById('linkFinalGerado').textContent = 'Link do aluno: ' + urlFinal;
-      document.getElementById('qrAulaLegenda').textContent = titulo;
-      document.getElementById('btnTestarAula').href = urlFinal;
+      const driveId = extrairIdDrive(linkDrive);
+      const nova = {
+        id: "aula_" + Date.now(),
+        app,
+        disciplina,
+        titulo,
+        driveId
+      };
 
-      const box = document.getElementById('qrAulaBox');
-      box.innerHTML = '';
-      new QRCode(box, {
-        text: urlFinal,
-        width: 170,
-        height: 170,
-        colorDark: '#0f172a',
-        colorLight: '#ffffff',
-        correctLevel: QRCode.CorrectLevel.H
+      catalogoAulas.unshift(nova);
+      localStorage.setItem(CATALOG_STORAGE_KEY, JSON.stringify(catalogoAulas));
+
+      document.getElementById("novaAulaTitulo").value = "";
+      document.getElementById("novaAulaDrive").value = "";
+      atualizarContadoresETela();
+      alert("✅ Aula adicionada! Lembre-se de baixar o aulas_catalogo.json e subir no GitHub para ficar visível em todos os celulares.");
+    }
+
+    function removerAulaCatalogo(id) {
+      catalogoAulas = catalogoAulas.filter(a => a.id !== id);
+      localStorage.setItem(CATALOG_STORAGE_KEY, JSON.stringify(catalogoAulas));
+      atualizarContadoresETela();
+    }
+
+    function renderizarListaDev() {
+      const el = document.getElementById("listaCatalogoDev");
+      if (!el) return;
+      if (catalogoAulas.length === 0) {
+        el.innerHTML = `<p style="font-size:12px; color:#94a3b8;">Nenhuma aula cadastrada no catálogo ainda.</p>`;
+        return;
+      }
+      el.innerHTML = `<div style="font-size:12px; font-weight:700; color:#cbd5e1; margin-bottom:10px;">Aulas Publicadas (${catalogoAulas.length}):</div>`;
+      catalogoAulas.forEach(a => {
+        const info = MAPA_APPS[a.app] || MAPA_APPS.roleta;
+        const div = document.createElement("div");
+        div.className = "catalog-item-dev";
+        div.innerHTML = `
+          <div>
+            <strong>${info.icone} ${a.titulo}</strong>
+            <span style="font-size:11px; color:#94a3b8; display:block;">${info.nome} • ${a.disciplina || "Geral"}</span>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button onclick="abrirQrAula('${a.id}')" style="background:#2563eb; color:white; border:none; padding:6px 10px; border-radius:6px; font-size:11px; font-weight:700; cursor:pointer;">📱 QR</button>
+            <button onclick="removerAulaCatalogo('${a.id}')" style="background:#ef4444; color:white; border:none; padding:6px 10px; border-radius:6px; font-size:11px; font-weight:700; cursor:pointer;">Excluir</button>
+          </div>
+        `;
+        el.appendChild(div);
       });
     }
 
-    function baixarQrAula() {
-      const qrCanvas = document.querySelector('#qrAulaBox canvas');
-      if (!qrCanvas) return;
-      const titulo = document.getElementById('aulaTituloInput').value.trim() || 'Aula';
-      const out = document.createElement('canvas');
-      out.width = qrCanvas.width + 40;
-      out.height = qrCanvas.height + 68;
-      const ctx = out.getContext('2d');
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, out.width, out.height);
-      ctx.drawImage(qrCanvas, 20, 20);
-      ctx.fillStyle = '#0f172a';
-      ctx.font = 'bold 14px Segoe UI, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText(titulo, out.width / 2, qrCanvas.height + 46);
-
-      const a = document.createElement('a');
-      a.download = `QRCode-${titulo.replace(/[^a-zA-Z0-9]/g, '_')}.png`;
-      a.href = out.toDataURL('image/png');
+    function exportarCatalogoJSON() {
+      const blob = new Blob([JSON.stringify(catalogoAulas, null, 2)], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "aulas_catalogo.json";
       a.click();
     }
+
+    /* =========================================================
+       MODAL DE QR CODE POR AULA
+       ========================================================= */
+    let tituloModalAtual = "";
+    function abrirQrAula(id) {
+      const aula = catalogoAulas.find(a => a.id === id);
+      if (!aula) return;
+      const appInfo = MAPA_APPS[aula.app] || MAPA_APPS.roleta;
+      const urlFinal = montarUrlApresentacao(aula);
+
+      tituloModalAtual = aula.titulo;
+      document.getElementById("qrModalBadge").textContent = `${appInfo.icone} ${appInfo.nome.toUpperCase()}`;
+      document.getElementById("qrModalTitulo").textContent = aula.titulo;
+
+      const box = document.getElementById("qrModalCanvasBox");
+      box.innerHTML = "";
+      new QRCode(box, {
+        text: urlFinal,
+        width: 230,
+        height: 230,
+        colorDark: "#0f172a",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+      });
+
+      document.getElementById("qrModalOverlay").classList.remove("hidden");
+    }
+
+    function fecharQrModal() {
+      document.getElementById("qrModalOverlay").classList.add("hidden");
+    }
+
+    function baixarQrModalPNG() {
+      const canvas = document.querySelector("#qrModalCanvasBox canvas");
+      if (!canvas) return;
+      const a = document.createElement("a");
+      a.download = `QRCode-${tituloModalAtual.replace(/[^a-zA-Z0-9]/g, "_")}.png`;
+      a.href = canvas.toDataURL("image/png");
+      a.click();
+    }
+
+    inicializarCatalogo();
   </script>
 </body>
 </html>
