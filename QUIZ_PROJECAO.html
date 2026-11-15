@@ -24,7 +24,7 @@
     }
 
     .container {
-      max-width: 980px;
+      max-width: 960px;
       margin: 0 auto;
     }
 
@@ -36,7 +36,7 @@
     }
 
     header h1 {
-      font-size: 1.8rem;
+      font-size: 1.85rem;
       color: #89b4fa;
       margin-bottom: 8px;
     }
@@ -94,7 +94,7 @@
       margin-bottom: 18px;
     }
 
-    .form-group label {
+    .form-group label.field-label {
       display: block;
       margin-bottom: 6px;
       font-weight: bold;
@@ -118,7 +118,7 @@
 
     textarea.form-control {
       resize: vertical;
-      min-height: 80px;
+      min-height: 85px;
     }
 
     .image-upload-box {
@@ -133,14 +133,17 @@
     }
 
     .preview-container {
-      margin-top: 10px;
+      margin-top: 12px;
       display: flex;
       align-items: center;
       gap: 15px;
+      background: #2b2b3d;
+      padding: 10px;
+      border-radius: 6px;
     }
 
     .preview-container img {
-      max-height: 90px;
+      max-height: 110px;
       border-radius: 6px;
       border: 1px solid #45475a;
     }
@@ -165,6 +168,7 @@
     }
 
     .btn {
+      display: inline-block;
       padding: 11px 18px;
       border: none;
       border-radius: 6px;
@@ -172,6 +176,7 @@
       font-weight: bold;
       cursor: pointer;
       transition: all 0.2s ease;
+      text-align: center;
     }
 
     .btn-primary {
@@ -216,6 +221,16 @@
       background-color: #45475a;
     }
 
+    .btn-portal {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #052e16;
+      border: 1px solid #34d399;
+    }
+
+    .btn-portal:hover {
+      filter: brightness(1.08);
+    }
+
     .actions-bar {
       display: flex;
       justify-content: space-between;
@@ -252,16 +267,10 @@
       color: #cdd6f4;
     }
 
-    .badge-time {
-      background-color: #313244;
-      color: #00ffcc;
-      border: 1px solid #00ffcc44;
-    }
-
     .badge-exp {
-      background-color: #313244;
-      color: #f9e2af;
-      border: 1px solid #f9e2af44;
+      background-color: #f9e2af;
+      color: #11111b;
+      font-weight: bold;
     }
 
     .filter-box {
@@ -273,7 +282,7 @@
     }
 
     /* =========================================================
-       MODO PROJEÇÃO EM TELA CHEIA (PALCO DO JOGO)
+       PALCO DE PROJEÇÃO EM TELA CHEIA (SLIDE DE AULA)
        ========================================================= */
     #projection-stage {
       position: fixed;
@@ -281,21 +290,21 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      background-color: #11111b;
+      background-color: #141420;
       z-index: 900;
       display: flex;
       flex-direction: column;
-      padding: 16px 28px;
-      overflow: hidden;
+      padding: 18px 32px;
+      overflow-y: auto;
     }
 
     .stage-topbar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding-bottom: 10px;
+      padding-bottom: 12px;
       border-bottom: 2px solid #313244;
-      margin-bottom: 12px;
+      margin-bottom: 18px;
       flex-shrink: 0;
       flex-wrap: wrap;
       gap: 10px;
@@ -303,61 +312,43 @@
 
     .stage-controls {
       display: flex;
-      gap: 8px;
+      gap: 10px;
       align-items: center;
       flex-wrap: wrap;
     }
 
-    .progress-bar-container {
-      width: 100%;
-      height: 7px;
-      background-color: #313244;
-      border-radius: 4px;
-      overflow: hidden;
-      margin-bottom: 16px;
-      flex-shrink: 0;
-    }
-
-    .progress-bar {
-      height: 100%;
-      width: 0%;
-      background-color: #89b4fa;
-      transition: width 0.3s ease;
-    }
-
-    .stage-grid {
+    .stage-workspace {
+      flex: 1;
       display: grid;
       grid-template-columns: 1.15fr 1fr;
-      gap: 24px;
-      flex: 1;
-      min-height: 0;
-    }
-
-    .stage-grid.no-image {
-      grid-template-columns: 1fr;
-      max-width: 950px;
+      gap: 28px;
+      align-items: center;
+      max-width: 1500px;
       width: 100%;
       margin: 0 auto;
     }
 
+    .stage-workspace.no-image {
+      grid-template-columns: 1fr;
+      max-width: 920px;
+    }
+
     .stage-media-panel {
-      background-color: #181825;
+      background-color: #1e1e2e;
       border: 2px solid #313244;
       border-radius: 14px;
+      padding: 16px;
       display: flex;
       flex-direction: column;
-      justify-content: center;
       align-items: center;
-      padding: 15px;
-      position: relative;
-      overflow: hidden;
-      min-height: 0;
+      justify-content: center;
+      height: 100%;
+      max-height: 78vh;
     }
 
     .stage-media-panel img {
-      width: 100%;
-      height: 100%;
-      max-height: calc(100vh - 150px);
+      max-width: 100%;
+      max-height: 68vh;
       object-fit: contain;
       border-radius: 8px;
       cursor: zoom-in;
@@ -365,31 +356,17 @@
     }
 
     .stage-media-panel img:hover {
-      transform: scale(1.01);
+      transform: scale(1.015);
     }
 
-    .zoom-hint {
-      position: absolute;
-      bottom: 12px;
-      right: 15px;
-      background: rgba(17, 17, 27, 0.85);
-      color: #a6adc8;
-      padding: 5px 10px;
-      border-radius: 6px;
-      font-size: 0.8rem;
-      pointer-events: none;
-    }
-
-    .stage-interaction-panel {
+    .stage-question-panel {
       background-color: #1e1e2e;
       border: 2px solid #313244;
       border-radius: 14px;
-      padding: 22px 26px;
+      padding: 26px;
       display: flex;
       flex-direction: column;
-      justify-content: flex-start;
-      overflow-y: auto;
-      min-height: 0;
+      justify-content: space-between;
     }
 
     .question-header-row {
@@ -397,19 +374,19 @@
       justify-content: space-between;
       align-items: flex-start;
       gap: 18px;
-      margin-bottom: 18px;
+      margin-bottom: 22px;
     }
 
     #quiz-enunciado {
-      font-size: 1.32rem;
-      line-height: 1.48;
+      font-size: 1.38rem;
+      line-height: 1.5;
       color: #cdd6f4;
       flex: 1;
       white-space: pre-line;
     }
 
     /* =========================================================
-       CRONÔMETRO CIRCULAR
+       CRONÔMETRO CIRCULAR (DESIGN DARK NEON CIANO)
        ========================================================= */
     .circular-timer-wrapper {
       display: flex;
@@ -427,7 +404,7 @@
       background-color: #181825;
       border-radius: 50%;
       border: 2px solid #333344;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 0 18px rgba(0, 255, 204, 0.15);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -489,12 +466,13 @@
       color: #fff;
     }
 
-    /* Alternativas */
+    /* =========================================================
+       ALTERNATIVAS E FEEDBACK
+       ========================================================= */
     .options-grid {
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      margin-top: 6px;
+      gap: 12px;
     }
 
     .btn-option {
@@ -502,8 +480,8 @@
       color: #cdd6f4;
       border: 2px solid #45475a;
       border-radius: 10px;
-      padding: 14px 18px;
-      font-size: 1.08rem;
+      padding: 15px 20px;
+      font-size: 1.12rem;
       text-align: left;
       cursor: pointer;
       transition: all 0.15s ease;
@@ -530,16 +508,15 @@
       background-color: #c62828 !important;
       border-color: #ef5350 !important;
       color: #ffffff !important;
-      opacity: 0.85;
     }
 
     .feedback-banner {
-      margin-top: 14px;
-      padding: 10px 14px;
+      margin-top: 16px;
+      padding: 12px 16px;
       border-radius: 8px;
       font-weight: bold;
       text-align: center;
-      font-size: 1rem;
+      font-size: 1.05rem;
     }
 
     .feedback-error {
@@ -554,17 +531,24 @@
       color: #b9f6ca;
     }
 
-    .stage-footer-bar {
-      margin-top: auto;
-      padding-top: 14px;
-      border-top: 1px solid #313244;
+    .feedback-warning {
+      background-color: rgba(249, 226, 175, 0.2);
+      border: 1px solid #f9e2af;
+      color: #f9e2af;
+    }
+
+    .stage-footer-nav {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 10px;
+      margin-top: 22px;
+      padding-top: 15px;
+      border-top: 1px solid #313244;
     }
 
-    /* Modal de Zoom / Explicação em Tela Cheia */
+    /* =========================================================
+       MODAL TELA CHEIA (ZOOM DA QUESTÃO OU IMAGEM DE EXPLICAÇÃO)
+       ========================================================= */
     .modal-zoom {
       position: fixed;
       top: 0;
@@ -576,12 +560,12 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      z-index: 1200;
+      z-index: 1100;
       padding: 20px;
       cursor: zoom-out;
     }
 
-    .modal-header-bar {
+    .modal-zoom-header {
       position: absolute;
       top: 18px;
       right: 25px;
@@ -592,24 +576,13 @@
       pointer-events: none;
     }
 
-    .modal-title-tag {
+    .modal-zoom-badge {
       background-color: #f9e2af;
       color: #11111b;
       padding: 6px 14px;
       border-radius: 6px;
       font-weight: bold;
-      font-size: 1rem;
-    }
-
-    .modal-close-btn {
-      pointer-events: auto;
-      background-color: #f38ba8;
-      color: #11111b;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
+      font-size: 0.95rem;
     }
 
     .modal-zoom img {
@@ -617,37 +590,38 @@
       max-height: 88vh;
       object-fit: contain;
       border-radius: 8px;
-      box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.9);
     }
 
     .hidden {
       display: none !important;
     }
 
-    @media (max-width: 850px) {
-      #projection-stage {
-        overflow-y: auto;
-      }
-      .stage-grid {
+    @media (max-width: 900px) {
+      .stage-workspace {
         grid-template-columns: 1fr;
       }
-      .stage-media-panel img {
-        max-height: 35vh;
+      #projection-stage {
+        padding: 12px 16px;
       }
     }
   </style>
 </head>
 <body>
 
-  <div class="container">
+  <div class="container" id="editor-main-container">
     <header>
-      <h1>Criador Interativo de Quizzes - Modo Projeção</h1>
-      <p>Com imagem da questão, imagem de explicação/resolução, tela cheia e cronômetro circular</p>
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
+        <a href="index.html" class="btn btn-ghost" style="text-decoration:none; font-size:0.85rem;">← Voltar ao Portal</a>
+        <button type="button" class="btn btn-portal" onclick="salvarAulaParaPortal()">💾 Salvar Aula para o Portal (Alunos)</button>
+      </div>
+      <h1>Quiz Interativo - Modo Projeção & Explicação</h1>
+      <p>Perguntas sorteadas, suporte a imagens da questão, explicação em tela cheia e cronômetro circular</p>
     </header>
 
     <div class="tabs">
-      <button class="tab-btn active" id="tab-editor" onclick="alternarModo('editor')">1. Criar & Gerenciar Questões</button>
-      <button class="tab-btn" id="tab-player" onclick="alternarModo('player')">2. Configurar & Projetar Quiz</button>
+      <button type="button" class="tab-btn active" id="tab-editor" onclick="alternarModo('editor')">1. Criar & Gerenciar Questões</button>
+      <button type="button" class="tab-btn" id="tab-player" onclick="alternarModo('player')">2. Configurar & Projetar Aula</button>
     </div>
 
     <!-- MODO 1: EDITOR DE QUESTÕES -->
@@ -658,7 +632,7 @@
         <form id="form-questao" onsubmit="salvarQuestao(event)">
           <div class="form-row">
             <div class="form-group">
-              <label for="categoria">Disciplina / Categoria:</label>
+              <label class="field-label" for="categoria">Disciplina / Categoria:</label>
               <select id="categoria" class="form-control" required>
                 <option value="Matemática">Matemática</option>
                 <option value="Física">Física</option>
@@ -668,60 +642,66 @@
             </div>
 
             <div class="form-group">
-              <label for="tempo-questao-individual">Tempo desta Questão em segundos (Opcional):</label>
-              <input type="number" id="tempo-questao-individual" class="form-control" min="0" placeholder="Ex: 45 (vazio = usar padrão)">
+              <label class="field-label" for="tempo-questao-individual">Tempo desta Questão em segundos (Opcional):</label>
+              <input type="number" id="tempo-questao-individual" class="form-control" min="0" placeholder="Ex: 60 (deixe vazio para usar padrão)">
             </div>
           </div>
 
           <div class="form-group">
-            <label for="enunciado">Enunciado da Questão (Suporta fórmulas LaTeX com \(...\)):</label>
-            <textarea id="enunciado" class="form-control" placeholder="Ex: De acordo com a figura projetada, qual é o valor de x?" required></textarea>
+            <label class="field-label" for="enunciado">Enunciado da Questão (Suporta LaTeX com \( ... \)):</label>
+            <textarea id="enunciado" class="form-control" placeholder="Digite o texto da pergunta aqui..." required></textarea>
           </div>
 
-          <!-- IMAGEM 1: DA QUESTÃO -->
+          <!-- 1. IMAGEM DA QUESTÃO -->
           <div class="form-group image-upload-box">
-            <label>1. Imagem / Gráfico da Questão (Opcional - Aparece durante a pergunta):</label>
+            <label class="field-label">1. Imagem / Gráfico da Questão (Aparece durante a pergunta):</label>
             <div class="form-row" style="align-items: center; margin-top: 8px;">
               <div>
-                <input type="file" id="imagem-arquivo" accept="image/*" class="hidden" onchange="carregarImagemLocal(event, 'questao')">
+                <input type="file" id="imagem-arquivo" accept="image/*" style="display:none;" onchange="lerArquivoImagem(this, 'questao')">
                 <button type="button" class="btn btn-secondary" onclick="document.getElementById('imagem-arquivo').click()">
-                  Selecionar Imagem da Questão
+                  Selecionar Foto da Questão
                 </button>
               </div>
               <div style="flex: 1;">
-                <input type="text" id="imagem-url" class="form-control" placeholder="Ou cole uma URL / nome de arquivo local" oninput="atualizarPreviewUrl('questao')">
+                <input type="text" id="imagem-url" class="form-control" placeholder="Ou digite o caminho/nome (ex: foto1.png)" oninput="digitarUrlImagem('questao')">
               </div>
             </div>
-            
+
             <div id="preview-box" class="preview-container hidden">
-              <img id="img-preview" src="" alt="Pré-visualização da questão">
-              <button type="button" class="btn btn-danger" style="padding: 6px 12px; font-size: 0.85rem;" onclick="limparImagemSelecionada('questao')">Remover</button>
+              <img id="img-preview" src="" alt="Pré-visualização">
+              <div>
+                <p style="font-size: 0.85rem; color: #a6adc8; margin-bottom: 6px;">Imagem da questão selecionada</p>
+                <button type="button" class="btn btn-danger" style="padding: 5px 10px; font-size: 0.8rem;" onclick="limparImagemSelecionada('questao')">Remover</button>
+              </div>
             </div>
           </div>
 
-          <!-- IMAGEM 2: DA EXPLICAÇÃO / RESOLUÇÃO -->
+          <!-- 2. IMAGEM DE EXPLICAÇÃO / RESOLUÇÃO -->
           <div class="form-group image-upload-box explanation-box">
-            <label style="color: #f9e2af;">2. Imagem de Explicação / Resolução (Opcional - Para projetar na correção):</label>
+            <label class="field-label" style="color: #f9e2af;">2. Imagem de Explicação / Resolução (Para projetar após responderem):</label>
             <div class="form-row" style="align-items: center; margin-top: 8px;">
               <div>
-                <input type="file" id="explicacao-arquivo" accept="image/*" class="hidden" onchange="carregarImagemLocal(event, 'explicacao')">
+                <input type="file" id="explicacao-arquivo" accept="image/*" style="display:none;" onchange="lerArquivoImagem(this, 'explicacao')">
                 <button type="button" class="btn btn-warning" onclick="document.getElementById('explicacao-arquivo').click()">
-                  Selecionar Imagem de Explicação
+                  Selecionar Foto de Explicação
                 </button>
               </div>
               <div style="flex: 1;">
-                <input type="text" id="explicacao-url" class="form-control" placeholder="Ou cole uma URL / nome de arquivo da resolução" oninput="atualizarPreviewUrl('explicacao')">
+                <input type="text" id="explicacao-url" class="form-control" placeholder="Ou digite o caminho/nome da resolução (ex: resolucao1.png)" oninput="digitarUrlImagem('explicacao')">
               </div>
             </div>
-            
+
             <div id="preview-exp-box" class="preview-container hidden">
-              <img id="img-exp-preview" src="" alt="Pré-visualização da explicação">
-              <button type="button" class="btn btn-danger" style="padding: 6px 12px; font-size: 0.85rem;" onclick="limparImagemSelecionada('explicacao')">Remover</button>
+              <img id="img-exp-preview" src="" alt="Pré-visualização Explicação">
+              <div>
+                <p style="font-size: 0.85rem; color: #f9e2af; margin-bottom: 6px;">Imagem de explicação selecionada</p>
+                <button type="button" class="btn btn-danger" style="padding: 5px 10px; font-size: 0.8rem;" onclick="limparImagemSelecionada('explicacao')">Remover</button>
+              </div>
             </div>
           </div>
 
           <div class="form-group">
-            <label>Alternativas (Marque a bolinha da opção correta):</label>
+            <label class="field-label">Alternativas (Marque a bolinha da opção correta):</label>
             <div class="options-builder">
               <div class="option-row">
                 <input type="radio" name="opcao-correta" value="0" checked>
@@ -752,174 +732,183 @@
         <div id="lista-questoes"></div>
 
         <div class="actions-bar">
-          <button class="btn btn-danger" onclick="limparBanco()">Limpar Todas</button>
-          
+          <button type="button" class="btn btn-danger" onclick="limparBanco()">Limpar Todas</button>
           <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <input type="file" id="file-import" accept=".json" class="hidden" onchange="importarJSON(event)">
-            <button class="btn btn-secondary" onclick="document.getElementById('file-import').click()">Importar Backup (JSON)</button>
-            <button class="btn btn-secondary" onclick="exportarJSON()">Baixar Backup (JSON)</button>
+            <input type="file" id="file-import" accept=".json,application/json,text/plain" style="display:none;" onchange="importarJSON(this)">
+            <button type="button" class="btn btn-secondary" onclick="document.getElementById('file-import').click()">Importar JSON</button>
+            <button type="button" class="btn btn-secondary" onclick="exportarJSON()">Exportar JSON</button>
+            <button type="button" class="btn btn-portal" onclick="salvarAulaParaPortal()">💾 Salvar Aula para o Portal</button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- MODO 2: TELA DE CONFIGURAÇÃO DO SIMULADO -->
+    <!-- MODO 2: CONFIGURAÇÃO DA PROJEÇÃO -->
     <div id="section-player" class="hidden">
       <div class="card">
-        <h2>Configurar Projeção do Quiz</h2>
+        <h2>Configurar Apresentação em Sala</h2>
         <br>
         <div class="filter-box">
-          <div class="form-group">
-            <label for="filtro-disciplina">Selecione a Disciplina:</label>
-            <select id="filtro-disciplina" class="form-control">
-              <option value="Todas">Todas as Disciplinas</option>
-              <option value="Matemática">Matemática</option>
-              <option value="Física">Física</option>
-              <option value="Programação">Programação</option>
-              <option value="Geral">Geral</option>
-            </select>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="field-label" for="filtro-disciplina">Filtrar por Disciplina:</label>
+              <select id="filtro-disciplina" class="form-control">
+                <option value="Todas">Todas as Disciplinas</option>
+                <option value="Matemática">Matemática</option>
+                <option value="Física">Física</option>
+                <option value="Programação">Programação</option>
+                <option value="Geral">Geral</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="field-label" for="qtd-questoes">Quantidade de Questões Sorteadas:</label>
+              <select id="qtd-questoes" class="form-control">
+                <option value="5">5 Questões</option>
+                <option value="10" selected>10 Questões</option>
+                <option value="15">15 Questões</option>
+                <option value="20">20 Questões</option>
+                <option value="999">Todas as disponíveis</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="field-label" for="tempo-padrao">Tempo Padrão por Questão (segundos):</label>
+              <input type="number" id="tempo-padrao" class="form-control" value="45" min="0" placeholder="0 = sem tempo">
+            </div>
           </div>
 
-          <div class="form-group">
-            <label for="qtd-questoes">Quantidade de Perguntas Sorteadas:</label>
-            <select id="qtd-questoes" class="form-control">
-              <option value="5">5 Questões</option>
-              <option value="10" selected>10 Questões</option>
-              <option value="15">15 Questões</option>
-              <option value="20">20 Questões</option>
-              <option value="999">Todas as disponíveis</option>
-            </select>
+          <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:10px;">
+            <button type="button" class="btn btn-primary" style="flex:2; min-width:220px; font-size: 1.05rem; padding: 15px;" onclick="iniciarPartidaSorteada()">
+              Iniciar Apresentação em Tela Cheia
+            </button>
+            <button type="button" class="btn btn-portal" style="flex:1; min-width:220px; font-size: 1.05rem; padding: 15px;" onclick="salvarAulaParaPortal()">
+              💾 Salvar Aula para o Portal
+            </button>
           </div>
-
-          <div class="form-group">
-            <label for="tempo-padrao">Tempo Padrão por Questão (segundos):</label>
-            <input type="number" id="tempo-padrao" class="form-control" value="30" min="0" placeholder="Digite os segundos (0 = sem limite)">
-          </div>
-
-          <button class="btn btn-primary" style="width: 100%; margin-top: 10px; font-size: 1.1rem; padding: 15px;" onclick="iniciarPartidaSorteada()">
-            Iniciar Projeção em Tela Cheia
-          </button>
         </div>
       </div>
     </div>
   </div>
 
   <!-- =========================================================
-       PALCO DE PROJEÇÃO EM TELA CHEIA (OVERLAY DO JOGO)
+       PALCO DE PROJEÇÃO EM TELA CHEIA (SLIDE DE AULA)
        ========================================================= -->
   <div id="projection-stage" class="hidden">
     <div class="stage-topbar">
       <div>
-        <span id="quiz-contador" style="font-weight: bold; font-size: 1.2rem; color: #89b4fa;">Questão 1 de 10</span>
+        <span id="quiz-titulo-aula" style="font-weight: bold; font-size: 1.15rem; color: #f9e2af; margin-right: 12px;"></span>
+        <span id="quiz-contador" style="font-weight: bold; font-size: 1.1rem; color: #89b4fa;">Questão 1 de 10</span>
         <span id="quiz-categoria" class="badge">Matemática</span>
       </div>
 
       <div class="stage-controls">
-        <!-- Input oculto para carregar imagem de explicação na hora, se desejar -->
-        <input type="file" id="explicacao-ao-vivo-input" accept="image/*" class="hidden" onchange="carregarExplicacaoAoVivo(event)">
-        
-        <button class="btn btn-warning hidden" id="btn-ver-explicacao" onclick="abrirExplicacaoQuestao()">
-          Projetar Explicação
+        <!-- Botão de Explicação em Tela Cheia -->
+        <input type="file" id="explicacao-ao-vivo-input" accept="image/*" style="display:none;" onchange="carregarExplicacaoAoVivo(this)">
+        <button type="button" class="btn btn-warning hidden" id="btn-ver-explicacao" onclick="abrirExplicacaoQuestao()">
+          Projetar Explicação (E)
         </button>
-        <button class="btn btn-ghost" onclick="document.getElementById('explicacao-ao-vivo-input').click()" title="Selecionar uma imagem do PC agora para explicar esta questão">
+        <button type="button" class="btn btn-ghost" id="btn-anexar-explicacao" onclick="document.getElementById('explicacao-ao-vivo-input').click()" title="Selecionar imagem de explicação do computador agora">
           + Imagem Explicação
         </button>
-        <button class="btn btn-ghost" id="btn-som" onclick="alternarSom()">Som: ON</button>
-        <button class="btn btn-secondary" onclick="alternarTelaCheiaNativa()">Tela Cheia (F11)</button>
-        <button class="btn btn-danger" onclick="encerrarProjecao()">Sair da Projeção</button>
+
+        <button type="button" class="btn btn-ghost" id="btn-som" onclick="alternarSom()">Som: ON</button>
+        <button type="button" class="btn btn-secondary" onclick="alternarTelaCheiaNativa()">Tela Cheia (F11)</button>
+        <button type="button" class="btn btn-danger" onclick="encerrarProjecao()">Sair</button>
       </div>
     </div>
 
-    <div class="progress-bar-container">
-      <div class="progress-bar" id="quiz-progress-bar"></div>
-    </div>
-
-    <div id="quiz-active-area" class="stage-grid">
-      <!-- Coluna Esquerda: Imagem Projetada -->
+    <!-- Área Central da Questão -->
+    <div id="stage-workspace" class="stage-workspace">
+      <!-- Lado Esquerdo: Imagem da Questão -->
       <div id="quiz-media-box" class="stage-media-panel">
-        <img id="quiz-image" src="" alt="Imagem projetada" onclick="abrirZoomImagem()">
-        <div class="zoom-hint">Clique na imagem para ampliar 100%</div>
+        <img id="quiz-image" src="" alt="Imagem da questão" onclick="abrirZoomImagem()">
+        <div style="font-size: 0.85rem; color: #a6adc8; margin-top: 8px;">Clique na imagem para ampliar 100%</div>
       </div>
 
-      <!-- Coluna Direita: Enunciado, Cronômetro Circular e Alternativas -->
-      <div class="stage-interaction-panel" id="interaction-scroll-box">
-        <div class="question-header-row">
-          <div id="quiz-enunciado"></div>
+      <!-- Lado Direito: Enunciado, Cronômetro Circular e Alternativas -->
+      <div class="stage-question-panel">
+        <div>
+          <div class="question-header-row">
+            <div id="quiz-enunciado"></div>
 
-          <div id="circular-timer-container" class="circular-timer-wrapper" title="Duplo clique para editar tempo | Botão direito para pausar/continuar">
-            <div class="circular-timer" ondblclick="ajustarTempoAoVivo()" oncontextmenu="togglePausaTimer(event)">
-              <svg viewBox="0 0 130 130">
-                <circle class="bg-ring" cx="65" cy="65" r="56"></circle>
-                <circle id="timer-progress-ring" class="progress-ring" cx="65" cy="65" r="56"></circle>
-              </svg>
-              <div id="timer-display-text" class="timer-display-text">00:30</div>
-            </div>
-            <div class="timer-controls-mini">
-              <button class="mini-btn" onclick="togglePausaTimer()" id="btn-pausa-timer">Pausar</button>
-              <button class="mini-btn" onclick="ajustarTempoAoVivo()">Ajustar</button>
+            <!-- Cronômetro Circular -->
+            <div id="circular-timer-container" class="circular-timer-wrapper" title="Duplo clique para editar tempo | Botão direito para pausar">
+              <div class="circular-timer" ondblclick="ajustarTempoAoVivo()" oncontextmenu="togglePausaTimer(event)">
+                <svg viewBox="0 0 130 130">
+                  <circle class="bg-ring" cx="65" cy="65" r="56"></circle>
+                  <circle id="timer-progress-ring" class="progress-ring" cx="65" cy="65" r="56"></circle>
+                </svg>
+                <div id="timer-display-text" class="timer-display-text">00:45</div>
+              </div>
+              <div class="timer-controls-mini">
+                <button type="button" class="mini-btn" onclick="togglePausaTimer()" id="btn-pausa-timer">Pausar</button>
+                <button type="button" class="mini-btn" onclick="ajustarTempoAoVivo()">Ajustar</button>
+              </div>
             </div>
           </div>
+
+          <div class="options-grid" id="quiz-options"></div>
+          <div id="feedback-msg" class="feedback-banner hidden"></div>
         </div>
 
-        <div class="options-grid" id="quiz-options"></div>
-
-        <div id="feedback-msg" class="feedback-banner hidden"></div>
-
-        <div class="stage-footer-bar">
-          <span style="color: #a6adc8; font-size: 0.85rem;">* Só avança após acertar a questão.</span>
-          <button class="btn btn-primary hidden" id="btn-next-q" style="font-size: 1.05rem; padding: 12px 26px;" onclick="proximaQuestaoPlayer()">
-            Próxima Questão &rarr;
-          </button>
+        <div class="stage-footer-nav">
+          <div id="quiz-pontuacao" style="font-weight: bold; color: #a6e3a1; font-size: 1.1rem;">Acertos: 0</div>
+          <button type="button" class="btn btn-primary hidden" id="btn-proxima" onclick="proximaQuestao()">Próxima Questão &rarr;</button>
         </div>
       </div>
     </div>
 
+    <!-- Tela Final -->
     <div id="result-screen" class="hidden" style="margin: auto; text-align: center; background: #1e1e2e; padding: 50px; border-radius: 16px; border: 2px solid #45475a; max-width: 600px;">
-      <h1 style="color: #a6e3a1; font-size: 2.2rem; margin-bottom: 15px;">Quiz Concluído!</h1>
-      <p id="result-score" style="font-size: 1.3rem; margin-bottom: 30px; line-height: 1.6;"></p>
-      <button class="btn btn-primary" style="font-size: 1.1rem; padding: 14px 30px;" onclick="encerrarProjecao()">Voltar às Configurações</button>
+      <h1 style="color: #a6e3a1; font-size: 2.2rem; margin-bottom: 15px;">Atividade Concluída!</h1>
+      <p style="font-size: 1.3rem; margin-bottom: 10px;" id="final-score-text"></p>
+      <p id="final-message" style="color: #a6adc8; margin-bottom: 25px;"></p>
+      <button type="button" class="btn btn-primary" style="font-size: 1.1rem; padding: 14px 30px;" onclick="encerrarProjecao()">Concluir Apresentação</button>
     </div>
   </div>
 
-  <!-- Modal de Zoom / Explicação em Tela Cheia -->
+  <!-- Modal Zoom (Imagem da Questão ou Imagem de Explicação) -->
   <div id="modal-zoom" class="modal-zoom hidden" onclick="fecharZoomImagem()">
-    <div class="modal-header-bar">
-      <span id="modal-label" class="modal-title-tag">Visualização Ampliada</span>
-      <button class="modal-close-btn" onclick="fecharZoomImagem()">Fechar (ESC ou Clique)</button>
+    <div class="modal-zoom-header">
+      <span id="modal-label" class="modal-zoom-badge">Visualização em Tela Cheia</span>
+      <button type="button" class="btn btn-danger" style="pointer-events: auto;" onclick="fecharZoomImagem()">Fechar (ESC)</button>
     </div>
-    <img id="img-modal-target" src="" alt="Imagem ampliada">
+    <img id="img-modal-target" src="" alt="Imagem em tela cheia">
   </div>
 
   <script>
+    const STORAGE_KEY = "quiz_projecao_banco_v1";
     let bancoQuestoes = [];
     let questoesPartida = [];
-    let playerIndex = 0;
-    let tentativasNaQuestaoAtual = 0;
-    let acertosDePrimeira = 0;
-    
+    let indiceAtual = 0;
+    let acertos = 0;
+    let modoApresentacaoAluno = false;
+
     let imagemAtualBase64 = "";
     let explicacaoAtualBase64 = "";
 
-    // Variáveis do Cronômetro Circular
-    let tempoPadraoPartida = 30;
-    let tempoTotalAtual = 30;
-    let tempoRestante = 30;
+    let tempoPadraoPartida = 45;
+    let tempoTotalAtual = 45;
+    let tempoRestante = 45;
     let timerInterval = null;
     let timerPausado = false;
     let somAtivo = true;
+    let questaoFinalizada = false;
 
     const CIRCUNFERENCIA = 2 * Math.PI * 56;
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    let audioCtx = null;
 
-    function tocarBip(frequencia, duracaoMs) {
+    function tocarBeep(freq = 800, duracaoMs = 45) {
       if (!somAtivo) return;
       try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         if (audioCtx.state === 'suspended') audioCtx.resume();
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(frequencia, audioCtx.currentTime);
-        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
         osc.connect(gain);
         gain.connect(audioCtx.destination);
         osc.start();
@@ -932,63 +921,197 @@
       document.getElementById("btn-som").innerText = somAtivo ? "Som: ON" : "Som: OFF";
     }
 
-    window.onload = () => {
+    function salvarNoNavegador() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(bancoQuestoes));
+      } catch (e) {}
+    }
+
+    function carregarDoNavegador() {
+      try {
+        const salvo = localStorage.getItem(STORAGE_KEY);
+        if (salvo) {
+          const parsed = JSON.parse(salvo);
+          if (Array.isArray(parsed)) bancoQuestoes = parsed;
+        }
+      } catch (e) {}
+    }
+
+    /* =========================================================
+       BOTÃO SALVAR AULA PARA O PORTAL (ALUNOS)
+       ========================================================= */
+    function salvarAulaParaPortal() {
+      if (bancoQuestoes.length === 0) {
+        alert("Adicione ou importe pelo menos 1 questão antes de salvar a aula para o portal!");
+        return;
+      }
+
+      const disciplinaSel = document.getElementById("filtro-disciplina").value;
+      const tituloSugerido = prompt(
+        "Digite o Título desta Aula para os estudantes (ex: Cinemática - MRUV):",
+        disciplinaSel !== "Todas" ? `Quiz de ${disciplinaSel}` : "Quiz Interativo de Aula"
+      );
+
+      if (!tituloSugerido || tituloSugerido.trim() === "") return;
+
+      const pacoteAula = {
+        tipoPrograma: "quiz",
+        titulo: tituloSugerido.trim(),
+        dataCriacao: new Date().toISOString(),
+        configuracoes: {
+          disciplina: disciplinaSel,
+          qtdQuestoes: document.getElementById("qtd-questoes").value,
+          tempoPadrao: parseInt(document.getElementById("tempo-padrao").value) || 45
+        },
+        questoes: bancoQuestoes
+      };
+
+      const nomeArquivo = `Quiz_${tituloSugerido.trim().replace(/[^a-zA-Z0-9_-]/g, "_")}.json`;
+      const blob = new Blob([JSON.stringify(pacoteAula, null, 2)], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = nomeArquivo;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      alert(
+        `✅ Arquivo "${nomeArquivo}" salvo com sucesso!\n\n` +
+        `Próximos passos:\n` +
+        `1. Envie este arquivo para o seu Google Drive e compartilhe como "Qualquer pessoa com o link".\n` +
+        `2. No Portal (index.html ➔ Área do Desenvolvedor), escolha "Quiz Projeção" e cole o link para liberar na lista dos alunos!`
+      );
+    }
+
+    /* =========================================================
+       CARREGAMENTO AUTOMÁTICO VIA GOOGLE DRIVE (MODO SHOW ALUNO)
+       ========================================================= */
+    async function verificarModoApresentacaoDrive() {
+      const params = new URLSearchParams(window.location.search);
+      const driveId = params.get("drive");
+      const modo = params.get("modo");
+      const tituloUrl = params.get("titulo");
+
+      if (!driveId) return false;
+
+      modoApresentacaoAluno = (modo === "show");
+
+      const overlayLoad = document.createElement("div");
+      overlayLoad.id = "loading-drive-screen";
+      overlayLoad.style.cssText = "position:fixed;inset:0;background:#141420;color:#cdd6f4;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:99999;text-align:center;padding:24px;";
+      overlayLoad.innerHTML = `
+        <div style="font-size:52px;margin-bottom:14px;">❓</div>
+        <h2 style="color:#89b4fa;margin-bottom:8px;">${tituloUrl ? tituloUrl : "Carregando Quiz da Aula..."}</h2>
+        <p style="color:#a6adc8;font-size:15px;">Sincronizando questões, imagens e resolução comentada...</p>
+      `;
+      document.body.appendChild(overlayLoad);
+
+      try {
+        const driveUrl = `https://drive.google.com/uc?export=download&id=${encodeURIComponent(driveId)}`;
+        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(driveUrl)}`;
+
+        const resp = await fetch(proxyUrl);
+        if (!resp.ok) throw new Error("Falha ao baixar arquivo do Google Drive.");
+        const dados = await resp.json();
+
+        const lista = Array.isArray(dados) ? dados : (Array.isArray(dados.questoes) ? dados.questoes : []);
+        if (lista.length === 0) throw new Error("Nenhuma questão encontrada no arquivo.");
+
+        bancoQuestoes = lista;
+        atualizarListaQuestoes();
+
+        if (dados.configuracoes) {
+          const cfg = dados.configuracoes;
+          if (cfg.disciplina) document.getElementById("filtro-disciplina").value = cfg.disciplina;
+          if (cfg.qtdQuestoes) document.getElementById("qtd-questoes").value = cfg.qtdQuestoes;
+          if (cfg.tempoPadrao !== undefined) document.getElementById("tempo-padrao").value = cfg.tempoPadrao;
+        }
+
+        const tituloFinal = tituloUrl || dados.titulo || "";
+        if (tituloFinal) {
+          document.getElementById("quiz-titulo-aula").innerText = `❓ ${tituloFinal}`;
+        }
+
+        overlayLoad.remove();
+
+        if (modoApresentacaoAluno) {
+          document.getElementById("editor-main-container").classList.add("hidden");
+        }
+        iniciarPartidaSorteada(false);
+        return true;
+
+      } catch (err) {
+        overlayLoad.innerHTML = `
+          <div style="font-size:42px;margin-bottom:10px;">⚠️</div>
+          <h3 style="color:#f38ba8;margin-bottom:10px;">Não foi possível carregar o Quiz</h3>
+          <p style="color:#a6adc8;max-width:380px;margin-bottom:18px;font-size:14px;">Verifique sua conexão ou confirme se o arquivo no Google Drive está compartilhado como "Qualquer pessoa com o link".</p>
+          <a href="index.html" class="btn btn-secondary" style="text-decoration:none;">Voltar ao Portal</a>
+        `;
+        return true;
+      }
+    }
+
+    window.onload = async () => {
       const ring = document.getElementById("timer-progress-ring");
       ring.style.strokeDasharray = `${CIRCUNFERENCIA} ${CIRCUNFERENCIA}`;
       ring.style.strokeDashoffset = 0;
-      atualizarListaQuestoes();
+
+      const carregouRemoto = await verificarModoApresentacaoDrive();
+      if (!carregouRemoto) {
+        carregarDoNavegador();
+        atualizarListaQuestoes();
+      }
     };
 
-    // Fecha o modal de zoom/explicação com a tecla ESC
     document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") {
-        fecharZoomImagem();
+      if (e.key === "Escape") fecharZoomImagem();
+      if ((e.key === "e" || e.key === "E") && !document.getElementById("projection-stage").classList.contains("hidden")) {
+        const q = questoesPartida[indiceAtual];
+        if (q && q.explicacao) abrirExplicacaoQuestao();
       }
     });
 
     /* =========================================================
-       UPLOAD DE IMAGENS EMBUTIDAS (QUESTÃO E EXPLICAÇÃO)
+       UPLOAD DE IMAGENS (QUESTÃO E EXPLICAÇÃO)
        ========================================================= */
-    function carregarImagemLocal(event, tipo) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = (e) => {
+    function lerArquivoImagem(inputElement, tipo) {
+      if (!inputElement.files || inputElement.files.length === 0) return;
+      const leitor = new FileReader();
+      leitor.onload = function(evento) {
         if (tipo === 'questao') {
-          imagemAtualBase64 = e.target.result;
-          document.getElementById("imagem-url").value = `[Imagem embutida: ${file.name}]`;
-          mostrarPreview(imagemAtualBase64, 'questao');
+          imagemAtualBase64 = evento.target.result;
+          document.getElementById("imagem-url").value = "";
+          document.getElementById("img-preview").src = imagemAtualBase64;
+          document.getElementById("preview-box").classList.remove("hidden");
         } else {
-          explicacaoAtualBase64 = e.target.result;
-          document.getElementById("explicacao-url").value = `[Explicação embutida: ${file.name}]`;
-          mostrarPreview(explicacaoAtualBase64, 'explicacao');
+          explicacaoAtualBase64 = evento.target.result;
+          document.getElementById("explicacao-url").value = "";
+          document.getElementById("img-exp-preview").src = explicacaoAtualBase64;
+          document.getElementById("preview-exp-box").classList.remove("hidden");
         }
       };
-      reader.readAsDataURL(file);
+      leitor.readAsDataURL(inputElement.files[0]);
     }
 
-    function atualizarPreviewUrl(tipo) {
+    function digitarUrlImagem(tipo) {
       if (tipo === 'questao') {
         imagemAtualBase64 = "";
-        const url = document.getElementById("imagem-url").value.trim();
-        if (url !== "") mostrarPreview(url, 'questao');
-        else document.getElementById("preview-box").classList.add("hidden");
+        const caminho = document.getElementById("imagem-url").value.trim();
+        if (caminho !== "") {
+          document.getElementById("img-preview").src = caminho;
+          document.getElementById("preview-box").classList.remove("hidden");
+        } else {
+          document.getElementById("preview-box").classList.add("hidden");
+        }
       } else {
         explicacaoAtualBase64 = "";
-        const url = document.getElementById("explicacao-url").value.trim();
-        if (url !== "") mostrarPreview(url, 'explicacao');
-        else document.getElementById("preview-exp-box").classList.add("hidden");
-      }
-    }
-
-    function mostrarPreview(src, tipo) {
-      if (tipo === 'questao') {
-        document.getElementById("img-preview").src = src;
-        document.getElementById("preview-box").classList.remove("hidden");
-      } else {
-        document.getElementById("img-exp-preview").src = src;
-        document.getElementById("preview-exp-box").classList.remove("hidden");
+        const caminho = document.getElementById("explicacao-url").value.trim();
+        if (caminho !== "") {
+          document.getElementById("img-exp-preview").src = caminho;
+          document.getElementById("preview-exp-box").classList.remove("hidden");
+        } else {
+          document.getElementById("preview-exp-box").classList.add("hidden");
+        }
       }
     }
 
@@ -1006,6 +1129,9 @@
       }
     }
 
+    /* =========================================================
+       NAVEGAÇÃO E CRUD DE QUESTÕES
+       ========================================================= */
     function alternarModo(modo) {
       const btnEditor = document.getElementById("tab-editor");
       const btnPlayer = document.getElementById("tab-player");
@@ -1019,7 +1145,7 @@
         secPlayer.classList.add("hidden");
       } else {
         if (bancoQuestoes.length === 0) {
-          alert("Adicione ou importe pelo menos 1 questão no banco antes de iniciar!");
+          alert("Adicione ou importe pelo menos 1 questão no banco antes de configurar a aula!");
           return;
         }
         btnPlayer.classList.add("active");
@@ -1031,14 +1157,11 @@
 
     function salvarQuestao(e) {
       e.preventDefault();
-
       const categoria = document.getElementById("categoria").value;
       const tempoIndiv = document.getElementById("tempo-questao-individual").value;
       const enunciado = document.getElementById("enunciado").value;
-      
       const urlQuestao = document.getElementById("imagem-url").value.trim();
       const urlExplicacao = document.getElementById("explicacao-url").value.trim();
-      
       const inputsOpt = document.querySelectorAll(".opt-input");
       const radioCorreta = document.querySelector('input[name="opcao-correta"]:checked').value;
 
@@ -1060,100 +1183,146 @@
       }
 
       bancoQuestoes.push(novaQuestao);
-
+      salvarNoNavegador();
       document.getElementById("enunciado").value = "";
       document.getElementById("tempo-questao-individual").value = "";
       limparImagemSelecionada('questao');
       limparImagemSelecionada('explicacao');
       inputsOpt.forEach(input => input.value = "");
-      
       atualizarListaQuestoes();
     }
 
     function atualizarListaQuestoes() {
       const elLista = document.getElementById("lista-questoes");
-      const elCount = document.getElementById("total-questoes-count");
-      
-      elCount.innerText = bancoQuestoes.length;
+      document.getElementById("total-questoes-count").innerText = bancoQuestoes.length;
       elLista.innerHTML = "";
 
       bancoQuestoes.forEach((q, i) => {
         const item = document.createElement("div");
         item.classList.add("question-item");
         const temMidia = q.imagem ? " 📷" : "";
-        const badgeExp = (q.explicacao && q.explicacao.trim() !== "") ? `<span class="badge badge-exp">💡 Explicação</span>` : "";
-        const badgeTempo = q.tempo ? `<span class="badge badge-time">⏱ ${q.tempo}s</span>` : "";
+        const badgeExp = q.explicacao ? `<span class="badge badge-exp">Com Explicação</span>` : "";
+        const badgeTempo = q.tempo ? `<span class="badge">⏱ ${q.tempo}s</span>` : "";
 
         item.innerHTML = `
           <div>
             <span class="question-item-title">${i + 1}. ${q.enunciado}${temMidia}</span>
             <span class="badge">${q.categoria}</span>
-            ${badgeExp}
             ${badgeTempo}
+            ${badgeExp}
           </div>
-          <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.85rem;" onclick="removerQuestao(${i})">Excluir</button>
+          <button type="button" class="btn btn-danger" style="padding: 6px 12px; font-size: 0.85rem;" onclick="removerQuestao(${i})">Excluir</button>
         `;
         elLista.appendChild(item);
       });
 
-      if (window.MathJax) {
-        MathJax.typesetPromise();
-      }
+      if (window.MathJax) MathJax.typesetPromise();
     }
 
     function removerQuestao(index) {
       bancoQuestoes.splice(index, 1);
+      salvarNoNavegador();
       atualizarListaQuestoes();
     }
 
     function limparBanco() {
       if (confirm("Tem certeza que deseja apagar todas as questões?")) {
         bancoQuestoes = [];
+        salvarNoNavegador();
         atualizarListaQuestoes();
       }
     }
 
     function exportarJSON() {
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(bancoQuestoes, null, 2));
-      const downloadAnchor = document.createElement('a');
-      downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", "meu_banco_de_questoes.json");
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      downloadAnchor.remove();
+      const a = document.createElement('a');
+      a.setAttribute("href", dataStr);
+      a.setAttribute("download", "questoes_aula.json");
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
     }
 
-    function importarJSON(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
+    function importarJSON(inputElement) {
+      if (!inputElement.files || inputElement.files.length === 0) return;
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = function(e) {
         try {
-          const dadosImportados = JSON.parse(e.target.result);
-          if (Array.isArray(dadosImportados)) {
-            bancoQuestoes = bancoQuestoes.concat(dadosImportados);
+          let conteudo = e.target.result.replace(/^\uFEFF/, "").trim();
+          const dados = JSON.parse(conteudo);
+          const lista = Array.isArray(dados) ? dados : (Array.isArray(dados.questoes) ? dados.questoes : null);
+
+          if (lista && lista.length > 0) {
+            const normalizadas = lista.map(q => ({
+              categoria: q.categoria || "Geral",
+              enunciado: q.enunciado || "Questão sem enunciado",
+              imagem: q.imagem || "",
+              explicacao: q.explicacao || "",
+              opcoes: Array.isArray(q.opcoes) ? q.opcoes : ["A", "B", "C", "D"],
+              correta: typeof q.correta === "number" ? q.correta : (parseInt(q.correta) || 0),
+              tempo: q.tempo ? parseInt(q.tempo) : undefined
+            }));
+            bancoQuestoes = bancoQuestoes.concat(normalizadas);
+            salvarNoNavegador();
             atualizarListaQuestoes();
-            alert(`${dadosImportados.length} questão(ões) importada(s) com sucesso!`);
+            alert(`Importado com sucesso (${normalizadas.length} questões)!`);
           } else {
-            alert("O arquivo selecionado não contém um formato de banco válido.");
+            alert("Formato de arquivo JSON inválido.");
           }
         } catch (err) {
-          alert("Erro ao ler o arquivo JSON. Verifique o formato.");
+          alert("Erro ao ler o arquivo JSON: " + err.message);
         }
+        inputElement.value = "";
       };
-      reader.readAsText(file);
-      event.target.value = "";
+      reader.readAsText(inputElement.files[0], "UTF-8");
     }
 
     /* =========================================================
-       CONTROLE DE TELA CHEIA, ZOOM E EXPLICAÇÃO
+       PALCO DE PROJEÇÃO E SORTEIO
        ========================================================= */
+    function embaralharArray(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function iniciarPartidaSorteada(pedirFullscreen = true) {
+      const disciplinaSel = document.getElementById("filtro-disciplina").value;
+      const qtdLimite = parseInt(document.getElementById("qtd-questoes").value);
+      tempoPadraoPartida = parseInt(document.getElementById("tempo-padrao").value) || 0;
+
+      let filtradas = disciplinaSel === "Todas"
+        ? [...bancoQuestoes]
+        : bancoQuestoes.filter(q => q.categoria === disciplinaSel);
+
+      if (filtradas.length === 0) {
+        alert(`Não há questões cadastradas para: ${disciplinaSel}`);
+        return;
+      }
+
+      embaralharArray(filtradas);
+      questoesPartida = filtradas.slice(0, Math.min(qtdLimite, filtradas.length));
+
+      indiceAtual = 0;
+      acertos = 0;
+
+      document.getElementById("projection-stage").classList.remove("hidden");
+      document.getElementById("stage-workspace").classList.remove("hidden");
+      document.getElementById("result-screen").classList.add("hidden");
+
+      if (pedirFullscreen) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      }
+      carregarQuestaoAtual();
+    }
+
     function alternarTelaCheiaNativa() {
       if (!document.fullscreenElement) {
         document.documentElement.requestFullscreen().catch(() => {});
-      } else {
-        if (document.exitFullscreen) document.exitFullscreen();
+      } else if (document.exitFullscreen) {
+        document.exitFullscreen();
       }
     }
 
@@ -1162,146 +1331,71 @@
       if (document.fullscreenElement && document.exitFullscreen) {
         document.exitFullscreen().catch(() => {});
       }
+      if (modoApresentacaoAluno) {
+        window.location.href = "index.html";
+        return;
+      }
       document.getElementById("projection-stage").classList.add("hidden");
     }
 
-    function abrirZoomImagem() {
-      const imgSrc = document.getElementById("quiz-image").src;
-      document.getElementById("modal-label").innerText = "Imagem da Questão (Ampliada)";
-      document.getElementById("modal-label").style.backgroundColor = "#89b4fa";
-      document.getElementById("img-modal-target").src = imgSrc;
-      document.getElementById("modal-zoom").classList.remove("hidden");
-    }
+    function carregarQuestaoAtual() {
+      questaoFinalizada = false;
+      const q = questoesPartida[indiceAtual];
 
-    function abrirExplicacaoQuestao() {
-      const q = questoesPartida[playerIndex];
-      if (!q || !q.explicacao) return;
-
-      // Pausa o cronômetro automaticamente enquanto você explica a questão
-      if (!timerPausado && tempoRestante > 0) {
-        togglePausaTimer();
-      }
-
-      document.getElementById("modal-label").innerText = "Explicação / Resolução da Questão";
-      document.getElementById("modal-label").style.backgroundColor = "#f9e2af";
-      document.getElementById("img-modal-target").src = q.explicacao;
-      document.getElementById("modal-zoom").classList.remove("hidden");
-    }
-
-    function carregarExplicacaoAoVivo(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        // Associa à questão atual da partida e abre na hora em tela cheia
-        questoesPartida[playerIndex].explicacao = e.target.result;
-        document.getElementById("btn-ver-explicacao").classList.remove("hidden");
-        abrirExplicacaoQuestao();
-      };
-      reader.readAsDataURL(file);
-      event.target.value = "";
-    }
-
-    function fecharZoomImagem() {
-      document.getElementById("modal-zoom").classList.add("hidden");
-    }
-
-    /* =========================================================
-       EXECUÇÃO DO JOGO E LÓGICA DO CRONÔMETRO CIRCULAR
-       ========================================================= */
-    function iniciarPartidaSorteada() {
-      const disciplinaSel = document.getElementById("filtro-disciplina").value;
-      const qtdLimite = parseInt(document.getElementById("qtd-questoes").value);
-      tempoPadraoPartida = parseInt(document.getElementById("tempo-padrao").value) || 0;
-
-      let listaFiltrada = bancoQuestoes;
-      if (disciplinaSel !== "Todas") {
-        listaFiltrada = bancoQuestoes.filter(q => q.categoria === disciplinaSel);
-      }
-
-      if (listaFiltrada.length === 0) {
-        alert(`Não há questões cadastradas para a disciplina: ${disciplinaSel}`);
-        return;
-      }
-
-      let embaralhada = [...listaFiltrada];
-      for (let i = embaralhada.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [embaralhada[i], embaralhada[j]] = [embaralhada[j], embaralhada[i]];
-      }
-
-      questoesPartida = embaralhada.slice(0, Math.min(qtdLimite, embaralhada.length));
-      playerIndex = 0;
-      acertosDePrimeira = 0;
-
-      document.getElementById("projection-stage").classList.remove("hidden");
-      document.getElementById("quiz-active-area").classList.remove("hidden");
-      document.getElementById("result-screen").classList.add("hidden");
-
-      document.documentElement.requestFullscreen().catch(() => {});
-
-      carregarQuestaoPlayer();
-    }
-
-    function carregarQuestaoPlayer() {
-      const q = questoesPartida[playerIndex];
-      tentativasNaQuestaoAtual = 0;
-
-      document.getElementById("quiz-contador").innerText = `Questão ${playerIndex + 1} de ${questoesPartida.length}`;
+      document.getElementById("quiz-contador").innerText = `Questão ${indiceAtual + 1} de ${questoesPartida.length}`;
       document.getElementById("quiz-categoria").innerText = q.categoria;
+      document.getElementById("quiz-pontuacao").innerText = `Acertos: ${acertos}`;
       document.getElementById("quiz-enunciado").innerText = q.enunciado;
-      document.getElementById("interaction-scroll-box").scrollTop = 0;
 
-      // Verifica se há imagem da questão
-      const stageGrid = document.getElementById("quiz-active-area");
+      // Imagem da Questão
+      const workspace = document.getElementById("stage-workspace");
       const mediaBox = document.getElementById("quiz-media-box");
-      const imgElement = document.getElementById("quiz-image");
-      
+      const imgEl = document.getElementById("quiz-image");
+
       if (q.imagem && q.imagem.trim() !== "") {
-        imgElement.src = q.imagem;
+        imgEl.src = q.imagem;
         mediaBox.classList.remove("hidden");
-        stageGrid.classList.remove("no-image");
+        workspace.classList.remove("no-image");
       } else {
         mediaBox.classList.add("hidden");
-        stageGrid.classList.add("no-image");
+        workspace.classList.add("no-image");
       }
 
-      // Verifica se há imagem de explicação para exibir o botão amarelo na barra superior
-      const btnExplicacao = document.getElementById("btn-ver-explicacao");
+      // Botão de Explicação
+      const btnExp = document.getElementById("btn-ver-explicacao");
       if (q.explicacao && q.explicacao.trim() !== "") {
-        btnExplicacao.classList.remove("hidden");
+        btnExp.classList.remove("hidden");
       } else {
-        btnExplicacao.classList.add("hidden");
+        btnExp.classList.add("hidden");
       }
 
-      const pct = ((playerIndex + 1) / questoesPartida.length) * 100;
-      document.getElementById("quiz-progress-bar").style.width = `${pct}%`;
-
+      // Alternativas
       const containerOpt = document.getElementById("quiz-options");
       containerOpt.innerHTML = "";
-      document.getElementById("btn-next-q").classList.add("hidden");
-      
+      document.getElementById("btn-proxima").classList.add("hidden");
+
       const feedback = document.getElementById("feedback-msg");
       feedback.classList.add("hidden");
       feedback.className = "feedback-banner hidden";
 
-      const tempoDefinido = (q.tempo !== undefined && q.tempo > 0) ? q.tempo : tempoPadraoPartida;
-      configurarEIniciarTimer(tempoDefinido);
-
-      q.opcoes.forEach((opcaoText, i) => {
+      q.opcoes.forEach((texto, idx) => {
         const btn = document.createElement("button");
+        btn.type = "button";
         btn.classList.add("btn-option");
-        btn.innerText = opcaoText;
-        btn.onclick = () => verificarRespostaPlayer(i, btn);
+        btn.innerText = texto;
+        btn.onclick = () => verificarResposta(idx, btn);
         containerOpt.appendChild(btn);
       });
 
-      if (window.MathJax) {
-        MathJax.typesetPromise();
-      }
+      const tempoDefinido = (q.tempo !== undefined && q.tempo > 0) ? q.tempo : tempoPadraoPartida;
+      configurarEIniciarTimer(tempoDefinido);
+
+      if (window.MathJax) MathJax.typesetPromise();
     }
 
+    /* =========================================================
+       CRONÔMETRO CIRCULAR
+       ========================================================= */
     function configurarEIniciarTimer(segundos) {
       clearInterval(timerInterval);
       const timerWrapper = document.getElementById("circular-timer-container");
@@ -1323,15 +1417,23 @@
       atualizarVisualCronometro();
 
       timerInterval = setInterval(() => {
-        if (!timerPausado) {
+        if (!timerPausado && !questaoFinalizada) {
           if (tempoRestante > 0) {
-            tocarBip(800, 45);
+            tocarBeep(800, 40);
             tempoRestante--;
             atualizarVisualCronometro();
           } else {
             clearInterval(timerInterval);
+            questaoFinalizada = true;
             displayText.classList.add("expired");
-            tocarBip(1200, 600);
+            tocarBeep(400, 500);
+
+            document.querySelectorAll("#quiz-options .btn-option").forEach(b => b.disabled = true);
+            const feedback = document.getElementById("feedback-msg");
+            feedback.innerText = "Tempo esgotado! Clique em 'Projetar Explicação' ou avance para a próxima.";
+            feedback.className = "feedback-banner feedback-warning";
+            feedback.classList.remove("hidden");
+            document.getElementById("btn-proxima").classList.remove("hidden");
           }
         }
       }, 1000);
@@ -1340,86 +1442,122 @@
     function atualizarVisualCronometro() {
       const mins = Math.floor(tempoRestante / 60);
       const secs = tempoRestante % 60;
-      document.getElementById("timer-display-text").innerText = 
+      document.getElementById("timer-display-text").innerText =
         `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
 
       const ring = document.getElementById("timer-progress-ring");
       const fracao = tempoTotalAtual > 0 ? (tempoRestante / tempoTotalAtual) : 0;
-      const offset = CIRCUNFERENCIA * (1 - fracao);
-      ring.style.strokeDashoffset = offset;
+      ring.style.strokeDashoffset = CIRCUNFERENCIA * (1 - fracao);
       ring.style.stroke = tempoRestante <= 5 && tempoRestante > 0 ? "#ff4d4d" : "#00ffcc";
     }
 
     function togglePausaTimer(event) {
       if (event) event.preventDefault();
-      if (tempoRestante <= 0) return;
+      if (tempoRestante <= 0 || questaoFinalizada) return;
       timerPausado = !timerPausado;
       document.getElementById("btn-pausa-timer").innerText = timerPausado ? "Retomar" : "Pausar";
     }
 
     function ajustarTempoAoVivo() {
+      if (questaoFinalizada) return;
       const estavaPausado = timerPausado;
       timerPausado = true;
-      const novoValor = prompt("Digite o novo tempo em segundos para esta questão:", tempoRestante || 30);
-      
-      if (novoValor !== null && !isNaN(parseInt(novoValor)) && parseInt(novoValor) > 0) {
-        const segs = parseInt(novoValor);
-        configurarEIniciarTimer(segs);
+      const novo = prompt("Digite o novo tempo em segundos:", tempoRestante || 45);
+      if (novo !== null && !isNaN(parseInt(novo)) && parseInt(novo) > 0) {
+        configurarEIniciarTimer(parseInt(novo));
       } else {
         timerPausado = estavaPausado;
       }
     }
 
-    function verificarRespostaPlayer(opcaoSelecionada, botaoClicado) {
-      const q = questoesPartida[playerIndex];
+    /* =========================================================
+       RESPOSTAS E TELA DE EXPLICAÇÃO
+       ========================================================= */
+    function verificarResposta(opcaoSelecionada, botaoClicado) {
+      if (questaoFinalizada) return;
+      questaoFinalizada = true;
+      clearInterval(timerInterval);
+
+      const q = questoesPartida[indiceAtual];
       const botoes = document.querySelectorAll("#quiz-options .btn-option");
       const feedback = document.getElementById("feedback-msg");
 
+      botoes.forEach(b => b.disabled = true);
+
       if (opcaoSelecionada === q.correta) {
-        clearInterval(timerInterval);
         botaoClicado.classList.add("correct");
-        botoes.forEach(b => b.disabled = true);
-
-        if (tentativasNaQuestaoAtual === 0) {
-          acertosDePrimeira++;
-        }
-
-        tocarBip(1046, 150);
-        feedback.innerText = "Resposta Correta! Clique em 'Próxima Questão' para continuar.";
+        acertos++;
+        document.getElementById("quiz-pontuacao").innerText = `Acertos: ${acertos}`;
+        feedback.innerText = "Resposta Correta!";
         feedback.className = "feedback-banner feedback-success";
         feedback.classList.remove("hidden");
-
-        document.getElementById("btn-next-q").classList.remove("hidden");
       } else {
-        tentativasNaQuestaoAtual++;
         botaoClicado.classList.add("incorrect");
-        botaoClicado.disabled = true;
-
-        tocarBip(300, 200);
-        feedback.innerText = "Alternativa incorreta! Tente novamente.";
+        feedback.innerText = "Incorreto! Você pode projetar a explicação ou tentar discutir com a turma.";
         feedback.className = "feedback-banner feedback-error";
         feedback.classList.remove("hidden");
       }
+
+      document.getElementById("btn-proxima").classList.remove("hidden");
     }
 
-    function proximaQuestaoPlayer() {
-      clearInterval(timerInterval);
-      playerIndex++;
-      if (playerIndex < questoesPartida.length) {
-        carregarQuestaoPlayer();
+    function abrirZoomImagem() {
+      const src = document.getElementById("quiz-image").src;
+      if (!src) return;
+      document.getElementById("modal-label").innerText = "Imagem da Questão (Ampliada)";
+      document.getElementById("img-modal-target").src = src;
+      document.getElementById("modal-zoom").classList.remove("hidden");
+    }
+
+    function abrirExplicacaoQuestao() {
+      const q = questoesPartida[indiceAtual];
+      if (!q || !q.explicacao) return;
+
+      if (!timerPausado && tempoRestante > 0 && !questaoFinalizada) {
+        togglePausaTimer();
+      }
+
+      document.getElementById("modal-label").innerText = "Explicação / Resolução da Questão";
+      document.getElementById("img-modal-target").src = q.explicacao;
+      document.getElementById("modal-zoom").classList.remove("hidden");
+    }
+
+    function carregarExplicacaoAoVivo(inputElement) {
+      if (!inputElement.files || inputElement.files.length === 0) return;
+      const leitor = new FileReader();
+      leitor.onload = function(evento) {
+        questoesPartida[indiceAtual].explicacao = evento.target.result;
+        document.getElementById("btn-ver-explicacao").classList.remove("hidden");
+        abrirExplicacaoQuestao();
+      };
+      leitor.readAsDataURL(inputElement.files[0]);
+      inputElement.value = "";
+    }
+
+    function fecharZoomImagem() {
+      document.getElementById("modal-zoom").classList.add("hidden");
+    }
+
+    function proximaQuestao() {
+      indiceAtual++;
+      if (indiceAtual < questoesPartida.length) {
+        carregarQuestaoAtual();
       } else {
-        mostrarResultadoPlayer();
+        mostrarResultado();
       }
     }
 
-    function mostrarResultadoPlayer() {
+    function mostrarResultado() {
       clearInterval(timerInterval);
-      document.getElementById("quiz-active-area").classList.add("hidden");
+      document.getElementById("stage-workspace").classList.add("hidden");
       document.getElementById("result-screen").classList.remove("hidden");
 
-      const pct = ((acertosDePrimeira / questoesPartida.length) * 100).toFixed(0);
-      document.getElementById("result-score").innerText = 
-        `Todas as ${questoesPartida.length} questões foram concluídas!\nAcertos de primeira tentativa: ${acertosDePrimeira} (${pct}%).`;
+      const total = questoesPartida.length;
+      const percentual = Math.round((acertos / total) * 100);
+      document.getElementById("final-score-text").innerText = `Acertos da turma: ${acertos} de ${total} (${percentual}%)`;
+      document.getElementById("final-message").innerText = percentual >= 70
+        ? "Excelente desempenho na atividade!"
+        : "Bom trabalho! Revisem os pontos principais com as imagens de explicação.";
     }
   </script>
 
