@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Portal Educacional • Lousa Digital Interativa</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -15,9 +16,8 @@
       flex-direction: column;
     }
 
-    /* Cabeçalho Institucional */
     header {
-      background: rgba(15, 23, 42, 0.85);
+      background: rgba(15, 23, 42, 0.88);
       backdrop-filter: blur(10px);
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       padding: 18px 32px;
@@ -27,280 +27,164 @@
       flex-wrap: wrap;
       gap: 16px;
     }
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
+    .brand { display: flex; align-items: center; gap: 14px; }
     .brand-icon {
-      width: 46px;
-      height: 46px;
-      border-radius: 12px;
+      width: 46px; height: 46px; border-radius: 12px;
       background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
     }
-    .brand h1 { font-size: 20px; font-weight: 800; letter-spacing: -0.3px; }
+    .brand h1 { font-size: 20px; font-weight: 800; }
     .brand p { font-size: 13px; color: #94a3b8; }
 
-    .header-actions {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
+    .header-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
     .badge-status {
       background: rgba(16, 185, 129, 0.15);
       border: 1px solid rgba(16, 185, 129, 0.4);
-      color: #34d399;
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 700;
+      color: #34d399; padding: 6px 12px; border-radius: 20px;
+      font-size: 12px; font-weight: 700;
     }
     .btn-github {
-      background: #334155;
-      color: #f8fafc;
-      text-decoration: none;
-      padding: 8px 14px;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 600;
-      border: 1px solid rgba(255,255,255,0.12);
-      transition: 0.2s;
+      background: #334155; color: #f8fafc; text-decoration: none;
+      padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 600;
+      border: 1px solid rgba(255,255,255,0.12); transition: 0.2s;
     }
     .btn-github:hover { background: #475569; }
 
-    /* Container Principal */
     main {
-      max-width: 1180px;
-      width: 100%;
-      margin: 0 auto;
-      padding: 36px 24px 60px;
-      flex: 1;
+      max-width: 1200px; width: 100%; margin: 0 auto;
+      padding: 32px 24px 60px; flex: 1;
     }
 
-    .hero {
-      text-align: center;
-      margin-bottom: 38px;
+    /* Banner Superior com QR Code Direto do Portal */
+    .hero-banner {
+      background: rgba(30, 41, 59, 0.85);
+      border: 1px solid rgba(96, 165, 250, 0.25);
+      border-radius: 18px;
+      padding: 24px 28px;
+      margin-bottom: 34px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
     }
-    .hero h2 {
-      font-size: 30px;
-      font-weight: 800;
-      margin-bottom: 10px;
+    .hero-text { flex: 1; min-width: 260px; }
+    .hero-text h2 {
+      font-size: 26px; font-weight: 800; margin-bottom: 8px;
       background: linear-gradient(90deg, #ffffff, #93c5fd);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
-    .hero p {
-      color: #cbd5e1;
-      font-size: 15px;
-      max-width: 680px;
-      margin: 0 auto;
-      line-height: 1.5;
+    .hero-text p { color: #cbd5e1; font-size: 14px; line-height: 1.55; margin-bottom: 14px; }
+    .url-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: #0f172a; border: 1px solid rgba(255,255,255,0.12);
+      padding: 7px 12px; border-radius: 8px; font-size: 12px; color: #38bdf8;
+      font-family: monospace;
+    }
+    .hero-qr-box {
+      background: #ffffff; padding: 12px; border-radius: 14px;
+      display: flex; flex-direction: column; align-items: center;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+    }
+    .hero-qr-box span {
+      color: #0f172a; font-size: 11px; font-weight: 800;
+      margin-top: 6px; text-transform: uppercase;
     }
 
-    /* Grade das 3 Ferramentas Principais */
+    /* Grade das Ferramentas */
     .tools-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
-      gap: 24px;
-      margin-bottom: 42px;
+      grid-template-columns: repeat(auto-fit, minmax(265px, 1fr));
+      gap: 20px;
+      margin-bottom: 38px;
     }
     .tool-card {
-      background: #1e293b;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 16px;
-      padding: 26px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.35);
+      background: #1e293b; border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px; padding: 22px;
+      display: flex; flex-direction: column; justify-content: space-between;
+      transition: transform 0.2s ease, border-color 0.2s ease;
     }
-    .tool-card:hover {
-      transform: translateY(-5px);
-      border-color: rgba(96, 165, 250, 0.5);
-      box-shadow: 0 18px 35px -5px rgba(0, 0, 0, 0.5);
-    }
-    .card-top { margin-bottom: 22px; }
+    .tool-card:hover { transform: translateY(-4px); border-color: rgba(96, 165, 250, 0.5); }
+    .card-top { margin-bottom: 18px; }
     .card-tag {
-      display: inline-block;
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-size: 11px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 14px;
+      display: inline-block; padding: 4px 10px; border-radius: 6px;
+      font-size: 11px; font-weight: 800; text-transform: uppercase; margin-bottom: 12px;
     }
     .tag-prof { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
     .tag-aluno { background: rgba(16, 185, 129, 0.2); color: #34d399; }
     .tag-editor { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+    .tag-qr { background: rgba(168, 85, 247, 0.2); color: #c084fc; }
 
-    .tool-card h3 {
-      font-size: 21px;
-      font-weight: 800;
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .tool-card p {
-      font-size: 14px;
-      color: #94a3b8;
-      line-height: 1.55;
-      margin-bottom: 14px;
-    }
-    .feature-list {
-      list-style: none;
-      font-size: 13px;
-      color: #cbd5e1;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .feature-list li::before {
-      content: "✓ ";
-      color: #38bdf8;
-      font-weight: bold;
-    }
+    .tool-card h3 { font-size: 19px; font-weight: 800; margin-bottom: 8px; }
+    .tool-card p { font-size: 13px; color: #94a3b8; line-height: 1.5; }
 
-    .card-buttons {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
     .btn-launch {
-      flex: 1;
-      text-align: center;
-      text-decoration: none;
-      padding: 12px 16px;
-      border-radius: 10px;
-      font-weight: 700;
-      font-size: 14px;
-      color: white;
-      transition: filter 0.2s;
+      display: block; text-align: center; text-decoration: none;
+      padding: 11px 14px; border-radius: 10px; font-weight: 700;
+      font-size: 13px; color: white; transition: filter 0.2s;
     }
     .btn-launch:hover { filter: brightness(1.1); }
     .btn-blue { background: linear-gradient(135deg, #2563eb, #3b82f6); }
     .btn-green { background: linear-gradient(135deg, #059669, #10b981); }
     .btn-amber { background: linear-gradient(135deg, #d97706, #f59e0b); }
+    .btn-purple { background: linear-gradient(135deg, #7c3aed, #9333ea); }
 
-    /* Seção de Recursos Educacionais de Apoio */
-    .section-title {
-      font-size: 18px;
-      font-weight: 700;
-      margin-bottom: 16px;
-      color: #e2e8f0;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    /* Seção Interativa Interna (Gerador QR + Cronômetro + Fórmulas) */
+    .section-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; color: #e2e8f0; }
     .support-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap: 20px;
     }
     .support-box {
-      background: rgba(30, 41, 59, 0.75);
+      background: rgba(30, 41, 59, 0.78);
       border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 14px;
-      padding: 20px;
+      border-radius: 14px; padding: 20px;
     }
-    .support-box h4 {
-      font-size: 15px;
-      font-weight: 700;
-      margin-bottom: 12px;
-      color: #93c5fd;
+    .support-box h4 { font-size: 15px; font-weight: 700; margin-bottom: 12px; color: #93c5fd; }
+
+    /* Mini Gerador QR Embutido */
+    .qr-inline-wrap { display: flex; gap: 14px; align-items: center; }
+    .qr-inline-controls { flex: 1; }
+    .qr-inline-controls input {
+      width: 100%; background: #0f172a; color: #f8fafc;
+      border: 1px solid rgba(255,255,255,0.14); border-radius: 8px;
+      padding: 8px 10px; font-size: 12px; margin-bottom: 8px; outline: none;
+    }
+    .qr-inline-preview {
+      background: #ffffff; padding: 8px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      min-width: 112px; min-height: 112px;
     }
 
-    /* Cronômetro de Aula */
     .timer-display {
-      font-size: 32px;
-      font-weight: 800;
-      font-variant-numeric: tabular-nums;
-      text-align: center;
-      background: #0f172a;
-      padding: 12px;
-      border-radius: 10px;
-      margin-bottom: 12px;
-      border: 1px solid rgba(255,255,255,0.08);
-      color: #38bdf8;
+      font-size: 32px; font-weight: 800; text-align: center;
+      background: #0f172a; padding: 12px; border-radius: 10px;
+      margin-bottom: 12px; color: #38bdf8;
     }
-    .timer-controls {
-      display: flex;
-      gap: 8px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
+    .timer-controls { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
     .btn-mini {
-      background: #334155;
-      color: white;
-      border: none;
-      padding: 7px 12px;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
+      background: #334155; color: white; border: none;
+      padding: 7px 11px; border-radius: 6px; font-size: 12px;
+      font-weight: 700; cursor: pointer;
     }
     .btn-mini:hover { background: #475569; }
 
-    /* Tabela de Referência Rápida */
-    .formula-tabs {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 10px;
-    }
+    .formula-tabs { display: flex; gap: 6px; margin-bottom: 10px; }
     .tab-btn {
-      background: #0f172a;
-      color: #94a3b8;
-      border: 1px solid rgba(255,255,255,0.1);
-      padding: 5px 10px;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
+      background: #0f172a; color: #94a3b8; border: 1px solid rgba(255,255,255,0.1);
+      padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer;
     }
-    .tab-btn.active {
-      background: #3b82f6;
-      color: white;
-      border-color: #3b82f6;
-    }
+    .tab-btn.active { background: #3b82f6; color: white; border-color: #3b82f6; }
     .formula-content {
-      background: #0f172a;
-      padding: 12px;
-      border-radius: 10px;
-      font-size: 13px;
-      line-height: 1.7;
-      color: #e2e8f0;
-      min-height: 98px;
+      background: #0f172a; padding: 12px; border-radius: 10px;
+      font-size: 13px; line-height: 1.65; color: #e2e8f0; min-height: 98px;
     }
-
-    /* Bloco de Notas Rápido */
-    textarea.quick-notes {
-      width: 100%;
-      height: 104px;
-      background: #0f172a;
-      color: #f8fafc;
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 10px;
-      padding: 10px;
-      font-family: inherit;
-      font-size: 13px;
-      resize: none;
-      outline: none;
-    }
-    textarea.quick-notes:focus { border-color: #3b82f6; }
 
     footer {
-      text-align: center;
-      padding: 18px;
-      font-size: 12px;
-      color: #64748b;
-      border-top: 1px solid rgba(255,255,255,0.06);
+      text-align: center; padding: 18px; font-size: 12px;
+      color: #64748b; border-top: 1px solid rgba(255,255,255,0.06);
     }
   </style>
 </head>
@@ -311,189 +195,205 @@
       <div class="brand-icon">🎓</div>
       <div>
         <h1>Portal Educacional • Lousa Digital</h1>
-        <p>Ambiente Integrado de Apresentação, Resolução Passo a Passo e Animação Didática</p>
+        <p>Ambiente Integrado de Apresentação, Animação e Acesso Rápido por QR Code</p>
       </div>
     </div>
     <div class="header-actions">
-      <span class="badge-status">● Conectado ao GitHub Pages</span>
+      <span class="badge-status">● GitHub Pages Ativo</span>
       <a class="btn-github" href="https://github.com/Sandovalleme/Quadro--magico" target="_blank" rel="noopener">📂 Repositório GitHub</a>
     </div>
   </header>
 
   <main>
-    <section class="hero">
-      <h2>Central de Ferramentas Interativas</h2>
-      <p>Selecione abaixo o ambiente desejado para preparar sua aula, projetar a tela sincronizada para os estudantes ou criar animações passo a passo de Matemática, Física e Programação.</p>
+    <!-- Banner com QR Code permanente para os alunos acessarem o Portal -->
+    <section class="hero-banner">
+      <div class="hero-text">
+        <h2>Acesso Rápido à Aula Digital</h2>
+        <p>Projete este QR Code na lousa ou TV da sala: os estudantes podem apontar a câmera do celular para abrir imediatamente o portal e acompanhar os materiais interativos.</p>
+        <div class="url-pill">🔗 https://sandovalleme.github.io/Quadro--magico/</div>
+      </div>
+      <div class="hero-qr-box" title="QR Code de acesso a este portal">
+        <div id="portalMainQr"></div>
+        <span>Acesso Alunos</span>
+      </div>
     </section>
 
-    <!-- Cards de Acesso Direto às Ferramentas -->
+    <!-- Cards das 4 Ferramentas -->
     <section class="tools-grid">
-      <!-- Ferramenta 1: Quadro Mágico -->
       <article class="tool-card">
         <div class="card-top">
           <span class="card-tag tag-prof">Painel Principal</span>
           <h3>🖥️ Quadro Mágico</h3>
-          <p>Controle completo do professor para apresentar PDFs com máscaras reveláveis, vídeos, imagens ampliáveis e animações.</p>
-          <ul class="feature-list">
-            <li>Revelação sequencial de textos e passos</li>
-            <li>Sincronização em tempo real com a Tela do Aluno</li>
-            <li>Exportação e leitura de arquivos .LOSA</li>
-          </ul>
+          <p>Controle completo do professor para apresentar PDFs com máscaras, vídeos, imagens e animações passo a passo.</p>
         </div>
-        <div class="card-buttons">
-          <a href="QUADRO%20M%C3%81GICO.html" class="btn-launch btn-blue">Abrir Quadro Mágico ➔</a>
-        </div>
+        <a href="QUADRO%20M%C3%81GICO.html" class="btn-launch btn-blue">Abrir Quadro Mágico ➔</a>
       </article>
 
-      <!-- Ferramenta 2: Losa Mágica -->
       <article class="tool-card">
         <div class="card-top">
-          <span class="card-tag tag-aluno">Projeção / Segundo Monitor</span>
-          <h3>📺 Losa Mágica (Aluno)</h3>
-          <p>Tela limpa sem barras de ferramentas, ideal para projetor, TV da sala de aula ou compartilhamento de tela.</p>
-          <ul class="feature-list">
-            <li>Espelhamento automático do Quadro Mágico</li>
-            <li>Acompanha zoom, rolagem e animações</li>
-            <li>Visualização focada sem distrações</li>
-          </ul>
+          <span class="card-tag tag-aluno">Projeção / 2º Monitor</span>
+          <h3>📺 Losa Mágica</h3>
+          <p>Tela limpa sem barras de ferramentas, sincronizada em tempo real com o Quadro Mágico para projetor ou TV.</p>
         </div>
-        <div class="card-buttons">
-          <a href="LOSA%20M%C3%81GICA.html" target="_blank" class="btn-launch btn-green">Abrir Tela do Aluno ↗</a>
-        </div>
+        <a href="LOSA%20M%C3%81GICA.html" target="_blank" class="btn-launch btn-green">Abrir Tela do Aluno ↗</a>
       </article>
 
-      <!-- Ferramenta 3: Folha Mágica -->
       <article class="tool-card">
         <div class="card-top">
           <span class="card-tag tag-editor">Estúdio de Criação</span>
           <h3>🪄 Folha Mágica</h3>
-          <p>Lousa gigante para desenhar, inserir fórmulas matemáticas, imagens e gravar trajetórias de movimento.</p>
-          <ul class="feature-list">
-            <li>Animação de equações, vetores e esquemas</li>
-            <li>Suporte a PDF de fundo e colagem (Ctrl+V)</li>
-            <li>Exportação em JSON para o Modo Show</li>
-          </ul>
+          <p>Lousa infinita para desenhar esquemas, fórmulas e gravar trajetórias de animação em formato JSON.</p>
         </div>
-        <div class="card-buttons">
-          <a href="FOLHA%20M%C3%81GICA.html" class="btn-launch btn-amber">Abrir Folha Mágica ➔</a>
+        <a href="FOLHA%20M%C3%81GICA.html" class="btn-launch btn-amber">Abrir Folha Mágica ➔</a>
+      </article>
+
+      <article class="tool-card">
+        <div class="card-top">
+          <span class="card-tag tag-qr">Compartilhamento</span>
+          <h3>📱 Gerador QR Code</h3>
+          <p>Crie QR Codes personalizados com legenda para qualquer link de aula, formulário ou atividade e baixe em PNG.</p>
         </div>
+        <a href="GERADOR%20QR%20CODE.html" class="btn-launch btn-purple">Abrir Gerador Completo ➔</a>
       </article>
     </section>
 
-    <!-- Recursos Educacionais Complementares -->
-    <h3 class="section-title">🧰 Utilitários Rápidos para Sala de Aula</h3>
+    <!-- Utilitários Embutidos na Página -->
+    <h3 class="section-title">🧰 Ferramentas Rápidas Integradas na Página</h3>
     <section class="support-grid">
-      <!-- Cronômetro de Atividades -->
+      <!-- Gerador Rápido de QR Code Embutido -->
       <div class="support-box">
-        <h4>⏱️ Cronômetro de Atividade / Prova</h4>
-        <div class="timer-display" id="timerDisplay">15:00</div>
-        <div class="timer-controls">
-          <button class="btn-mini" onclick="setTimer(5)">5 min</button>
-          <button class="btn-mini" onclick="setTimer(15)">15 min</button>
-          <button class="btn-mini" onclick="setTimer(45)">45 min</button>
-          <button class="btn-mini" style="background:#10b981;" onclick="toggleTimer()" id="btnStartTimer">▶ Iniciar</button>
-          <button class="btn-mini" style="background:#ef4444;" onclick="resetTimer()">↺ Zerar</button>
+        <h4>📱 Gerador Rápido de QR Code</h4>
+        <div class="qr-inline-wrap">
+          <div class="qr-inline-controls">
+            <input type="text" id="inlineQrInput" value="https://sandovalleme.github.io/Quadro--magico/" placeholder="Cole qualquer link aqui..." oninput="atualizarInlineQR()">
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+              <button class="btn-mini" onclick="setInlineLink('https://sandovalleme.github.io/Quadro--magico/')">Portal</button>
+              <button class="btn-mini" onclick="setInlineLink('https://sandovalleme.github.io/Quadro--magico/LOSA%20M%C3%81GICA.html')">Losa Aluno</button>
+              <button class="btn-mini" style="background:#10b981;" onclick="baixarInlineQR()">⬇️ PNG</button>
+            </div>
+          </div>
+          <div class="qr-inline-preview" id="inlineQrBox"></div>
         </div>
       </div>
 
-      <!-- Quadro de Fórmulas Rápidas -->
+      <!-- Cronômetro -->
+      <div class="support-box">
+        <h4>⏱️ Cronômetro de Atividade</h4>
+        <div class="timer-display" id="timerDisplay">15:00</div>
+        <div class="timer-controls">
+          <button class="btn-mini" onclick="setTimer(5)">5m</button>
+          <button class="btn-mini" onclick="setTimer(15)">15m</button>
+          <button class="btn-mini" onclick="setTimer(45)">45m</button>
+          <button class="btn-mini" style="background:#10b981;" onclick="toggleTimer()" id="btnStartTimer">▶ Iniciar</button>
+          <button class="btn-mini" style="background:#ef4444;" onclick="resetTimer()">↺</button>
+        </div>
+      </div>
+
+      <!-- Fórmulas -->
       <div class="support-box">
         <h4>📐 Consulta Rápida de Fórmulas</h4>
         <div class="formula-tabs">
           <button class="tab-btn active" onclick="showTab('mat', this)">Matemática</button>
           <button class="tab-btn" onclick="showTab('fis', this)">Física</button>
-          <button class="tab-btn" onclick="showTab('web', this)">Web / HTML</button>
+          <button class="tab-btn" onclick="showTab('web', this)">Web</button>
         </div>
         <div class="formula-content" id="formulaBox">
           <strong>Bhaskara:</strong> x = (-b ± √Δ) / 2a &nbsp;|&nbsp; Δ = b² - 4ac<br>
           <strong>Pitágoras:</strong> a² = b² + c²<br>
-          <strong>Área do Círculo:</strong> A = π · r² &nbsp;|&nbsp; C = 2 · π · r
+          <strong>Círculo:</strong> A = π · r² &nbsp;|&nbsp; C = 2 · π · r
         </div>
-      </div>
-
-      <!-- Roteiro da Aula (Salvo localmente no navegador) -->
-      <div class="support-box">
-        <h4>📝 Roteiro / Lembretes da Aula</h4>
-        <textarea class="quick-notes" id="aulaNotes" placeholder="Anote aqui a sequência de slides, páginas do livro ou recados da turma (salvo automaticamente neste computador)..."></textarea>
       </div>
     </section>
   </main>
 
   <footer>
-    Sistema Educacional Interativo • Hospedado via GitHub Pages (Sandovalleme/Quadro--magico)
+    Portal Educacional Interativo • Hospedado no GitHub Pages (Sandovalleme/Quadro--magico)
   </footer>
 
   <script>
-    // Cronômetro de Aula
-    let totalSeconds = 15 * 60;
-    let initialSeconds = 15 * 60;
-    let timerInterval = null;
+    // 1. Gera o QR Code fixo do Portal no topo
+    new QRCode(document.getElementById('portalMainQr'), {
+      text: 'https://sandovalleme.github.io/Quadro--magico/',
+      width: 108,
+      height: 108,
+      colorDark: '#0f172a',
+      colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.H
+    });
 
+    // 2. Gerador de QR Code Interativo Embutido
+    function atualizarInlineQR() {
+      const box = document.getElementById('inlineQrBox');
+      const val = document.getElementById('inlineQrInput').value.trim() || 'https://sandovalleme.github.io/Quadro--magico/';
+      box.innerHTML = '';
+      new QRCode(box, {
+        text: val,
+        width: 96,
+        height: 96,
+        colorDark: '#0f172a',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.M
+      });
+    }
+
+    function setInlineLink(url) {
+      document.getElementById('inlineQrInput').value = url;
+      atualizarInlineQR();
+    }
+
+    function baixarInlineQR() {
+      const canvas = document.querySelector('#inlineQrBox canvas');
+      if (!canvas) return;
+      const a = document.createElement('a');
+      a.download = 'qrcode-rapido.png';
+      a.href = canvas.toDataURL('image/png');
+      a.click();
+    }
+
+    atualizarInlineQR();
+
+    // 3. Cronômetro
+    let totalSeconds = 15 * 60, initialSeconds = 15 * 60, timerInterval = null;
     function updateTimerDisplay() {
-      const mins = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
-      const secs = String(totalSeconds % 60).padStart(2, '0');
-      document.getElementById('timerDisplay').textContent = `${mins}:${secs}`;
+      const m = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
+      const s = String(totalSeconds % 60).padStart(2, '0');
+      document.getElementById('timerDisplay').textContent = `${m}:${s}`;
     }
-
-    function setTimer(minutes) {
-      clearInterval(timerInterval);
-      timerInterval = null;
+    function setTimer(min) {
+      clearInterval(timerInterval); timerInterval = null;
       document.getElementById('btnStartTimer').textContent = '▶ Iniciar';
-      initialSeconds = minutes * 60;
-      totalSeconds = initialSeconds;
-      updateTimerDisplay();
+      initialSeconds = min * 60; totalSeconds = initialSeconds; updateTimerDisplay();
     }
-
     function toggleTimer() {
       const btn = document.getElementById('btnStartTimer');
       if (timerInterval) {
-        clearInterval(timerInterval);
-        timerInterval = null;
-        btn.textContent = '▶ Continuar';
+        clearInterval(timerInterval); timerInterval = null; btn.textContent = '▶ Continuar';
       } else {
         if (totalSeconds <= 0) totalSeconds = initialSeconds;
         btn.textContent = '⏸ Pausar';
         timerInterval = setInterval(() => {
-          if (totalSeconds > 0) {
-            totalSeconds--;
-            updateTimerDisplay();
-          } else {
-            clearInterval(timerInterval);
-            timerInterval = null;
-            btn.textContent = '▶ Iniciar';
-            alert('⏰ Tempo da atividade concluído!');
-          }
+          if (totalSeconds > 0) { totalSeconds--; updateTimerDisplay(); }
+          else { clearInterval(timerInterval); timerInterval = null; btn.textContent = '▶ Iniciar'; alert('⏰ Tempo encerrado!'); }
         }, 1000);
       }
     }
-
     function resetTimer() {
-      clearInterval(timerInterval);
-      timerInterval = null;
+      clearInterval(timerInterval); timerInterval = null;
       document.getElementById('btnStartTimer').textContent = '▶ Iniciar';
-      totalSeconds = initialSeconds;
-      updateTimerDisplay();
+      totalSeconds = initialSeconds; updateTimerDisplay();
     }
 
-    // Abas de Consulta Rápida
+    // 4. Fórmulas
     const conteudos = {
-      mat: '<strong>Bhaskara:</strong> x = (-b ± √Δ) / 2a &nbsp;|&nbsp; Δ = b² - 4ac<br><strong>Pitágoras:</strong> a² = b² + c²<br><strong>Área do Círculo:</strong> A = π · r² &nbsp;|&nbsp; C = 2 · π · r',
-      fis: '<strong>MRU:</strong> S = S₀ + v · t &nbsp;|&nbsp; <strong>MRUV:</strong> v = v₀ + a · t<br><strong>Torricelli:</strong> v² = v₀² + 2 · a · ΔS<br><strong>2ª Lei de Newton:</strong> F<sub>R</sub> = m · a &nbsp;|&nbsp; <strong>Ohm:</strong> U = R · i',
-      web: '<strong>Estrutura Base:</strong> &lt;!DOCTYPE html&gt;, &lt;html&gt;, &lt;head&gt;, &lt;body&gt;<br><strong>Estilo e Lógica:</strong> &lt;style&gt; (CSS) e &lt;script&gt; (JavaScript)<br><strong>Tela Gráfica:</strong> &lt;canvas id="tela"&gt;&lt;/canvas&gt;'
+      mat: '<strong>Bhaskara:</strong> x = (-b ± √Δ) / 2a &nbsp;|&nbsp; Δ = b² - 4ac<br><strong>Pitágoras:</strong> a² = b² + c²<br><strong>Círculo:</strong> A = π · r² &nbsp;|&nbsp; C = 2 · π · r',
+      fis: '<strong>MRU:</strong> S = S₀ + v · t &nbsp;|&nbsp; <strong>MRUV:</strong> v = v₀ + a · t<br><strong>Torricelli:</strong> v² = v₀² + 2 · a · ΔS<br><strong>Newton:</strong> F<sub>R</sub> = m · a &nbsp;|&nbsp; <strong>Ohm:</strong> U = R · i',
+      web: '<strong>Base:</strong> &lt;!DOCTYPE html&gt;, &lt;html&gt;, &lt;head&gt;, &lt;body&gt;<br><strong>Estilo/Código:</strong> &lt;style&gt; e &lt;script&gt;<br><strong>Gráficos:</strong> &lt;canvas id="tela"&gt;&lt;/canvas&gt;'
     };
-
     function showTab(chave, botao) {
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       botao.classList.add('active');
       document.getElementById('formulaBox').innerHTML = conteudos[chave];
     }
-
-    // Salvamento automático das anotações no navegador
-    const notesEl = document.getElementById('aulaNotes');
-    notesEl.value = localStorage.getItem('portal_educacional_notas') || '';
-    notesEl.addEventListener('input', () => {
-      localStorage.setItem('portal_educacional_notas', notesEl.value);
-    });
   </script>
 </body>
 </html>
