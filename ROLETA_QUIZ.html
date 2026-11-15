@@ -1,0 +1,2057 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Roleta Interativa de Quizzes - 1 a 4 Equipes</title>
+
+  <!-- Suporte a Fórmulas Matemáticas e Físicas (MathJax) -->
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #1e1e2e;
+      color: #cdd6f4;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #45475a;
+    }
+
+    header h1 {
+      font-size: 1.85rem;
+      color: #89b4fa;
+      margin-bottom: 8px;
+    }
+
+    header p {
+      color: #a6adc8;
+      font-size: 0.95rem;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 12px;
+      background-color: #313244;
+      color: #cdd6f4;
+      border: 2px solid #45475a;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn.active {
+      background-color: #89b4fa;
+      color: #11111b;
+      border-color: #89b4fa;
+    }
+
+    .card {
+      background-color: #2b2b3d;
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      margin-bottom: 20px;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .form-row .form-group {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group label.field-label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+      color: #f5e0dc;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 12px;
+      background-color: #1e1e2e;
+      border: 1px solid #45475a;
+      border-radius: 6px;
+      color: #cdd6f4;
+      font-size: 1rem;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: #89b4fa;
+    }
+
+    textarea.form-control {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .image-upload-box {
+      background-color: #1e1e2e;
+      border: 1px dashed #89b4fa;
+      border-radius: 8px;
+      padding: 15px;
+    }
+
+    .image-upload-box.explanation-box {
+      border-color: #f9e2af;
+    }
+
+    .preview-container {
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      background: #2b2b3d;
+      padding: 10px;
+      border-radius: 6px;
+    }
+
+    .preview-container img {
+      max-height: 95px;
+      border-radius: 6px;
+      border: 1px solid #45475a;
+    }
+
+    .options-builder {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .option-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .option-row input[type="radio"] {
+      width: 20px;
+      height: 20px;
+      accent-color: #a6e3a1;
+      cursor: pointer;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 11px 18px;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+      user-select: none;
+    }
+
+    .btn-primary { background-color: #a6e3a1; color: #11111b; }
+    .btn-primary:hover { background-color: #94e2d5; }
+    .btn-secondary { background-color: #89b4fa; color: #11111b; }
+    .btn-secondary:hover { background-color: #74c7ec; }
+    .btn-warning { background-color: #f9e2af; color: #11111b; }
+    .btn-warning:hover { background-color: #fab387; }
+    .btn-danger { background-color: #f38ba8; color: #11111b; }
+    .btn-ghost { background-color: #313244; color: #cdd6f4; border: 1px solid #45475a; }
+    .btn-ghost:hover { background-color: #45475a; }
+
+    .actions-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .question-item {
+      background-color: #1e1e2e;
+      border: 1px solid #45475a;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .question-item-title { font-weight: bold; color: #89b4fa; }
+
+    .badge {
+      display: inline-block;
+      font-size: 0.8rem;
+      padding: 3px 9px;
+      border-radius: 4px;
+      margin-left: 8px;
+      background-color: #45475a;
+      color: #cdd6f4;
+    }
+
+    .filter-box {
+      background-color: #1e1e2e;
+      border: 1px solid #45475a;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .players-setup-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .player-setup-card {
+      background-color: #2b2b3d;
+      padding: 12px;
+      border-radius: 8px;
+      border-left: 5px solid #89b4fa;
+    }
+
+    /* =========================================================
+       PALCO DA ROLETA EM TELA CHEIA
+       ========================================================= */
+    #projection-stage {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: radial-gradient(circle at center, #1e1e30 0%, #0d0d16 100%);
+      z-index: 900;
+      display: flex;
+      flex-direction: column;
+      padding: 14px 26px;
+      overflow: hidden;
+    }
+
+    .stage-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #313244;
+      margin-bottom: 10px;
+      flex-shrink: 0;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .stage-controls {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    /* Painel Dinâmico de Participantes (1, 2, 3 ou 4) */
+    .players-arena-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 10px;
+      flex-shrink: 0;
+    }
+
+    .player-card-btn {
+      background-color: #181825;
+      border: 2px solid #313244;
+      border-radius: 10px;
+      padding: 10px 14px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .player-card-btn.selected-turn {
+      transform: translateY(-3px);
+      background-color: #252538;
+    }
+
+    .player-card-btn[data-player="0"].selected-turn { border-color: #89b4fa; box-shadow: 0 0 18px #89b4fa66; }
+    .player-card-btn[data-player="1"].selected-turn { border-color: #cba6f7; box-shadow: 0 0 18px #cba6f766; }
+    .player-card-btn[data-player="2"].selected-turn { border-color: #f9e2af; box-shadow: 0 0 18px #f9e2af66; }
+    .player-card-btn[data-player="3"].selected-turn { border-color: #94e2d5; box-shadow: 0 0 18px #94e2d566; }
+
+    .player-info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+
+    .player-identity {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: bold;
+      font-size: 1.05rem;
+      color: #cdd6f4;
+    }
+
+    .shape-icon { font-size: 1.35rem; line-height: 1; }
+
+    .player-score-pill {
+      font-size: 0.85rem;
+      font-weight: bold;
+      padding: 2px 9px;
+      border-radius: 12px;
+      background-color: #313244;
+      color: #fff;
+    }
+
+    .turn-indicator {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      font-weight: bold;
+      padding: 2px 7px;
+      border-radius: 4px;
+      display: none;
+    }
+
+    .player-card-btn.selected-turn .turn-indicator { display: inline-block; }
+
+    .player-track-bg {
+      width: 100%;
+      height: 10px;
+      background-color: #11111b;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid #313244;
+    }
+
+    .player-track-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 6px;
+      transition: width 0.4s ease;
+    }
+
+    /* =========================================================
+       ÁREA CENTRAL DA ROLETA GIRATÓRIA
+       ========================================================= */
+    .wheel-arena {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      min-height: 0;
+    }
+
+    .wheel-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    #wheel-canvas {
+      max-width: 70vh;
+      max-height: 70vh;
+      width: 560px;
+      height: 560px;
+      filter: drop-shadow(0 16px 38px rgba(0, 0, 0, 0.85));
+    }
+
+    .wheel-pointer-left {
+      position: absolute;
+      left: -38px;
+      top: 50%;
+      transform: translateY(-50%) rotate(0deg);
+      transform-origin: 15% 50%;
+      width: 68px;
+      height: 46px;
+      background: linear-gradient(135deg, #fff3b0, #f5c211 55%, #d97706);
+      clip-path: polygon(0% 18%, 68% 18%, 100% 50%, 68% 82%, 0% 82%);
+      filter: drop-shadow(3px 5px 8px rgba(0,0,0,0.75));
+      z-index: 10;
+      pointer-events: none;
+      transition: transform 0.06s ease-out;
+    }
+
+    .wheel-status-banner {
+      margin-top: 12px;
+      font-size: 1.22rem;
+      font-weight: bold;
+      color: #f9e2af;
+      background: rgba(24, 24, 37, 0.92);
+      padding: 10px 28px;
+      border-radius: 30px;
+      border: 2px solid #45475a;
+      text-align: center;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+    }
+
+    /* =========================================================
+       MENU SUSPENSO (MODAL DA QUESTÃO + CONTAGEM REGRESSIVA)
+       ========================================================= */
+    .question-dropdown-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(11, 11, 18, 0.88);
+      backdrop-filter: blur(5px);
+      z-index: 1050;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      animation: dropIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes dropIn {
+      from { opacity: 0; transform: translateY(-45px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    #confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 1150;
+    }
+
+    .question-modal-card {
+      background-color: #1e1e2e;
+      border: 2px solid #89b4fa;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 1200px;
+      max-height: 92vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .modal-q-topbar {
+      background-color: #181825;
+      padding: 14px 24px;
+      border-bottom: 2px solid #313244;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .modal-q-body {
+      padding: 24px;
+      overflow-y: auto;
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .modal-q-body.no-image {
+      grid-template-columns: 1fr;
+      max-width: 850px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .modal-media-box {
+      background-color: #11111b;
+      border: 1px solid #313244;
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .modal-media-box img {
+      max-width: 100%;
+      max-height: 55vh;
+      object-fit: contain;
+      border-radius: 8px;
+      cursor: zoom-in;
+    }
+
+    .question-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    #quiz-enunciado {
+      font-size: 1.28rem;
+      line-height: 1.48;
+      color: #cdd6f4;
+      flex: 1;
+      white-space: pre-line;
+    }
+
+    .circular-timer-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex-shrink: 0;
+      user-select: none;
+      cursor: pointer;
+    }
+
+    .circular-timer {
+      position: relative;
+      width: 110px;
+      height: 110px;
+      background-color: #181825;
+      border-radius: 50%;
+      border: 2px solid #333344;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .circular-timer svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .circular-timer circle.bg-ring { fill: none; stroke: #2a2a3c; stroke-width: 7; }
+    .circular-timer circle.progress-ring {
+      fill: none;
+      stroke: #00ffcc;
+      stroke-width: 7;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 0.3s linear, stroke 0.3s ease;
+    }
+
+    .timer-display-text {
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: #ffffff;
+      z-index: 2;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .timer-display-text.expired { color: #ff4d4d; }
+
+    .timer-controls-mini { display: flex; gap: 6px; margin-top: 6px; }
+
+    .mini-btn {
+      background: #313244;
+      color: #a6adc8;
+      border: none;
+      border-radius: 4px;
+      padding: 3px 8px;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn-option {
+      background-color: #313244;
+      color: #cdd6f4;
+      border: 2px solid #45475a;
+      border-radius: 10px;
+      padding: 13px 18px;
+      font-size: 1.06rem;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-option:hover:not(:disabled) {
+      background-color: #45475a;
+      border-color: #89b4fa;
+      transform: translateX(4px);
+    }
+
+    .btn-option:disabled { cursor: not-allowed; }
+    .btn-option.correct { background-color: #2e7d32 !important; border-color: #66bb6a !important; color: #fff !important; font-weight: bold; }
+    .btn-option.incorrect { background-color: #c62828 !important; border-color: #ef5350 !important; color: #fff !important; }
+
+    .feedback-banner {
+      margin-top: 14px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-weight: bold;
+      text-align: center;
+      font-size: 1rem;
+    }
+
+    .feedback-error { background-color: rgba(198, 40, 40, 0.25); border: 1px solid #ef5350; color: #ff8a80; }
+    .feedback-success { background-color: rgba(46, 125, 50, 0.25); border: 1px solid #66bb6a; color: #b9f6ca; }
+    .feedback-warning { background-color: rgba(249, 226, 175, 0.2); border: 1px solid #f9e2af; color: #f9e2af; }
+
+    .modal-q-footer {
+      background-color: #181825;
+      padding: 14px 24px;
+      border-top: 1px solid #313244;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-zoom {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(10, 10, 18, 0.96);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 1200;
+      padding: 20px;
+      cursor: zoom-out;
+    }
+
+    .modal-zoom img {
+      max-width: 94vw;
+      max-height: 88vh;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+
+    .podium-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 25px 0;
+      text-align: left;
+    }
+
+    .podium-item {
+      background-color: #181825;
+      border: 1px solid #45475a;
+      padding: 14px 20px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1.15rem;
+      font-weight: bold;
+    }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 850px) {
+      .modal-q-body { grid-template-columns: 1fr; }
+      #wheel-canvas { width: 350px; height: 350px; }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="confetti-canvas"></canvas>
+
+  <div class="container">
+    <header>
+      <h1>Roleta Interativa de Quizzes - Edição Palco</h1>
+      <p>De 1 a 4 participantes — ideal tanto para estudar sozinho quanto para competições em turma</p>
+    </header>
+
+    <div class="tabs">
+      <button type="button" class="tab-btn active" id="tab-editor" onclick="alternarModo('editor')">1. Criar & Gerenciar Questões</button>
+      <button type="button" class="tab-btn" id="tab-player" onclick="alternarModo('player')">2. Configurar & Abrir Roleta</button>
+    </div>
+
+    <!-- MODO 1: EDITOR DE QUESTÕES -->
+    <div id="section-editor">
+      <div class="card">
+        <h2>Adicionar Nova Questão à Roleta</h2>
+        <br>
+        <form id="form-questao" onsubmit="salvarQuestao(event)">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="field-label" for="categoria">Disciplina / Categoria:</label>
+              <select id="categoria" class="form-control" required>
+                <option value="Matemática">Matemática</option>
+                <option value="Física">Física</option>
+                <option value="Programação">Programação</option>
+                <option value="Geral">Geral</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="field-label" for="tempo-questao-individual">Tempo desta Questão em segundos (Opcional):</label>
+              <input type="number" id="tempo-questao-individual" class="form-control" min="0" placeholder="Ex: 45 (vazio = usar padrão)">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="field-label" for="enunciado">Enunciado da Questão (Aparece na fatia da roleta e no menu suspenso):</label>
+            <textarea id="enunciado" class="form-control" placeholder="Ex: Quanto é 10% de 50 reais?" required></textarea>
+          </div>
+
+          <div class="form-group image-upload-box">
+            <label class="field-label">1. Imagem / Gráfico da Questão (Opcional):</label>
+            <div class="form-row" style="align-items: center; margin-top: 8px;">
+              <div>
+                <input type="file" id="imagem-arquivo" accept="image/*" style="display:none;" onchange="lerArquivoImagem(this, 'questao')">
+                <button type="button" class="btn btn-secondary" onclick="document.getElementById('imagem-arquivo').click()">
+                  Selecionar Foto do Computador
+                </button>
+              </div>
+              <div style="flex: 1;">
+                <input type="text" id="imagem-url" class="form-control" placeholder="Ou digite o caminho/nome (ex: foto1.png)" oninput="digitarUrlImagem('questao')">
+              </div>
+            </div>
+            <div id="preview-box" class="preview-container hidden">
+              <img id="img-preview" src="" alt="Pré-visualização">
+              <button type="button" class="btn btn-danger" style="padding: 5px 10px; font-size: 0.8rem;" onclick="limparImagemSelecionada('questao')">Remover</button>
+            </div>
+          </div>
+
+          <div class="form-group image-upload-box explanation-box">
+            <label class="field-label" style="color: #f9e2af;">2. Imagem de Explicação / Resolução (Opcional):</label>
+            <div class="form-row" style="align-items: center; margin-top: 8px;">
+              <div>
+                <input type="file" id="explicacao-arquivo" accept="image/*" style="display:none;" onchange="lerArquivoImagem(this, 'explicacao')">
+                <button type="button" class="btn btn-warning" onclick="document.getElementById('explicacao-arquivo').click()">
+                  Selecionar Foto de Explicação
+                </button>
+              </div>
+              <div style="flex: 1;">
+                <input type="text" id="explicacao-url" class="form-control" placeholder="Ou digite o caminho/nome da resolução" oninput="digitarUrlImagem('explicacao')">
+              </div>
+            </div>
+            <div id="preview-exp-box" class="preview-container hidden">
+              <img id="img-exp-preview" src="" alt="Pré-visualização">
+              <button type="button" class="btn btn-danger" style="padding: 5px 10px; font-size: 0.8rem;" onclick="limparImagemSelecionada('explicacao')">Remover</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="field-label">Alternativas (Marque a bolinha da opção correta):</label>
+            <div class="options-builder">
+              <div class="option-row">
+                <input type="radio" name="opcao-correta" value="0" checked>
+                <input type="text" class="form-control opt-input" placeholder="Opção A" required>
+              </div>
+              <div class="option-row">
+                <input type="radio" name="opcao-correta" value="1">
+                <input type="text" class="form-control opt-input" placeholder="Opção B" required>
+              </div>
+              <div class="option-row">
+                <input type="radio" name="opcao-correta" value="2">
+                <input type="text" class="form-control opt-input" placeholder="Opção C" required>
+              </div>
+              <div class="option-row">
+                <input type="radio" name="opcao-correta" value="3">
+                <input type="text" class="form-control opt-input" placeholder="Opção D" required>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary">Salvar Questão no Banco</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>Banco de Questões (<span id="total-questoes-count">0</span>)</h2>
+        <br>
+        <div id="lista-questoes"></div>
+
+        <div class="actions-bar">
+          <button type="button" class="btn btn-danger" onclick="limparBanco()">Limpar Todas</button>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <input type="file" id="file-import" accept=".json,application/json,text/plain" style="display:none;" onchange="importarJSON(this)">
+            <button type="button" class="btn btn-secondary" onclick="document.getElementById('file-import').click()">Importar Backup (JSON)</button>
+            <button type="button" class="btn btn-secondary" onclick="exportarJSON()">Baixar Backup (JSON)</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODO 2: CONFIGURAR ROLETA -->
+    <div id="section-player" class="hidden">
+      <div class="card">
+        <h2>Configurar Roleta & Participantes</h2>
+        <br>
+        <div class="filter-box">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="field-label" for="filtro-disciplina">Disciplina:</label>
+              <select id="filtro-disciplina" class="form-control">
+                <option value="Todas">Todas as Disciplinas</option>
+                <option value="Matemática">Matemática</option>
+                <option value="Física">Física</option>
+                <option value="Programação">Programação</option>
+                <option value="Geral">Geral</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="field-label" for="qtd-questoes">Fatias de Questões na Roleta:</label>
+              <select id="qtd-questoes" class="form-control">
+                <option value="6">6 Questões</option>
+                <option value="8">8 Questões</option>
+                <option value="10" selected>10 Questões</option>
+                <option value="12">12 Questões</option>
+                <option value="16">16 Questões</option>
+                <option value="999">Todas as disponíveis</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="field-label" for="tempo-padrao">Tempo por Questão (segundos):</label>
+              <input type="number" id="tempo-padrao" class="form-control" value="30" min="0">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="field-label" for="fatias-especiais">Fatias Especiais:</label>
+              <select id="fatias-especiais" class="form-control">
+                <option value="sim" selected>Incluir "Passou a vez!" e "Rode outra vez!"</option>
+                <option value="nao">Apenas fatias com questões</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="field-label" for="qtd-equipes">Número de Participantes / Equipes:</label>
+              <select id="qtd-equipes" class="form-control" onchange="atualizarCamposEquipesSetup()">
+                <option value="1">1 Participante (Estudo Individual)</option>
+                <option value="2">2 Equipes</option>
+                <option value="3">3 Equipes</option>
+                <option value="4" selected>4 Equipes</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-top: 10px;">
+            <label class="field-label">Nomes dos Participantes / Equipes:</label>
+            <div class="players-setup-grid">
+              <div class="player-setup-card" id="setup-card-0" style="border-left-color: #89b4fa;">
+                <label class="field-label" style="color: #89b4fa; font-size: 0.9rem;">▲ Triângulo</label>
+                <input type="text" id="nome-p0" class="form-control" value="Triângulo">
+              </div>
+              <div class="player-setup-card" id="setup-card-1" style="border-left-color: #cba6f7;">
+                <label class="field-label" style="color: #cba6f7; font-size: 0.9rem;">■ Quadrado</label>
+                <input type="text" id="nome-p1" class="form-control" value="Quadrado">
+              </div>
+              <div class="player-setup-card" id="setup-card-2" style="border-left-color: #f9e2af;">
+                <label class="field-label" style="color: #f9e2af; font-size: 0.9rem;">● Círculo</label>
+                <input type="text" id="nome-p2" class="form-control" value="Círculo">
+              </div>
+              <div class="player-setup-card" id="setup-card-3" style="border-left-color: #94e2d5;">
+                <label class="field-label" style="color: #94e2d5; font-size: 0.9rem;">◆ Losango</label>
+                <input type="text" id="nome-p3" class="form-control" value="Losango">
+              </div>
+            </div>
+          </div>
+
+          <button type="button" class="btn btn-primary" style="width: 100%; margin-top: 10px; font-size: 1.1rem; padding: 15px;" onclick="iniciarRoleta()">
+            Projetar Roleta em Tela Cheia
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       PALCO DA ROLETA EM TELA CHEIA
+       ========================================================= -->
+  <div id="projection-stage" class="hidden">
+    <div class="stage-topbar">
+      <div>
+        <span id="roleta-contador" style="font-weight: bold; font-size: 1.15rem; color: #89b4fa;">Questões restantes: 10</span>
+      </div>
+      <div class="stage-controls">
+        <button type="button" class="btn btn-primary" id="btn-girar-topo" onclick="girarRoleta()">Girar Roleta (Espaço)</button>
+        <button type="button" class="btn btn-ghost" id="btn-som" onclick="alternarSom()">Som: ON</button>
+        <button type="button" class="btn btn-secondary" onclick="alternarTelaCheiaNativa()">Tela Cheia (F11)</button>
+        <button type="button" class="btn btn-danger" onclick="encerrarProjecao()">Sair</button>
+      </div>
+    </div>
+
+    <!-- Participantes (1 a 4) -->
+    <div class="players-arena-bar" id="players-arena-bar">
+      <button type="button" class="player-card-btn selected-turn" id="arena-card-0" data-player="0" onclick="selecionarParticipante(0)">
+        <div class="player-info-row">
+          <div class="player-identity">
+            <span class="shape-icon" style="color: #89b4fa;">▲</span>
+            <span id="label-p0">Triângulo</span>
+          </div>
+          <div>
+            <span class="turn-indicator" style="background: #89b4fa; color: #11111b;">Na Vez</span>
+            <span class="player-score-pill" id="score-p0">0</span>
+          </div>
+        </div>
+        <div class="player-track-bg"><div class="player-track-fill" id="bar-p0" style="background-color: #89b4fa;"></div></div>
+      </button>
+
+      <button type="button" class="player-card-btn" id="arena-card-1" data-player="1" onclick="selecionarParticipante(1)">
+        <div class="player-info-row">
+          <div class="player-identity">
+            <span class="shape-icon" style="color: #cba6f7;">■</span>
+            <span id="label-p1">Quadrado</span>
+          </div>
+          <div>
+            <span class="turn-indicator" style="background: #cba6f7; color: #11111b;">Na Vez</span>
+            <span class="player-score-pill" id="score-p1">0</span>
+          </div>
+        </div>
+        <div class="player-track-bg"><div class="player-track-fill" id="bar-p1" style="background-color: #cba6f7;"></div></div>
+      </button>
+
+      <button type="button" class="player-card-btn" id="arena-card-2" data-player="2" onclick="selecionarParticipante(2)">
+        <div class="player-info-row">
+          <div class="player-identity">
+            <span class="shape-icon" style="color: #f9e2af;">●</span>
+            <span id="label-p2">Círculo</span>
+          </div>
+          <div>
+            <span class="turn-indicator" style="background: #f9e2af; color: #11111b;">Na Vez</span>
+            <span class="player-score-pill" id="score-p2">0</span>
+          </div>
+        </div>
+        <div class="player-track-bg"><div class="player-track-fill" id="bar-p2" style="background-color: #f9e2af;"></div></div>
+      </button>
+
+      <button type="button" class="player-card-btn" id="arena-card-3" data-player="3" onclick="selecionarParticipante(3)">
+        <div class="player-info-row">
+          <div class="player-identity">
+            <span class="shape-icon" style="color: #94e2d5;">◆</span>
+            <span id="label-p3">Losango</span>
+          </div>
+          <div>
+            <span class="turn-indicator" style="background: #94e2d5; color: #11111b;">Na Vez</span>
+            <span class="player-score-pill" id="score-p3">0</span>
+          </div>
+        </div>
+        <div class="player-track-bg"><div class="player-track-fill" id="bar-p3" style="background-color: #94e2d5;"></div></div>
+      </button>
+    </div>
+
+    <!-- Centro: Roleta Giratória com Aro de Luzes e Pinos -->
+    <div class="wheel-arena" id="wheel-arena">
+      <div class="wheel-wrapper" onclick="girarRoleta()" title="Clique na roleta ou aperte Espaço para girar!">
+        <div class="wheel-pointer-left" id="wheel-pointer"></div>
+        <canvas id="wheel-canvas" width="640" height="640"></canvas>
+      </div>
+      <div id="wheel-status-banner" class="wheel-status-banner">
+        Clique na roleta ou aperte ESPAÇO para girar!
+      </div>
+    </div>
+
+    <!-- Tela Final / Pódio -->
+    <div id="result-screen" class="hidden" style="margin: auto; text-align: center; background: #1e1e2e; padding: 40px 50px; border-radius: 16px; border: 2px solid #45475a; max-width: 650px; width: 100%;">
+      <h1 style="color: #a6e3a1; font-size: 2.2rem; margin-bottom: 10px;">Todas as Questões Concluídas!</h1>
+      <p style="color: #a6adc8; font-size: 1.1rem;" id="result-subtitle">Classificação Final:</p>
+      <div id="podium-container" class="podium-list"></div>
+      <button type="button" class="btn btn-primary" style="font-size: 1.1rem; padding: 14px 30px;" onclick="encerrarProjecao()">Voltar às Configurações</button>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       MENU SUSPENSO (MODAL DA QUESTÃO + CONTAGEM REGRESSIVA)
+       ========================================================= -->
+  <div id="question-dropdown-overlay" class="question-dropdown-overlay hidden">
+    <div class="question-modal-card">
+      <div class="modal-q-topbar">
+        <div>
+          <span id="modal-player-turn" style="font-weight: bold; font-size: 1.1rem; color: #89b4fa;">Vez de: ▲ Triângulo</span>
+          <span id="quiz-categoria" class="badge">Matemática</span>
+        </div>
+
+        <div style="display: flex; gap: 8px;">
+          <input type="file" id="explicacao-ao-vivo-input" accept="image/*" style="display:none;" onchange="carregarExplicacaoAoVivo(this)">
+          <button type="button" class="btn btn-warning hidden" id="btn-ver-explicacao" onclick="abrirExplicacaoQuestao()">
+            Projetar Explicação
+          </button>
+          <button type="button" class="btn btn-ghost" onclick="document.getElementById('explicacao-ao-vivo-input').click()">
+            + Imagem Explicação
+          </button>
+        </div>
+      </div>
+
+      <div id="modal-q-body" class="modal-q-body">
+        <div id="quiz-media-box" class="modal-media-box">
+          <img id="quiz-image" src="" alt="Imagem da questão" onclick="abrirZoomImagem()">
+          <div style="font-size: 0.8rem; color: #a6adc8; margin-top: 6px;">Clique na imagem para ampliar 100%</div>
+        </div>
+
+        <div>
+          <div class="question-header-row">
+            <div id="quiz-enunciado"></div>
+
+            <div id="circular-timer-container" class="circular-timer-wrapper" title="Duplo clique para editar tempo | Botão direito para pausar">
+              <div class="circular-timer" ondblclick="ajustarTempoAoVivo()" oncontextmenu="togglePausaTimer(event)">
+                <svg viewBox="0 0 130 130">
+                  <circle class="bg-ring" cx="65" cy="65" r="56"></circle>
+                  <circle id="timer-progress-ring" class="progress-ring" cx="65" cy="65" r="56"></circle>
+                </svg>
+                <div id="timer-display-text" class="timer-display-text">00:30</div>
+              </div>
+              <div class="timer-controls-mini">
+                <button type="button" class="mini-btn" onclick="togglePausaTimer()" id="btn-pausa-timer">Pausar</button>
+                <button type="button" class="mini-btn" onclick="ajustarTempoAoVivo()">Ajustar</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="options-grid" id="quiz-options"></div>
+          <div id="feedback-msg" class="feedback-banner hidden"></div>
+        </div>
+      </div>
+
+      <div class="modal-q-footer">
+        <span style="color: #a6adc8; font-size: 0.9rem;">Responda ou aguarde o fim do tempo para voltar à roleta.</span>
+        <button type="button" class="btn btn-primary hidden" id="btn-voltar-roleta" onclick="fecharMenuQuestao()">
+          Voltar para a Roleta &rarr;
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Zoom / Explicação -->
+  <div id="modal-zoom" class="modal-zoom hidden" onclick="fecharZoomImagem()">
+    <div style="position: absolute; top: 18px; right: 25px; left: 25px; display: flex; justify-content: space-between; pointer-events: none;">
+      <span id="modal-label" style="background: #f9e2af; color: #11111b; padding: 6px 14px; border-radius: 6px; font-weight: bold;">Visualização</span>
+      <button type="button" style="pointer-events: auto; background: #f38ba8; color: #11111b; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer;" onclick="fecharZoomImagem()">Fechar</button>
+    </div>
+    <img id="img-modal-target" src="" alt="Ampliada">
+  </div>
+
+  <script>
+    const STORAGE_KEY = "roleta_quiz_banco_v2";
+    let bancoQuestoes = [];
+    let fatiasRoleta = [];
+    let fatiaSorteadaAtual = null;
+    let indiceFatiaSorteada = -1;
+
+    let totalQuestoesNaRoleta = 0;
+    let questoesConcluidas = 0;
+
+    const CORES_FATIAS = [
+      ["#84e398", "#58b86d"], // Verde
+      ["#f2a057", "#d47626"], // Laranja
+      ["#f7ec7e", "#d6c845"], // Amarelo
+      ["#d469ed", "#a838c2"], // Roxo
+      ["#6c95f2", "#436bd1"], // Azul
+      ["#ed689b", "#c93c72"]  // Rosa
+    ];
+
+    let anguloAtual = 0;
+    let girando = false;
+    let ultimoIndiceTick = -1;
+    let faseLuzes = 0;
+    let loopLuzesInterval = null;
+
+    let qtdEquipesAtivas = 4;
+    let participantes = [
+      { id: 0, nome: "Triângulo", icone: "▲", cor: "#89b4fa", acertos: 0 },
+      { id: 1, nome: "Quadrado",  icone: "■", cor: "#cba6f7", acertos: 0 },
+      { id: 2, nome: "Círculo",   icone: "●", cor: "#f9e2af", acertos: 0 },
+      { id: 3, nome: "Losango",   icone: "◆", cor: "#94e2d5", acertos: 0 }
+    ];
+    let participanteAtivo = 0;
+
+    let imagemAtualBase64 = "";
+    let explicacaoAtualBase64 = "";
+
+    let tempoPadraoPartida = 30;
+    let tempoTotalAtual = 30;
+    let tempoRestante = 30;
+    let timerInterval = null;
+    let timerPausado = false;
+    let somAtivo = true;
+    let rodadaFinalizada = false;
+
+    const CIRCUNFERENCIA = 2 * Math.PI * 56;
+    let audioCtx = null;
+
+    function tocarSom(freq, duracaoMs, tipo = 'sine', volume = 0.1) {
+      if (!somAtivo) return;
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = tipo;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duracaoMs / 1000);
+      } catch (e) {}
+    }
+
+    function tocarFanfarraVitoria() {
+      if (!somAtivo) return;
+      const notas = [523.25, 659.25, 783.99, 1046.50];
+      notas.forEach((n, idx) => {
+        setTimeout(() => tocarSom(n, 220, 'triangle', 0.14), idx * 110);
+      });
+    }
+
+    function alternarSom() {
+      somAtivo = !somAtivo;
+      document.getElementById("btn-som").innerText = somAtivo ? "Som: ON" : "Som: OFF";
+    }
+
+    function salvarNoNavegador() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(bancoQuestoes));
+      } catch (e) {}
+    }
+
+    function carregarDoNavegador() {
+      try {
+        const salvo = localStorage.getItem(STORAGE_KEY);
+        if (salvo) {
+          const parsed = JSON.parse(salvo);
+          if (Array.isArray(parsed)) bancoQuestoes = parsed;
+        }
+      } catch (e) {}
+    }
+
+    window.onload = () => {
+      const ring = document.getElementById("timer-progress-ring");
+      ring.style.strokeDasharray = `${CIRCUNFERENCIA} ${CIRCUNFERENCIA}`;
+      ring.style.strokeDashoffset = 0;
+      carregarDoNavegador();
+      atualizarListaQuestoes();
+    };
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") fecharZoomImagem();
+      if (e.code === "Space") {
+        const palcoVisivel = !document.getElementById("projection-stage").classList.contains("hidden");
+        const modalOculto = document.getElementById("question-dropdown-overlay").classList.contains("hidden");
+        const resultadoOculto = document.getElementById("result-screen").classList.contains("hidden");
+        if (palcoVisivel && modalOculto && resultadoOculto) {
+          e.preventDefault();
+          girarRoleta();
+        }
+      }
+    });
+
+    /* =========================================================
+       EDITOR E UPLOAD DE FOTOS
+       ========================================================= */
+    function lerArquivoImagem(inputElement, tipo) {
+      if (!inputElement.files || inputElement.files.length === 0) return;
+      const leitor = new FileReader();
+      leitor.onload = function(evento) {
+        if (tipo === 'questao') {
+          imagemAtualBase64 = evento.target.result;
+          document.getElementById("imagem-url").value = "";
+          document.getElementById("img-preview").src = imagemAtualBase64;
+          document.getElementById("preview-box").classList.remove("hidden");
+        } else {
+          explicacaoAtualBase64 = evento.target.result;
+          document.getElementById("explicacao-url").value = "";
+          document.getElementById("img-exp-preview").src = explicacaoAtualBase64;
+          document.getElementById("preview-exp-box").classList.remove("hidden");
+        }
+      };
+      leitor.readAsDataURL(inputElement.files[0]);
+    }
+
+    function digitarUrlImagem(tipo) {
+      if (tipo === 'questao') {
+        imagemAtualBase64 = "";
+        const caminho = document.getElementById("imagem-url").value.trim();
+        if (caminho !== "") {
+          document.getElementById("img-preview").src = caminho;
+          document.getElementById("preview-box").classList.remove("hidden");
+        } else {
+          document.getElementById("preview-box").classList.add("hidden");
+        }
+      } else {
+        explicacaoAtualBase64 = "";
+        const caminho = document.getElementById("explicacao-url").value.trim();
+        if (caminho !== "") {
+          document.getElementById("img-exp-preview").src = caminho;
+          document.getElementById("preview-exp-box").classList.remove("hidden");
+        } else {
+          document.getElementById("preview-exp-box").classList.add("hidden");
+        }
+      }
+    }
+
+    function limparImagemSelecionada(tipo) {
+      if (tipo === 'questao') {
+        imagemAtualBase64 = "";
+        document.getElementById("imagem-arquivo").value = "";
+        document.getElementById("imagem-url").value = "";
+        document.getElementById("preview-box").classList.add("hidden");
+      } else {
+        explicacaoAtualBase64 = "";
+        document.getElementById("explicacao-arquivo").value = "";
+        document.getElementById("explicacao-url").value = "";
+        document.getElementById("preview-exp-box").classList.add("hidden");
+      }
+    }
+
+    function alternarModo(modo) {
+      const btnEditor = document.getElementById("tab-editor");
+      const btnPlayer = document.getElementById("tab-player");
+      const secEditor = document.getElementById("section-editor");
+      const secPlayer = document.getElementById("section-player");
+
+      if (modo === 'editor') {
+        btnEditor.classList.add("active");
+        btnPlayer.classList.remove("active");
+        secEditor.classList.remove("hidden");
+        secPlayer.classList.add("hidden");
+      } else {
+        if (bancoQuestoes.length === 0) {
+          alert("Adicione ou importe pelo menos 1 questão no banco antes de abrir a roleta!");
+          return;
+        }
+        btnPlayer.classList.add("active");
+        btnEditor.classList.remove("active");
+        secPlayer.classList.remove("hidden");
+        secEditor.classList.add("hidden");
+      }
+    }
+
+    function atualizarCamposEquipesSetup() {
+      const qtd = parseInt(document.getElementById("qtd-equipes").value);
+      for (let i = 0; i < 4; i++) {
+        document.getElementById(`setup-card-${i}`).classList.toggle("hidden", i >= qtd);
+      }
+    }
+
+    function salvarQuestao(e) {
+      e.preventDefault();
+      const categoria = document.getElementById("categoria").value;
+      const tempoIndiv = document.getElementById("tempo-questao-individual").value;
+      const enunciado = document.getElementById("enunciado").value;
+      const urlQuestao = document.getElementById("imagem-url").value.trim();
+      const urlExplicacao = document.getElementById("explicacao-url").value.trim();
+      const inputsOpt = document.querySelectorAll(".opt-input");
+      const radioCorreta = document.querySelector('input[name="opcao-correta"]:checked').value;
+
+      const opcoes = Array.from(inputsOpt).map(input => input.value);
+      const imagemFinal = imagemAtualBase64 !== "" ? imagemAtualBase64 : urlQuestao;
+      const explicacaoFinal = explicacaoAtualBase64 !== "" ? explicacaoAtualBase64 : urlExplicacao;
+
+      const novaQuestao = {
+        categoria,
+        enunciado,
+        imagem: imagemFinal,
+        explicacao: explicacaoFinal,
+        opcoes,
+        correta: parseInt(radioCorreta)
+      };
+
+      if (tempoIndiv !== "" && parseInt(tempoIndiv) > 0) {
+        novaQuestao.tempo = parseInt(tempoIndiv);
+      }
+
+      bancoQuestoes.push(novaQuestao);
+      salvarNoNavegador();
+      document.getElementById("enunciado").value = "";
+      document.getElementById("tempo-questao-individual").value = "";
+      limparImagemSelecionada('questao');
+      limparImagemSelecionada('explicacao');
+      inputsOpt.forEach(input => input.value = "");
+      atualizarListaQuestoes();
+    }
+
+    function atualizarListaQuestoes() {
+      const elLista = document.getElementById("lista-questoes");
+      document.getElementById("total-questoes-count").innerText = bancoQuestoes.length;
+      elLista.innerHTML = "";
+
+      bancoQuestoes.forEach((q, i) => {
+        const item = document.createElement("div");
+        item.classList.add("question-item");
+        const temMidia = q.imagem ? " 📷" : "";
+        item.innerHTML = `
+          <div>
+            <span class="question-item-title">${i + 1}. ${q.enunciado}${temMidia}</span>
+            <span class="badge">${q.categoria}</span>
+          </div>
+          <button type="button" class="btn btn-danger" style="padding: 6px 12px; font-size: 0.85rem;" onclick="removerQuestao(${i})">Excluir</button>
+        `;
+        elLista.appendChild(item);
+      });
+
+      if (window.MathJax) MathJax.typesetPromise();
+    }
+
+    function removerQuestao(index) {
+      bancoQuestoes.splice(index, 1);
+      salvarNoNavegador();
+      atualizarListaQuestoes();
+    }
+
+    function limparBanco() {
+      if (confirm("Tem certeza que deseja apagar todas as questões?")) {
+        bancoQuestoes = [];
+        salvarNoNavegador();
+        atualizarListaQuestoes();
+      }
+    }
+
+    function exportarJSON() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(bancoQuestoes, null, 2));
+      const a = document.createElement('a');
+      a.setAttribute("href", dataStr);
+      a.setAttribute("download", "roleta_questoes.json");
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
+    function importarJSON(inputElement) {
+      if (!inputElement.files || inputElement.files.length === 0) return;
+      const file = inputElement.files[0];
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          let conteudo = e.target.result.replace(/^\uFEFF/, "").trim();
+          const dados = JSON.parse(conteudo);
+          const lista = Array.isArray(dados) ? dados : (Array.isArray(dados.questoes) ? dados.questoes : null);
+
+          if (lista && lista.length > 0) {
+            const normalizadas = lista.map(q => ({
+              categoria: q.categoria || "Geral",
+              enunciado: q.enunciado || "Questão sem enunciado",
+              imagem: q.imagem || "",
+              explicacao: q.explicacao || "",
+              opcoes: Array.isArray(q.opcoes) ? q.opcoes : ["A", "B", "C", "D"],
+              correta: typeof q.correta === "number" ? q.correta : (parseInt(q.correta) || 0),
+              tempo: q.tempo ? parseInt(q.tempo) : undefined
+            }));
+
+            bancoQuestoes = bancoQuestoes.concat(normalizadas);
+            salvarNoNavegador();
+            atualizarListaQuestoes();
+            alert(`Sucesso! ${normalizadas.length} questão(ões) importada(s)!`);
+          } else {
+            alert("O arquivo foi lido, mas não contém nenhuma questão válida.");
+          }
+        } catch (err) {
+          alert("Não foi possível ler o arquivo JSON.\nDetalhe: " + err.message);
+        }
+        inputElement.value = "";
+      };
+      reader.readAsText(file, "UTF-8");
+    }
+
+    /* =========================================================
+       CONTROLE DE TELA CHEIA E PARTICIPANTES (1 A 4)
+       ========================================================= */
+    function alternarTelaCheiaNativa() {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {});
+      else if (document.exitFullscreen) document.exitFullscreen();
+    }
+
+    function encerrarProjecao() {
+      clearInterval(timerInterval);
+      clearInterval(loopLuzesInterval);
+      if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(() => {});
+      document.getElementById("projection-stage").classList.add("hidden");
+      document.getElementById("question-dropdown-overlay").classList.add("hidden");
+    }
+
+    function selecionarParticipante(index) {
+      if (girando || index >= qtdEquipesAtivas) return;
+      participanteAtivo = index;
+      for (let i = 0; i < 4; i++) {
+        document.getElementById(`arena-card-${i}`).classList.toggle("selected-turn", i === index);
+      }
+      const p = participantes[participanteAtivo];
+      const prefixo = qtdEquipesAtivas === 1 ? `Estudando: ${p.icone} ${p.nome}` : `Vez de ${p.icone} ${p.nome}`;
+      document.getElementById("wheel-status-banner").innerText = `${prefixo} — Clique na roleta ou aperte ESPAÇO!`;
+    }
+
+    function atualizarPlacarEBarras() {
+      // No modo 1 participante, a meta da barra de progresso é o total de questões da roleta
+      const meta = qtdEquipesAtivas === 1
+        ? Math.max(1, totalQuestoesNaRoleta)
+        : Math.max(2, Math.ceil(totalQuestoesNaRoleta / 2));
+
+      for (let idx = 0; idx < qtdEquipesAtivas; idx++) {
+        const p = participantes[idx];
+        document.getElementById(`label-p${idx}`).innerText = p.nome;
+        document.getElementById(`score-p${idx}`).innerText = qtdEquipesAtivas === 1
+          ? `${p.acertos} / ${totalQuestoesNaRoleta}`
+          : `${p.acertos} pt${p.acertos === 1 ? '' : 's'}`;
+        document.getElementById(`bar-p${idx}`).style.width = `${Math.min(100, (p.acertos / meta) * 100)}%`;
+      }
+      const restantes = totalQuestoesNaRoleta - questoesConcluidas;
+      document.getElementById("roleta-contador").innerText = `Questões restantes na roleta: ${restantes} de ${totalQuestoesNaRoleta}`;
+    }
+
+    /* =========================================================
+       MONTAGEM E DESENHO DA ROLETA PALCO
+       ========================================================= */
+    function embaralharArray(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function iniciarRoleta() {
+      const disciplinaSel = document.getElementById("filtro-disciplina").value;
+      const qtdLimite = parseInt(document.getElementById("qtd-questoes").value);
+      const incluirEspeciais = document.getElementById("fatias-especiais").value === "sim";
+      qtdEquipesAtivas = parseInt(document.getElementById("qtd-equipes").value);
+      tempoPadraoPartida = parseInt(document.getElementById("tempo-padrao").value) || 0;
+
+      const arenaBar = document.getElementById("players-arena-bar");
+      arenaBar.style.gridTemplateColumns = `repeat(${qtdEquipesAtivas}, 1fr)`;
+
+      for (let i = 0; i < 4; i++) {
+        const card = document.getElementById(`arena-card-${i}`);
+        card.classList.toggle("hidden", i >= qtdEquipesAtivas);
+        const nomeInput = document.getElementById(`nome-p${i}`).value.trim();
+        participantes[i].nome = nomeInput || ["Triângulo", "Quadrado", "Círculo", "Losango"][i];
+        participantes[i].acertos = 0;
+      }
+
+      let filtradas = disciplinaSel === "Todas"
+        ? [...bancoQuestoes]
+        : bancoQuestoes.filter(q => q.categoria === disciplinaSel);
+
+      if (filtradas.length === 0) {
+        alert(`Não há questões cadastradas para: ${disciplinaSel}`);
+        return;
+      }
+
+      embaralharArray(filtradas);
+      const selecionadas = filtradas.slice(0, Math.min(qtdLimite, filtradas.length));
+
+      totalQuestoesNaRoleta = selecionadas.length;
+      questoesConcluidas = 0;
+
+      fatiasRoleta = selecionadas.map((q, idx) => ({
+        tipo: 'questao',
+        dados: q,
+        cores: CORES_FATIAS[idx % CORES_FATIAS.length]
+      }));
+
+      if (incluirEspeciais && fatiasRoleta.length >= 2) {
+        const meio = Math.floor(fatiasRoleta.length / 2);
+        fatiasRoleta.splice(meio, 0, { tipo: 'passou', texto: 'Passou a vez!', cores: ['#6c95f2', '#436bd1'] });
+        fatiasRoleta.push({ tipo: 'rode', texto: 'Rode outra vez!', cores: ['#d469ed', '#a838c2'] });
+      }
+
+      anguloAtual = 0;
+      girando = false;
+
+      selecionarParticipante(0);
+      atualizarPlacarEBarras();
+
+      document.getElementById("projection-stage").classList.remove("hidden");
+      document.getElementById("wheel-arena").classList.remove("hidden");
+      document.getElementById("players-arena-bar").classList.remove("hidden");
+      document.getElementById("result-screen").classList.add("hidden");
+      document.getElementById("question-dropdown-overlay").classList.add("hidden");
+
+      clearInterval(loopLuzesInterval);
+      loopLuzesInterval = setInterval(() => {
+        if (!girando && document.getElementById("question-dropdown-overlay").classList.contains("hidden")) {
+          faseLuzes = (faseLuzes + 1) % 2;
+          desenharRoleta();
+        }
+      }, 650);
+
+      document.documentElement.requestFullscreen().catch(() => {});
+      desenharRoleta();
+    }
+
+    function desenharRoleta() {
+      const canvas = document.getElementById("wheel-canvas");
+      const ctx = canvas.getContext("2d");
+      const cx = canvas.width / 2;
+      const cy = canvas.height / 2;
+      const raioAro = 308;
+      const raioExterno = 282;
+      const raioInterno = 90;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const totalFatias = fatiasRoleta.length;
+      if (totalFatias === 0) return;
+
+      // 1. Aro Externo Metálico Dourado com Luzes de Palco
+      const gradAro = ctx.createRadialGradient(cx, cy, raioExterno, cx, cy, raioAro);
+      gradAro.addColorStop(0, "#232336");
+      gradAro.addColorStop(0.5, "#3b3b54");
+      gradAro.addColorStop(1, "#181825");
+
+      ctx.beginPath();
+      ctx.arc(cx, cy, raioAro, 0, 2 * Math.PI);
+      ctx.fillStyle = gradAro;
+      ctx.fill();
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = "#f9e2af";
+      ctx.stroke();
+
+      // 24 Lâmpadas ao redor do aro
+      const numLuzes = 24;
+      for (let l = 0; l < numLuzes; l++) {
+        const angLuz = (l * 2 * Math.PI) / numLuzes;
+        const lx = cx + Math.cos(angLuz) * ((raioExterno + raioAro) / 2);
+        const ly = cy + Math.sin(angLuz) * ((raioExterno + raioAro) / 2);
+        const acesa = (l + faseLuzes) % 2 === 0;
+
+        ctx.beginPath();
+        ctx.arc(lx, ly, 5.5, 0, 2 * Math.PI);
+        ctx.fillStyle = acesa ? "#fff3b0" : "#585b70";
+        if (acesa) {
+          ctx.shadowColor = "#f9e2af";
+          ctx.shadowBlur = 10;
+        } else {
+          ctx.shadowBlur = 0;
+        }
+        ctx.fill();
+      }
+      ctx.shadowBlur = 0;
+
+      // 2. Fatias com Gradiente Radial
+      const arco = (2 * Math.PI) / totalFatias;
+
+      fatiasRoleta.forEach((fatia, i) => {
+        const angInicio = anguloAtual + i * arco;
+        const angFim = angInicio + arco;
+
+        const gradFatia = ctx.createRadialGradient(cx, cy, raioInterno, cx, cy, raioExterno);
+        gradFatia.addColorStop(0, fatia.cores[0]);
+        gradFatia.addColorStop(1, fatia.cores[1]);
+
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.arc(cx, cy, raioExterno, angInicio, angFim);
+        ctx.closePath();
+
+        ctx.fillStyle = gradFatia;
+        ctx.fill();
+
+        ctx.lineWidth = 2.5;
+        ctx.strokeStyle = "#181825";
+        ctx.stroke();
+
+        // Texto da fatia
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(angInicio + arco / 2);
+        ctx.textAlign = "right";
+        ctx.textBaseline = "middle";
+        ctx.fillStyle = "#11111b";
+
+        let label = "";
+        if (fatia.tipo === 'questao') {
+          const limpo = fatia.dados.enunciado.replace(/\\\(|\\\)/g, "").trim();
+          const maxChars = totalFatias <= 4 ? 36 : (totalFatias <= 8 ? 32 : 26);
+          label = limpo.length > maxChars ? limpo.substring(0, maxChars - 2) + "..." : limpo;
+          const fontSize = totalFatias <= 4 ? 17 : (totalFatias <= 8 ? 15 : 13);
+          ctx.font = `bold ${fontSize}px 'Segoe UI', sans-serif`;
+        } else {
+          label = fatia.texto;
+          ctx.font = "bold 16px 'Segoe UI', sans-serif";
+        }
+
+        ctx.fillText(label, raioExterno - 22, 0);
+        ctx.restore();
+      });
+
+      // 3. Pinos metálicos nas bordas de cada fatia
+      fatiasRoleta.forEach((_, i) => {
+        const angPino = anguloAtual + i * arco;
+        const px = cx + Math.cos(angPino) * (raioExterno - 8);
+        const py = cy + Math.sin(angPino) * (raioExterno - 8);
+
+        ctx.beginPath();
+        ctx.arc(px, py, 5, 0, 2 * Math.PI);
+        ctx.fillStyle = "#f8f8f2";
+        ctx.fill();
+        ctx.lineWidth = 1.5;
+        ctx.strokeStyle = "#11111b";
+        ctx.stroke();
+      });
+
+      // 4. Botão Central em Relevo
+      const gradCentro = ctx.createRadialGradient(cx - 15, cy - 15, 10, cx, cy, raioInterno);
+      gradCentro.addColorStop(0, "#ffffff");
+      gradCentro.addColorStop(1, "#dce0e8");
+
+      ctx.beginPath();
+      ctx.arc(cx, cy, raioInterno, 0, 2 * Math.PI);
+      ctx.fillStyle = gradCentro;
+      ctx.fill();
+      ctx.lineWidth = 5;
+      ctx.strokeStyle = "#313244";
+      ctx.stroke();
+
+      ctx.fillStyle = "#181825";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.font = "bold 23px 'Segoe UI', sans-serif";
+      ctx.fillText("Gire", cx, cy - 25);
+      ctx.fillText("e boa", cx, cy);
+      ctx.fillText("sorte!!!", cx, cy + 25);
+    }
+
+    /* =========================================================
+       ANIMAÇÃO DE GIRO COM IMPULSO NOS PINOS
+       ========================================================= */
+    function girarRoleta() {
+      if (girando) return;
+
+      const questoesRestantes = fatiasRoleta
+        .map((f, idx) => ({ f, idx }))
+        .filter(item => item.f.tipo === 'questao');
+
+      if (questoesRestantes.length === 0) {
+        mostrarResultadoFinal();
+        return;
+      }
+
+      if (questoesRestantes.length <= 2 && fatiasRoleta.some(f => f.tipo !== 'questao')) {
+        fatiasRoleta = fatiasRoleta.filter(f => f.tipo === 'questao');
+        desenharRoleta();
+      }
+
+      girando = true;
+      document.getElementById("btn-girar-topo").disabled = true;
+      const p = participantes[participanteAtivo];
+      document.getElementById("wheel-status-banner").innerText = `Girando para ${p.icone} ${p.nome}...`;
+
+      const idxAlvo = Math.floor(Math.random() * fatiasRoleta.length);
+      const fatiaAlvo = fatiasRoleta[idxAlvo];
+      const totalFatias = fatiasRoleta.length;
+      const arco = (2 * Math.PI) / totalFatias;
+
+      const centroAlvo = (idxAlvo + 0.5) * arco;
+      const offsetDesvio = (Math.random() - 0.5) * (arco * 0.45);
+      let anguloDestinoBase = Math.PI - centroAlvo + offsetDesvio;
+
+      const voltas = (7 + Math.floor(Math.random() * 3)) * 2 * Math.PI;
+      const anguloInicial = anguloAtual;
+      while (anguloDestinoBase < anguloInicial) {
+        anguloDestinoBase += 2 * Math.PI;
+      }
+      const anguloFinal = anguloDestinoBase + voltas;
+
+      const duracao = 4400;
+      const inicio = performance.now();
+      const pointerEl = document.getElementById("wheel-pointer");
+
+      function animar(agora) {
+        const decorrido = agora - inicio;
+        const t = Math.min(1, decorrido / duracao);
+        const ease = 1 - Math.pow(1 - t, 4.2);
+
+        anguloAtual = anguloInicial + (anguloFinal - anguloInicial) * ease;
+
+        const indiceAtualSeta = Math.floor((((Math.PI - anguloAtual) % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI) / arco);
+        if (indiceAtualSeta !== ultimoIndiceTick) {
+          ultimoIndiceTick = indiceAtualSeta;
+          faseLuzes = (faseLuzes + 1) % 2;
+          tocarSom(600, 20, 'triangle', 0.06);
+
+          pointerEl.style.transform = "translateY(-50%) rotate(-24deg)";
+          setTimeout(() => {
+            pointerEl.style.transform = "translateY(-50%) rotate(0deg)";
+          }, 55);
+        }
+
+        desenharRoleta();
+
+        if (t < 1) {
+          requestAnimationFrame(animar);
+        } else {
+          girando = false;
+          document.getElementById("btn-girar-topo").disabled = false;
+          processarParadaRoleta(fatiaAlvo, idxAlvo);
+        }
+      }
+
+      requestAnimationFrame(animar);
+    }
+
+    function processarParadaRoleta(fatia, idx) {
+      fatiaSorteadaAtual = fatia;
+      indiceFatiaSorteada = idx;
+      const p = participantes[participanteAtivo];
+
+      if (fatia.tipo === 'passou') {
+        tocarSom(300, 350, 'sawtooth', 0.12);
+        if (qtdEquipesAtivas === 1) {
+          document.getElementById("wheel-status-banner").innerText = `😅 "Passou a vez!" — Modo individual: gire novamente!`;
+        } else {
+          document.getElementById("wheel-status-banner").innerText = `😅 "Passou a vez!" — A vez passou para a próxima equipe!`;
+          setTimeout(() => {
+            selecionarParticipante((participanteAtivo + 1) % qtdEquipesAtivas);
+          }, 1500);
+        }
+        return;
+      }
+
+      if (fatia.tipo === 'rode') {
+        tocarSom(880, 250, 'sine', 0.12);
+        document.getElementById("wheel-status-banner").innerText = `🎲 "Rode outra vez!" — ${p.icone} ${p.nome} pode girar novamente!`;
+        return;
+      }
+
+      tocarSom(784, 200, 'sine', 0.12);
+      document.getElementById("wheel-status-banner").innerText = `Questão sorteada para ${p.icone} ${p.nome}!`;
+      setTimeout(() => {
+        abrirMenuQuestao(fatia.dados);
+      }, 650);
+    }
+
+    /* =========================================================
+       CONFETES DE CELEBRAÇÃO
+       ========================================================= */
+    function dispararConfetes() {
+      const canvas = document.getElementById("confetti-canvas");
+      const ctx = canvas.getContext("2d");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const cores = ["#89b4fa", "#a6e3a1", "#f9e2af", "#cba6f7", "#f38ba8", "#94e2d5"];
+      const particulas = Array.from({ length: 90 }, () => ({
+        x: Math.random() * canvas.width,
+        y: -20 - Math.random() * 200,
+        w: 8 + Math.random() * 8,
+        h: 5 + Math.random() * 6,
+        cor: cores[Math.floor(Math.random() * cores.length)],
+        vy: 3 + Math.random() * 5,
+        vx: (Math.random() - 0.5) * 4,
+        rot: Math.random() * 360,
+        vrot: (Math.random() - 0.5) * 10
+      }));
+
+      let frames = 0;
+      function animarConfetes() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particulas.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.rot += p.vrot;
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate((p.rot * Math.PI) / 180);
+          ctx.fillStyle = p.cor;
+          ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+          ctx.restore();
+        });
+        frames++;
+        if (frames < 130) requestAnimationFrame(animarConfetes);
+        else ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+      requestAnimationFrame(animarConfetes);
+    }
+
+    /* =========================================================
+       MENU SUSPENSO DA QUESTÃO + CONTAGEM REGRESSIVA
+       ========================================================= */
+    let acertouRodadaAtual = false;
+
+    function abrirMenuQuestao(q) {
+      rodadaFinalizada = false;
+      acertouRodadaAtual = false;
+      const p = participantes[participanteAtivo];
+
+      const labelTurno = document.getElementById("modal-player-turn");
+      labelTurno.innerText = `Respondendo: ${p.icone} ${p.nome}`;
+      labelTurno.style.color = p.cor;
+
+      document.getElementById("quiz-categoria").innerText = q.categoria;
+      document.getElementById("quiz-enunciado").innerText = q.enunciado;
+
+      const bodyModal = document.getElementById("modal-q-body");
+      const mediaBox = document.getElementById("quiz-media-box");
+      const imgEl = document.getElementById("quiz-image");
+
+      if (q.imagem && q.imagem.trim() !== "") {
+        imgEl.src = q.imagem;
+        mediaBox.classList.remove("hidden");
+        bodyModal.classList.remove("no-image");
+      } else {
+        mediaBox.classList.add("hidden");
+        bodyModal.classList.add("no-image");
+      }
+
+      const btnExp = document.getElementById("btn-ver-explicacao");
+      if (q.explicacao && q.explicacao.trim() !== "") btnExp.classList.remove("hidden");
+      else btnExp.classList.add("hidden");
+
+      const containerOpt = document.getElementById("quiz-options");
+      containerOpt.innerHTML = "";
+      document.getElementById("btn-voltar-roleta").classList.add("hidden");
+
+      const feedback = document.getElementById("feedback-msg");
+      feedback.classList.add("hidden");
+
+      q.opcoes.forEach((texto, idx) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.classList.add("btn-option");
+        btn.innerText = texto;
+        btn.onclick = () => verificarResposta(idx, btn);
+        containerOpt.appendChild(btn);
+      });
+
+      document.getElementById("question-dropdown-overlay").classList.remove("hidden");
+
+      const tempoDefinido = (q.tempo !== undefined && q.tempo > 0) ? q.tempo : tempoPadraoPartida;
+      configurarEIniciarTimer(tempoDefinido);
+
+      if (window.MathJax) MathJax.typesetPromise();
+    }
+
+    function fecharMenuQuestao() {
+      clearInterval(timerInterval);
+      document.getElementById("question-dropdown-overlay").classList.add("hidden");
+
+      if (acertouRodadaAtual && indiceFatiaSorteada > -1) {
+        fatiasRoleta.splice(indiceFatiaSorteada, 1);
+        indiceFatiaSorteada = -1;
+      }
+
+      if (questoesConcluidas >= totalQuestoesNaRoleta) {
+        mostrarResultadoFinal();
+      } else {
+        desenharRoleta();
+        selecionarParticipante((participanteAtivo + 1) % qtdEquipesAtivas);
+      }
+    }
+
+    function configurarEIniciarTimer(segundos) {
+      clearInterval(timerInterval);
+      const timerWrapper = document.getElementById("circular-timer-container");
+      const displayText = document.getElementById("timer-display-text");
+      const btnPausa = document.getElementById("btn-pausa-timer");
+
+      if (segundos <= 0) {
+        timerWrapper.classList.add("hidden");
+        return;
+      }
+
+      timerWrapper.classList.remove("hidden");
+      displayText.classList.remove("expired");
+      timerPausado = false;
+      btnPausa.innerText = "Pausar";
+
+      tempoTotalAtual = segundos;
+      tempoRestante = segundos;
+      atualizarVisualCronometro();
+
+      timerInterval = setInterval(() => {
+        if (!timerPausado && !rodadaFinalizada) {
+          if (tempoRestante > 0) {
+            tocarSom(800, 40);
+            tempoRestante--;
+            atualizarVisualCronometro();
+          } else {
+            clearInterval(timerInterval);
+            rodadaFinalizada = true;
+            displayText.classList.add("expired");
+            tocarSom(350, 550, 'sawtooth', 0.12);
+
+            document.querySelectorAll("#quiz-options .btn-option").forEach(b => b.disabled = true);
+            const p = participantes[participanteAtivo];
+            const feedback = document.getElementById("feedback-msg");
+            feedback.innerText = `⏱ Tempo esgotado para ${p.icone} ${p.nome}! Esta fatia permanece na roleta.`;
+            feedback.className = "feedback-banner feedback-warning";
+            feedback.classList.remove("hidden");
+
+            document.getElementById("btn-voltar-roleta").classList.remove("hidden");
+          }
+        }
+      }, 1000);
+    }
+
+    function atualizarVisualCronometro() {
+      const mins = Math.floor(tempoRestante / 60);
+      const secs = tempoRestante % 60;
+      document.getElementById("timer-display-text").innerText = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+
+      const ring = document.getElementById("timer-progress-ring");
+      const fracao = tempoTotalAtual > 0 ? (tempoRestante / tempoTotalAtual) : 0;
+      ring.style.strokeDashoffset = CIRCUNFERENCIA * (1 - fracao);
+      ring.style.stroke = tempoRestante <= 5 && tempoRestante > 0 ? "#ff4d4d" : "#00ffcc";
+    }
+
+    function togglePausaTimer(event) {
+      if (event) event.preventDefault();
+      if (tempoRestante <= 0 || rodadaFinalizada) return;
+      timerPausado = !timerPausado;
+      document.getElementById("btn-pausa-timer").innerText = timerPausado ? "Retomar" : "Pausar";
+    }
+
+    function ajustarTempoAoVivo() {
+      if (rodadaFinalizada) return;
+      const estavaPausado = timerPausado;
+      timerPausado = true;
+      const novo = prompt("Digite o novo tempo em segundos:", tempoRestante || 30);
+      if (novo !== null && !isNaN(parseInt(novo)) && parseInt(novo) > 0) {
+        configurarEIniciarTimer(parseInt(novo));
+      } else {
+        timerPausado = estavaPausado;
+      }
+    }
+
+    function verificarResposta(opcaoSelecionada, botaoClicado) {
+      if (rodadaFinalizada) return;
+      rodadaFinalizada = true;
+      clearInterval(timerInterval);
+
+      const q = fatiaSorteadaAtual.dados;
+      const botoes = document.querySelectorAll("#quiz-options .btn-option");
+      const feedback = document.getElementById("feedback-msg");
+      const jogador = participantes[participanteAtivo];
+
+      botoes.forEach(b => b.disabled = true);
+
+      if (opcaoSelecionada === q.correta) {
+        botaoClicado.classList.add("correct");
+        acertouRodadaAtual = true;
+        jogador.acertos++;
+        questoesConcluidas++;
+        atualizarPlacarEBarras();
+
+        tocarFanfarraVitoria();
+        dispararConfetes();
+
+        feedback.innerText = `✔ Resposta Correta! Ponto para ${jogador.icone} ${jogador.nome} e a fatia sairá da roleta!`;
+        feedback.className = "feedback-banner feedback-success";
+        feedback.classList.remove("hidden");
+      } else {
+        botaoClicado.classList.add("incorrect");
+        acertouRodadaAtual = false;
+        tocarSom(260, 280, 'sawtooth', 0.12);
+        feedback.innerText = `✖ Incorreto (${jogador.icone} ${jogador.nome})! A fatia permanece na roleta para próxima rodada.`;
+        feedback.className = "feedback-banner feedback-error";
+        feedback.classList.remove("hidden");
+      }
+
+      document.getElementById("btn-voltar-roleta").classList.remove("hidden");
+    }
+
+    /* =========================================================
+       ZOOM E PROJEÇÃO DE EXPLICAÇÃO
+       ========================================================= */
+    function abrirZoomImagem() {
+      document.getElementById("modal-label").innerText = "Imagem da Questão";
+      document.getElementById("img-modal-target").src = document.getElementById("quiz-image").src;
+      document.getElementById("modal-zoom").classList.remove("hidden");
+    }
+
+    function abrirExplicacaoQuestao() {
+      if (!fatiaSorteadaAtual || !fatiaSorteadaAtual.dados.explicacao) return;
+      if (!timerPausado && tempoRestante > 0) togglePausaTimer();
+      document.getElementById("modal-label").innerText = "Explicação / Resolução da Questão";
+      document.getElementById("img-modal-target").src = fatiaSorteadaAtual.dados.explicacao;
+      document.getElementById("modal-zoom").classList.remove("hidden");
+    }
+
+    function carregarExplicacaoAoVivo(inputElement) {
+      if (!inputElement.files || inputElement.files.length === 0) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        fatiaSorteadaAtual.dados.explicacao = e.target.result;
+        document.getElementById("btn-ver-explicacao").classList.remove("hidden");
+        abrirExplicacaoQuestao();
+      };
+      reader.readAsDataURL(inputElement.files[0]);
+      inputElement.value = "";
+    }
+
+    function fecharZoomImagem() {
+      document.getElementById("modal-zoom").classList.add("hidden");
+    }
+
+    function mostrarResultadoFinal() {
+      clearInterval(timerInterval);
+      clearInterval(loopLuzesInterval);
+      dispararConfetes();
+      tocarFanfarraVitoria();
+
+      document.getElementById("wheel-arena").classList.add("hidden");
+      document.getElementById("players-arena-bar").classList.add("hidden");
+      document.getElementById("result-screen").classList.remove("hidden");
+
+      document.getElementById("result-subtitle").innerText = qtdEquipesAtivas === 1
+        ? "Resumo do seu Estudo:"
+        : "Classificação Final:";
+
+      const ranking = participantes.slice(0, qtdEquipesAtivas).sort((a, b) => b.acertos - a.acertos);
+      const podiumEl = document.getElementById("podium-container");
+      podiumEl.innerHTML = "";
+
+      ranking.forEach((p, pos) => {
+        const div = document.createElement("div");
+        div.className = "podium-item";
+        div.style.borderLeft = `6px solid ${p.cor}`;
+        const labelPos = qtdEquipesAtivas === 1 ? "Desempenho" : `${pos + 1}º Lugar`;
+        div.innerHTML = `
+          <span>${labelPos} — <span style="color: ${p.cor};">${p.icone} ${p.nome}</span></span>
+          <span>${p.acertos} acerto${p.acertos === 1 ? '' : 's'} de ${totalQuestoesNaRoleta}</span>
+        `;
+        podiumEl.appendChild(div);
+      });
+    }
+  </script>
+
+</body>
+</html>
