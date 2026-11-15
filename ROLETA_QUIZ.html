@@ -189,6 +189,12 @@
     .btn-danger { background-color: #f38ba8; color: #11111b; }
     .btn-ghost { background-color: #313244; color: #cdd6f4; border: 1px solid #45475a; }
     .btn-ghost:hover { background-color: #45475a; }
+    .btn-portal {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #052e16;
+      border: 1px solid #34d399;
+    }
+    .btn-portal:hover { filter: brightness(1.08); }
 
     .actions-bar {
       display: flex;
@@ -281,7 +287,6 @@
       flex-wrap: wrap;
     }
 
-    /* Painel Dinâmico de Participantes (1, 2, 3 ou 4) */
     .players-arena-bar {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -698,8 +703,12 @@
 
   <canvas id="confetti-canvas"></canvas>
 
-  <div class="container">
+  <div class="container" id="editor-main-container">
     <header>
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
+        <a href="index.html" class="btn btn-ghost" style="text-decoration:none; font-size:0.85rem;">← Voltar ao Portal</a>
+        <button type="button" class="btn btn-portal" onclick="salvarAulaParaPortal()">💾 Salvar Aula para o Portal (Alunos)</button>
+      </div>
       <h1>Roleta Interativa de Quizzes - Edição Palco</h1>
       <p>De 1 a 4 participantes — ideal tanto para estudar sozinho quanto para competições em turma</p>
     </header>
@@ -812,6 +821,7 @@
             <input type="file" id="file-import" accept=".json,application/json,text/plain" style="display:none;" onchange="importarJSON(this)">
             <button type="button" class="btn btn-secondary" onclick="document.getElementById('file-import').click()">Importar Backup (JSON)</button>
             <button type="button" class="btn btn-secondary" onclick="exportarJSON()">Baixar Backup (JSON)</button>
+            <button type="button" class="btn btn-portal" onclick="salvarAulaParaPortal()">💾 Salvar Aula para o Portal</button>
           </div>
         </div>
       </div>
@@ -895,9 +905,14 @@
             </div>
           </div>
 
-          <button type="button" class="btn btn-primary" style="width: 100%; margin-top: 10px; font-size: 1.1rem; padding: 15px;" onclick="iniciarRoleta()">
-            Projetar Roleta em Tela Cheia
-          </button>
+          <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:12px;">
+            <button type="button" class="btn btn-primary" style="flex:2; min-width:220px; font-size: 1.05rem; padding: 15px;" onclick="iniciarRoleta()">
+              🎡 Projetar Roleta em Tela Cheia
+            </button>
+            <button type="button" class="btn btn-portal" style="flex:1; min-width:220px; font-size: 1.05rem; padding: 15px;" onclick="salvarAulaParaPortal()">
+              💾 Salvar Aula para o Portal
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -909,7 +924,8 @@
   <div id="projection-stage" class="hidden">
     <div class="stage-topbar">
       <div>
-        <span id="roleta-contador" style="font-weight: bold; font-size: 1.15rem; color: #89b4fa;">Questões restantes: 10</span>
+        <span id="roleta-titulo-aula" style="font-weight: bold; font-size: 1.15rem; color: #f9e2af; margin-right: 12px;"></span>
+        <span id="roleta-contador" style="font-weight: bold; font-size: 1.05rem; color: #89b4fa;">Questões restantes: 10</span>
       </div>
       <div class="stage-controls">
         <button type="button" class="btn btn-primary" id="btn-girar-topo" onclick="girarRoleta()">Girar Roleta (Espaço)</button>
@@ -978,7 +994,7 @@
       </button>
     </div>
 
-    <!-- Centro: Roleta Giratória com Aro de Luzes e Pinos -->
+    <!-- Centro: Roleta Giratória -->
     <div class="wheel-arena" id="wheel-arena">
       <div class="wheel-wrapper" onclick="girarRoleta()" title="Clique na roleta ou aperte Espaço para girar!">
         <div class="wheel-pointer-left" id="wheel-pointer"></div>
@@ -994,7 +1010,7 @@
       <h1 style="color: #a6e3a1; font-size: 2.2rem; margin-bottom: 10px;">Todas as Questões Concluídas!</h1>
       <p style="color: #a6adc8; font-size: 1.1rem;" id="result-subtitle">Classificação Final:</p>
       <div id="podium-container" class="podium-list"></div>
-      <button type="button" class="btn btn-primary" style="font-size: 1.1rem; padding: 14px 30px;" onclick="encerrarProjecao()">Voltar às Configurações</button>
+      <button type="button" class="btn btn-primary" style="font-size: 1.1rem; padding: 14px 30px;" onclick="encerrarProjecao()">Concluir</button>
     </div>
   </div>
 
@@ -1074,17 +1090,18 @@
     let fatiasRoleta = [];
     let fatiaSorteadaAtual = null;
     let indiceFatiaSorteada = -1;
+    let modoApresentacaoAluno = false;
 
     let totalQuestoesNaRoleta = 0;
     let questoesConcluidas = 0;
 
     const CORES_FATIAS = [
-      ["#84e398", "#58b86d"], // Verde
-      ["#f2a057", "#d47626"], // Laranja
-      ["#f7ec7e", "#d6c845"], // Amarelo
-      ["#d469ed", "#a838c2"], // Roxo
-      ["#6c95f2", "#436bd1"], // Azul
-      ["#ed689b", "#c93c72"]  // Rosa
+      ["#84e398", "#58b86d"],
+      ["#f2a057", "#d47626"],
+      ["#f7ec7e", "#d6c845"],
+      ["#d469ed", "#a838c2"],
+      ["#6c95f2", "#436bd1"],
+      ["#ed689b", "#c93c72"]
     ];
 
     let anguloAtual = 0;
@@ -1162,12 +1179,153 @@
       } catch (e) {}
     }
 
-    window.onload = () => {
+    /* =========================================================
+       BOTÃO SALVAR AULA PARA O PORTAL (ALUNOS)
+       ========================================================= */
+    function salvarAulaParaPortal() {
+      if (bancoQuestoes.length === 0) {
+        alert("Adicione ou importe pelo menos 1 questão antes de salvar a aula para o portal!");
+        return;
+      }
+
+      const tituloSugerido = prompt(
+        "Digite o Título desta Aula para os estudantes (ex: Física Quântica - Aula 01):",
+        document.getElementById("filtro-disciplina").value !== "Todas"
+          ? `Quiz de ${document.getElementById("filtro-disciplina").value}`
+          : "Roleta de Revisão"
+      );
+
+      if (!tituloSugerido || tituloSugerido.trim() === "") return;
+
+      const pacoteAula = {
+        tipoPrograma: "roleta",
+        titulo: tituloSugerido.trim(),
+        dataCriacao: new Date().toISOString(),
+        configuracoes: {
+          disciplina: document.getElementById("filtro-disciplina").value,
+          qtdQuestoes: document.getElementById("qtd-questoes").value,
+          tempoPadrao: parseInt(document.getElementById("tempo-padrao").value) || 30,
+          fatiasEspeciais: document.getElementById("fatias-especiais").value,
+          qtdEquipes: document.getElementById("qtd-equipes").value,
+          nomesEquipes: [
+            document.getElementById("nome-p0").value.trim() || "Triângulo",
+            document.getElementById("nome-p1").value.trim() || "Quadrado",
+            document.getElementById("nome-p2").value.trim() || "Círculo",
+            document.getElementById("nome-p3").value.trim() || "Losango"
+          ]
+        },
+        questoes: bancoQuestoes
+      };
+
+      const nomeArquivo = `Roleta_${tituloSugerido.trim().replace(/[^a-zA-Z0-9_-]/g, "_")}.json`;
+      const blob = new Blob([JSON.stringify(pacoteAula, null, 2)], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = nomeArquivo;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      alert(
+        `✅ Arquivo "${nomeArquivo}" salvo com sucesso!\n\n` +
+        `Próximos passos:\n` +
+        `1. Envie este arquivo para o seu Google Drive e compartilhe como "Qualquer pessoa com o link".\n` +
+        `2. No Portal (index.html ➔ Área do Desenvolvedor), cole o link para liberar na lista dos alunos!`
+      );
+    }
+
+    /* =========================================================
+       CARREGAMENTO AUTOMÁTICO VIA GOOGLE DRIVE (MODO SHOW ALUNO)
+       ========================================================= */
+    async function verificarModoApresentacaoDrive() {
+      const params = new URLSearchParams(window.location.search);
+      const driveId = params.get("drive");
+      const modo = params.get("modo");
+      const tituloUrl = params.get("titulo");
+
+      if (!driveId) return false;
+
+      modoApresentacaoAluno = (modo === "show");
+
+      const overlayLoad = document.createElement("div");
+      overlayLoad.id = "loading-drive-screen";
+      overlayLoad.style.cssText = "position:fixed;inset:0;background:#11111b;color:#cdd6f4;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:99999;text-align:center;padding:24px;";
+      overlayLoad.innerHTML = `
+        <div style="font-size:52px;margin-bottom:14px;">🎡</div>
+        <h2 style="color:#89b4fa;margin-bottom:8px;">${tituloUrl ? tituloUrl : "Carregando Roleta da Aula..."}</h2>
+        <p style="color:#a6adc8;font-size:15px;">Sincronizando questões e configurações programadas pelo professor...</p>
+      `;
+      document.body.appendChild(overlayLoad);
+
+      try {
+        const driveUrl = `https://drive.google.com/uc?export=download&id=${encodeURIComponent(driveId)}`;
+        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(driveUrl)}`;
+
+        const resp = await fetch(proxyUrl);
+        if (!resp.ok) throw new Error("Falha ao baixar arquivo do Google Drive.");
+        const dados = await resp.json();
+
+        const lista = Array.isArray(dados) ? dados : (Array.isArray(dados.questoes) ? dados.questoes : []);
+        if (lista.length === 0) throw new Error("Nenhuma questão encontrada no arquivo.");
+
+        bancoQuestoes = lista;
+        atualizarListaQuestoes();
+
+        // Aplica as configurações programadas pelo professor, se existirem no pacote
+        if (dados.configuracoes) {
+          const cfg = dados.configuracoes;
+          if (cfg.disciplina) document.getElementById("filtro-disciplina").value = cfg.disciplina;
+          if (cfg.qtdQuestoes) document.getElementById("qtd-questoes").value = cfg.qtdQuestoes;
+          if (cfg.tempoPadrao !== undefined) document.getElementById("tempo-padrao").value = cfg.tempoPadrao;
+          if (cfg.fatiasEspeciais) document.getElementById("fatias-especiais").value = cfg.fatiasEspeciais;
+          if (cfg.qtdEquipes) {
+            document.getElementById("qtd-equipes").value = cfg.qtdEquipes;
+            atualizarCamposEquipesSetup();
+          }
+          if (Array.isArray(cfg.nomesEquipes)) {
+            cfg.nomesEquipes.forEach((nome, i) => {
+              if (document.getElementById(`nome-p${i}`)) {
+                document.getElementById(`nome-p${i}`).value = nome;
+              }
+            });
+          }
+        }
+
+        const tituloFinal = tituloUrl || dados.titulo || "";
+        if (tituloFinal) {
+          document.getElementById("roleta-titulo-aula").innerText = `🎡 ${tituloFinal}`;
+        }
+
+        overlayLoad.remove();
+
+        // Abre direto no palco da roleta pronto para girar
+        if (modoApresentacaoAluno) {
+          document.getElementById("editor-main-container").classList.add("hidden");
+        }
+        iniciarRoleta(false);
+        return true;
+
+      } catch (err) {
+        overlayLoad.innerHTML = `
+          <div style="font-size:42px;margin-bottom:10px;">⚠️</div>
+          <h3 style="color:#f38ba8;margin-bottom:10px;">Não foi possível carregar a aula</h3>
+          <p style="color:#a6adc8;max-width:380px;margin-bottom:18px;font-size:14px;">Verifique sua conexão ou confirme se o arquivo no Google Drive está compartilhado como "Qualquer pessoa com o link".</p>
+          <a href="index.html" class="btn btn-secondary" style="text-decoration:none;">Voltar ao Portal</a>
+        `;
+        return true;
+      }
+    }
+
+    window.onload = async () => {
       const ring = document.getElementById("timer-progress-ring");
       ring.style.strokeDasharray = `${CIRCUNFERENCIA} ${CIRCUNFERENCIA}`;
       ring.style.strokeDashoffset = 0;
-      carregarDoNavegador();
-      atualizarListaQuestoes();
+
+      const carregouRemoto = await verificarModoApresentacaoDrive();
+      if (!carregouRemoto) {
+        carregarDoNavegador();
+        atualizarListaQuestoes();
+      }
     };
 
     document.addEventListener("keydown", (e) => {
@@ -1403,6 +1561,10 @@
       clearInterval(timerInterval);
       clearInterval(loopLuzesInterval);
       if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(() => {});
+      if (modoApresentacaoAluno) {
+        window.location.href = "index.html";
+        return;
+      }
       document.getElementById("projection-stage").classList.add("hidden");
       document.getElementById("question-dropdown-overlay").classList.add("hidden");
     }
@@ -1419,7 +1581,6 @@
     }
 
     function atualizarPlacarEBarras() {
-      // No modo 1 participante, a meta da barra de progresso é o total de questões da roleta
       const meta = qtdEquipesAtivas === 1
         ? Math.max(1, totalQuestoesNaRoleta)
         : Math.max(2, Math.ceil(totalQuestoesNaRoleta / 2));
@@ -1447,7 +1608,7 @@
       return arr;
     }
 
-    function iniciarRoleta() {
+    function iniciarRoleta(pedirFullscreen = true) {
       const disciplinaSel = document.getElementById("filtro-disciplina").value;
       const qtdLimite = parseInt(document.getElementById("qtd-questoes").value);
       const incluirEspeciais = document.getElementById("fatias-especiais").value === "sim";
@@ -1512,7 +1673,9 @@
         }
       }, 650);
 
-      document.documentElement.requestFullscreen().catch(() => {});
+      if (pedirFullscreen) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      }
       desenharRoleta();
     }
 
@@ -1530,7 +1693,6 @@
       const totalFatias = fatiasRoleta.length;
       if (totalFatias === 0) return;
 
-      // 1. Aro Externo Metálico Dourado com Luzes de Palco
       const gradAro = ctx.createRadialGradient(cx, cy, raioExterno, cx, cy, raioAro);
       gradAro.addColorStop(0, "#232336");
       gradAro.addColorStop(0.5, "#3b3b54");
@@ -1544,7 +1706,6 @@
       ctx.strokeStyle = "#f9e2af";
       ctx.stroke();
 
-      // 24 Lâmpadas ao redor do aro
       const numLuzes = 24;
       for (let l = 0; l < numLuzes; l++) {
         const angLuz = (l * 2 * Math.PI) / numLuzes;
@@ -1565,7 +1726,6 @@
       }
       ctx.shadowBlur = 0;
 
-      // 2. Fatias com Gradiente Radial
       const arco = (2 * Math.PI) / totalFatias;
 
       fatiasRoleta.forEach((fatia, i) => {
@@ -1588,7 +1748,6 @@
         ctx.strokeStyle = "#181825";
         ctx.stroke();
 
-        // Texto da fatia
         ctx.save();
         ctx.translate(cx, cy);
         ctx.rotate(angInicio + arco / 2);
@@ -1612,7 +1771,6 @@
         ctx.restore();
       });
 
-      // 3. Pinos metálicos nas bordas de cada fatia
       fatiasRoleta.forEach((_, i) => {
         const angPino = anguloAtual + i * arco;
         const px = cx + Math.cos(angPino) * (raioExterno - 8);
@@ -1627,7 +1785,6 @@
         ctx.stroke();
       });
 
-      // 4. Botão Central em Relevo
       const gradCentro = ctx.createRadialGradient(cx - 15, cy - 15, 10, cx, cy, raioInterno);
       gradCentro.addColorStop(0, "#ffffff");
       gradCentro.addColorStop(1, "#dce0e8");
@@ -1649,9 +1806,6 @@
       ctx.fillText("sorte!!!", cx, cy + 25);
     }
 
-    /* =========================================================
-       ANIMAÇÃO DE GIRO COM IMPULSO NOS PINOS
-       ========================================================= */
     function girarRoleta() {
       if (girando) return;
 
@@ -1758,9 +1912,6 @@
       }, 650);
     }
 
-    /* =========================================================
-       CONFETES DE CELEBRAÇÃO
-       ========================================================= */
     function dispararConfetes() {
       const canvas = document.getElementById("confetti-canvas");
       const ctx = canvas.getContext("2d");
@@ -1801,9 +1952,6 @@
       requestAnimationFrame(animarConfetes);
     }
 
-    /* =========================================================
-       MENU SUSPENSO DA QUESTÃO + CONTAGEM REGRESSIVA
-       ========================================================= */
     let acertouRodadaAtual = false;
 
     function abrirMenuQuestao(q) {
@@ -1988,9 +2136,6 @@
       document.getElementById("btn-voltar-roleta").classList.remove("hidden");
     }
 
-    /* =========================================================
-       ZOOM E PROJEÇÃO DE EXPLICAÇÃO
-       ========================================================= */
     function abrirZoomImagem() {
       document.getElementById("modal-label").innerText = "Imagem da Questão";
       document.getElementById("img-modal-target").src = document.getElementById("quiz-image").src;
