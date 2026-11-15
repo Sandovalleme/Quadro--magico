@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula Interativa • Apresentação Passo a Passo</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Barra superior minimalista do aluno */
+    header {
+      background: #1e293b;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 14px 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .lesson-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: #38bdf8;
+    }
+    .step-badge {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    /* Palco da Apresentação */
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+    }
+
+    .stage-card {
+      max-width: 960px;
+      width: 100%;
+      min-height: 62vh;
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 18px;
+      padding: 28px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stage-card img {
+      max-width: 100%;
+      max-height: 55vh;
+      border-radius: 10px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+    }
+
+    .step-text {
+      font-size: 22px;
+      line-height: 1.6;
+      color: #f8fafc;
+      max-width: 780px;
+      white-space: pre-wrap;
+    }
+
+    canvas#animCanvas {
+      max-width: 100%;
+      background: #0b1120;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Barra de Navegação Passo a Passo */
+    footer {
+      background: #1e293b;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+    }
+    .nav-btn {
+      padding: 13px 26px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 800;
+      border: none;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .nav-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+    .btn-prev {
+      background: #334155;
+      color: #f8fafc;
+    }
+    .btn-next {
+      background: linear-gradient(135deg, #059669, #10b981);
+      color: #052e16;
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.35);
+    }
+    .btn-next:hover:not(:disabled), .btn-prev:hover:not(:disabled) {
+      filter: brightness(1.1);
+    }
+
+    .progress-bar-wrap {
+      width: 100%;
+      height: 5px;
+      background: #0f172a;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #3b82f6, #10b981);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .loader {
+      font-size: 16px;
+      color: #94a3b8;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="lesson-title" id="tituloAula">Carregando aula...</div>
+    <div class="step-badge" id="contadorPasso">Passo 0 de 0</div>
+  </header>
+
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="barraProgresso"></div>
+  </div>
+
+  <main>
+    <div class="stage-card" id="palcoAula">
+      <div class="loader">⏳ Buscando apresentação no Google Drive...</div>
+    </div>
+  </main>
+
+  <footer>
+    <button class="nav-btn btn-prev" id="btnAnterior" onclick="mudarPasso(-1)" disabled>⬅ Passo Anterior</button>
+    <button class="nav-btn btn-next" id="btnProximo" onclick="mudarPasso(1)" disabled>Próximo Passo ➔</button>
+  </footer>
+
+  <script>
+    let passos = [];
+    let indiceAtual = 0;
+
+    // Lê os parâmetros enviados pelo QR Code (?titulo=...&drive=...)
+    const params = new URLSearchParams(window.location.search);
+    const driveId = params.get('drive');
+    const tituloParam = params.get('titulo') || 'Apresentação Interativa';
+    document.getElementById('tituloAula').textContent = '📚 ' + tituloParam;
+
+    async function iniciarAula() {
+      if (!driveId) {
+        mostrarFallbackLocal('Nenhuma aula especificada no QR Code.');
+        return;
+      }
+
+      // Converte o ID do Google Drive em link direto de leitura
+      const urlDrive = `https://drive.google.com/uc?export=download&id=${encodeURIComponent(driveId)}`;
+
+      try {
+        const resp = await fetch(urlDrive);
+        if (!resp.ok) throw new Error('Falha ao baixar arquivo do Drive');
+        const dados = await resp.json();
+        processarDadosAula(dados);
+      } catch (erro) {
+        // Caso o navegador bloqueie CORS do Drive direto, exibe opção de abertura direta ou arquivo local
+        mostrarFallbackDrive(driveId);
+      }
+    }
+
+    function processarDadosAula(dados) {
+      // Compatível com arquivos exportados da Folha Mágica (.json) ou roteiros de passos (.losa)
+      if (Array.isArray(dados)) {
+        passos = dados;
+      } else if (dados.passos && Array.isArray(dados.passos)) {
+        passos = dados.passos;
+      } else if (dados.elementos && Array.isArray(dados.elementos)) {
+        // Converte elementos gravados na Folha Mágica em sequência passo a passo
+        passos = dados.elementos.map((el, i) => ({
+          titulo: `Etapa ${i + 1}`,
+          texto: el.texto || el.conteudo || `Elemento gráfico (${el.tipo || 'desenho'})`,
+          imagem: el.src || el.imagem || null
+        }));
+      }
+
+      if (!passos || passos.length === 0) {
+        mostrarFallbackLocal('O arquivo da aula não possui passos visíveis.');
+        return;
+      }
+
+      indiceAtual = 0;
+      renderizarPasso();
+    }
+
+    function renderizarPasso() {
+      const palco = document.getElementById('palcoAula');
+      const total = passos.length;
+      const atual = passos[indiceAtual];
+
+      document.getElementById('contadorPasso').textContent = `Passo ${indiceAtual + 1} de ${total}`;
+      document.getElementById('barraProgresso').style.width = `${((indiceAtual + 1) / total) * 100}%`;
+
+      document.getElementById('btnAnterior').disabled = (indiceAtual === 0);
+      const btnProx = document.getElementById('btnProximo');
+      btnProx.disabled = false;
+      btnProx.textContent = (indiceAtual === total - 1) ? '✅ Aula Concluída' : 'Próximo Passo ➔';
+
+      palco.innerHTML = '';
+
+      if (atual.titulo) {
+        const h2 = document.createElement('h2');
+        h2.textContent = atual.titulo;
+        h2.style.cssText = 'color:#38bdf8; font-size:24px; margin-bottom:16px;';
+        palco.appendChild(h2);
+      }
+
+      if (atual.imagem) {
+        const img = document.createElement('img');
+        img.src = atual.imagem;
+        img.alt = atual.titulo || 'Ilustração da aula';
+        img.style.marginBottom = '16px';
+        palco.appendChild(img);
+      }
+
+      if (atual.texto) {
+        const p = document.createElement('div');
+        p.className = 'step-text';
+        p.textContent = atual.texto;
+        palco.appendChild(p);
+      }
+    }
+
+    function mudarPasso(delta) {
+      const novo = indiceAtual + delta;
+      if (novo >= 0 && novo < passos.length) {
+        indiceAtual = novo;
+        renderizarPasso();
+      } else if (novo >= passos.length) {
+        alert('🎉 Você chegou ao final desta apresentação!');
+      }
+    }
+
+    function mostrarFallbackDrive(id) {
+      const linkDireto = `https://drive.google.com/file/d/${encodeURIComponent(id)}/view`;
+      document.getElementById('palcoAula').innerHTML = `
+        <h3 style="color:#fbbf24; margin-bottom:12px;">Material da Aula Disponível</h3>
+        <p style="color:#cbd5e1; max-width:520px; line-height:1.6; margin-bottom:20px;">
+          Clique no botão abaixo para abrir o arquivo desta aula diretamente no Google Drive ou carregue o arquivo baixado no botão ao lado.
+        </p>
+        <div style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center;">
+          <a href="${linkDireto}" target="_blank" rel="noopener" style="background:#10b981; color:#052e16; text-decoration:none; padding:12px 20px; border-radius:10px; font-weight:800;">
+            📂 Abrir Aula no Google Drive ↗
+          </a>
+          <label style="background:#334155; color:white; padding:12px 20px; border-radius:10px; font-weight:700; cursor:pointer;">
+            📁 Carregar Arquivo (.json / .losa)
+            <input type="file" accept=".json,.losa" style="display:none;" onchange="lerArquivoLocal(event)">
+          </label>
+        </div>
+      `;
+    }
+
+    function mostrarFallbackLocal(msg) {
+      document.getElementById('palcoAula').innerHTML = `
+        <p style="color:#94a3b8; margin-bottom:16px;">${msg}</p>
+        <label style="background:#3b82f6; color:white; padding:12px 20px; border-radius:10px; font-weight:700; cursor:pointer;">
+          📁 Abrir Arquivo de Aula (.json / .losa)
+          <input type="file" accept=".json,.losa" style="display:none;" onchange="lerArquivoLocal(event)">
+        </label>
+      `;
+    }
+
+    function lerArquivoLocal(ev) {
+      const file = ev.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          processarDadosAula(JSON.parse(e.target.result));
+        } catch (err) {
+          alert('Formato de arquivo inválido.');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    // Permite avançar usando as setas do teclado
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') mudarPasso(1);
+      if (e.key === 'ArrowLeft') mudarPasso(-1);
+    });
+
+    iniciarAula();
+  </script>
+</body>
+</html>
