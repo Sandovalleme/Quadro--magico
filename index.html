@@ -56,7 +56,6 @@
       padding: 32px 24px 60px; flex: 1;
     }
 
-    /* Banner Superior com QR Code Direto do Portal */
     .hero-banner {
       background: rgba(30, 41, 59, 0.85);
       border: 1px solid rgba(96, 165, 250, 0.25);
@@ -92,7 +91,6 @@
       margin-top: 6px; text-transform: uppercase;
     }
 
-    /* Grade das Ferramentas */
     .tools-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(265px, 1fr));
@@ -130,7 +128,6 @@
     .btn-amber { background: linear-gradient(135deg, #d97706, #f59e0b); }
     .btn-purple { background: linear-gradient(135deg, #7c3aed, #9333ea); }
 
-    /* Seção Interativa Interna (Gerador QR + Cronômetro + Fórmulas) */
     .section-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; color: #e2e8f0; }
     .support-grid {
       display: grid;
@@ -144,7 +141,6 @@
     }
     .support-box h4 { font-size: 15px; font-weight: 700; margin-bottom: 12px; color: #93c5fd; }
 
-    /* Mini Gerador QR Embutido */
     .qr-inline-wrap { display: flex; gap: 14px; align-items: center; }
     .qr-inline-controls { flex: 1; }
     .qr-inline-controls input {
@@ -205,7 +201,6 @@
   </header>
 
   <main>
-    <!-- Banner com QR Code permanente para os alunos acessarem o Portal -->
     <section class="hero-banner">
       <div class="hero-text">
         <h2>Acesso Rápido à Aula Digital</h2>
@@ -218,7 +213,6 @@
       </div>
     </section>
 
-    <!-- Cards das 4 Ferramentas -->
     <section class="tools-grid">
       <article class="tool-card">
         <div class="card-top">
@@ -244,7 +238,7 @@
           <h3>🪄 Folha Mágica</h3>
           <p>Lousa infinita para desenhar esquemas, fórmulas e gravar trajetórias de animação em formato JSON.</p>
         </div>
-        <a href="FOLHA%20M%C3%81GICA.html" class="btn-launch btn-amber">Abrir Folha Mágica ➔</a>
+        <a href="Magia.html" class="btn-launch btn-amber">Abrir Folha Mágica ➔</a>
       </article>
 
       <article class="tool-card">
@@ -257,10 +251,8 @@
       </article>
     </section>
 
-    <!-- Utilitários Embutidos na Página -->
     <h3 class="section-title">🧰 Ferramentas Rápidas Integradas na Página</h3>
     <section class="support-grid">
-      <!-- Gerador Rápido de QR Code Embutido -->
       <div class="support-box">
         <h4>📱 Gerador Rápido de QR Code</h4>
         <div class="qr-inline-wrap">
@@ -276,7 +268,6 @@
         </div>
       </div>
 
-      <!-- Cronômetro -->
       <div class="support-box">
         <h4>⏱️ Cronômetro de Atividade</h4>
         <div class="timer-display" id="timerDisplay">15:00</div>
@@ -289,7 +280,6 @@
         </div>
       </div>
 
-      <!-- Fórmulas -->
       <div class="support-box">
         <h4>📐 Consulta Rápida de Fórmulas</h4>
         <div class="formula-tabs">
@@ -311,7 +301,6 @@
   </footer>
 
   <script>
-    // 1. Gera o QR Code fixo do Portal no topo
     new QRCode(document.getElementById('portalMainQr'), {
       text: 'https://sandovalleme.github.io/Quadro--magico/',
       width: 108,
@@ -321,7 +310,6 @@
       correctLevel: QRCode.CorrectLevel.H
     });
 
-    // 2. Gerador de QR Code Interativo Embutido
     function atualizarInlineQR() {
       const box = document.getElementById('inlineQrBox');
       const val = document.getElementById('inlineQrInput').value.trim() || 'https://sandovalleme.github.io/Quadro--magico/';
@@ -352,7 +340,6 @@
 
     atualizarInlineQR();
 
-    // 3. Cronômetro
     let totalSeconds = 15 * 60, initialSeconds = 15 * 60, timerInterval = null;
     function updateTimerDisplay() {
       const m = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
@@ -383,7 +370,6 @@
       totalSeconds = initialSeconds; updateTimerDisplay();
     }
 
-    // 4. Fórmulas
     const conteudos = {
       mat: '<strong>Bhaskara:</strong> x = (-b ± √Δ) / 2a &nbsp;|&nbsp; Δ = b² - 4ac<br><strong>Pitágoras:</strong> a² = b² + c²<br><strong>Círculo:</strong> A = π · r² &nbsp;|&nbsp; C = 2 · π · r',
       fis: '<strong>MRU:</strong> S = S₀ + v · t &nbsp;|&nbsp; <strong>MRUV:</strong> v = v₀ + a · t<br><strong>Torricelli:</strong> v² = v₀² + 2 · a · ΔS<br><strong>Newton:</strong> F<sub>R</sub> = m · a &nbsp;|&nbsp; <strong>Ohm:</strong> U = R · i',
