@@ -2,6 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Folha Mágica Gigante - Cores e Rolagem Sincronizada</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <style>
@@ -15,6 +16,8 @@
   button.active-org { background: #2e7d32; font-weight: bold; }
   button.btn-pdf { background: #a82424; }
   button.btn-pdf:hover { background: #c92e2e; }
+  button.btn-portal { background: linear-gradient(135deg, #10b981, #059669); color: #052e16; font-weight: bold; }
+  button.btn-portal:hover { filter: brightness(1.08); }
   #statusApresentacao { background: #0d0d0d; padding: 5px 9px; border-radius: 4px; font-size: 12px; color: #4fc3f7; border: 1px solid #333; min-width: 165px; text-align: center; cursor: pointer; }
   .pdf-nav { display: none; align-items: center; gap: 4px; background: #2c2c2c; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
   .workspace { flex: 1; width: 100%; height: 100%; overflow: scroll; position: relative; background: #ffffff; }
@@ -41,10 +44,65 @@
   .modal-box h3 { margin: 0 0 10px 0; font-size: 15px; color: #fff; }
   .modal-box input { width: 100%; padding: 9px; font-size: 15px; background: #111; color: #fff; border: 1px solid #555; border-radius: 4px; margin-bottom: 12px; user-select: text; cursor: text; }
   .modal-actions { display: flex; justify-content: flex-end; gap: 8px; }
+
+  /* Barra Flutuante exclusiva do Aluno quando aberto via Portal/QR Code */
+  #student-fm-bar {
+    position: fixed;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid rgba(56, 189, 248, 0.45);
+    padding: 10px 18px;
+    border-radius: 999px;
+    display: none;
+    align-items: center;
+    gap: 10px;
+    z-index: 200;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.65);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .fm-st-btn {
+    background: #1e293b;
+    color: #f8fafc;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .fm-st-btn:hover { background: #334155; }
+  .fm-st-btn-play {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: #052e16;
+    border: none;
+  }
+  #fm-st-status {
+    color: #38bdf8;
+    font-size: 12px;
+    font-weight: 800;
+    padding: 0 6px;
+  }
+  #fm-loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.94);
+    color: #f8fafc;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 300;
+    text-align: center;
+    padding: 24px;
+  }
 </style>
 </head>
 <body>
-<div class="toolbar">
+<div class="toolbar" id="mainToolbar">
   <button class="btn-pdf" onclick="document.getElementById('pdfInput').click()" title="Abrir arquivo PDF na folha">📄 Abrir PDF</button>
   <div class="pdf-nav" id="pdfNav"><button onclick="mudarPaginaPdf(-1)">◀</button><span id="pdfPageInfo">1/1</span><button onclick="mudarPaginaPdf(1)">▶</button></div>
   <button onclick="document.getElementById('imgInput').click()" title="Inserir imagem ou use Ctrl+V">🖼️ + Imagem</button>
@@ -58,12 +116,14 @@
   <label style="font-size:12px;">Vel.: <input type="range" id="velocidade" min="0.2" max="4" step="0.2" value="1" style="width:65px; vertical-align:middle;"></label>
   <button onclick="irParaInicioRolagem()" title="Voltar a barra de rolagem para o topo esquerdo">↖ Topo</button>
   <button onclick="salvarProjeto()">💾 Salvar</button>
+  <button class="btn-portal" onclick="salvarParaPortal()" title="Exportar aula pronta para publicar no Portal dos Alunos">🌐 Publicar Portal</button>
   <button onclick="document.getElementById('carregarInput').click()">📂 Abrir</button>
   <button onclick="limparTudo()" style="background:#8a2424;">🗑️ Limpar</button>
   <input type="file" id="pdfInput" style="display:none" accept="application/pdf,.pdf" onchange="carregarArquivoPdf(event)">
   <input type="file" id="imgInput" style="display:none" accept="image/*" onchange="carregarImagemArquivo(event)">
   <input type="file" id="carregarInput" style="display:none" accept=".json" onchange="carregarProjeto(event)">
 </div>
+
 <div class="workspace" id="workspaceArea">
   <div id="folhaGigante">
     <div id="viewportCanvasWrap"><canvas id="folhaPdfFundo"></canvas><canvas id="folhaBase"></canvas><canvas id="folhaInvisivel"></canvas></div>
@@ -86,6 +146,7 @@
     </div>
   </div>
 </div>
+
 <div id="modalEntrada">
   <div class="modal-box">
     <h3 id="modalTitulo">Digite o texto:</h3>
@@ -96,6 +157,20 @@
     </div>
   </div>
 </div>
+
+<div id="fm-loading-overlay">
+  <h2 style="margin-bottom:8px;">✨ Carregando Folha Mágica...</h2>
+  <p id="fm-loading-text" style="color:#94a3b8; font-size:14px;">Sincronizando aula e animações...</p>
+</div>
+
+<div id="student-fm-bar">
+  <a href="index.html" class="fm-st-btn">← Portal</a>
+  <button type="button" class="fm-st-btn" onclick="setModo('apresentar')">🔄 Reiniciar</button>
+  <span id="fm-st-status">Pronto</span>
+  <button type="button" class="fm-st-btn fm-st-btn-play" onclick="executarProximoPasso()">▶️ Próximo Passo</button>
+  <button type="button" class="fm-st-btn" onclick="irParaInicioRolagem()">↖ Topo</button>
+</div>
+
 <script>
 (function(){
   const _0xd=_0xi=>document.getElementById(_0xi);
@@ -206,13 +281,17 @@
   function _0xfm(_0xs){return _0xs.replace(/\^2/g,'²').replace(/\^3/g,'³').replace(/\^n/g,'ⁿ').replace(/\\sqrt/g,'√').replace(/sqrt/g,'√').replace(/\\pi/g,'π').replace(/\\Delta/g,'Δ').replace(/\\pm/g,'±').replace(/\\times/g,'×').replace(/\\div/g,'÷').replace(/\\leq/g,'≤').replace(/\\geq/g,'≥').replace(/\\neq/g,'≠').replace(/\\approx/g,'≈');}
 
   function _0xus(){
+    const stAluno = _0xd('fm-st-status');
     if(window.modo==='desenhar')_0xst.textContent='Modo: Desenho (Folha Gigante)';
     else if(window.modo==='organizar')_0xst.textContent='Modo: Organizar';
     else if(window.modo==='mover')_0xst.textContent=`Caminhos: ${_0xfil.length}`;
     else if(window.modo==='apresentar'){
-      if(_0xfil.length===0)_0xst.textContent='Sem caminhos';
-      else if(_0xpsf>=_0xfil.length)_0xst.textContent='Fim (Clique 4 para repetir)';
-      else _0xst.textContent=`Passo ${_0xpsf+1} de ${_0xfil.length}`;
+      let txt = '';
+      if(_0xfil.length===0) txt='Sem animações';
+      else if(_0xpsf>=_0xfil.length) txt='Concluído (Clique Reiniciar)';
+      else txt=`Passo ${_0xpsf+1} de ${_0xfil.length}`;
+      _0xst.textContent = txt;
+      if(stAluno) stAluno.textContent = txt;
     }
   }
   window.setModo=function(_0xnm){
@@ -306,7 +385,11 @@
   window.executarProximoPasso=function(){
     if(_0xani||_0xpsf>=_0xfil.length)return;
     const _0xal=_0xobs[_0xfil[_0xpsf]];if(!_0xal||!_0xal.caminho||_0xal.caminho.length<2)return;
-    _0xal.emMovimento=true;_0xani=true;_0xst.textContent=`Movendo ${_0xpsf+1} de ${_0xfil.length}...`;let _0xps=0;
+    _0xal.emMovimento=true;_0xani=true;
+    const msgMov = `Movendo ${_0xpsf+1} de ${_0xfil.length}...`;
+    _0xst.textContent = msgMov;
+    if(_0xd('fm-st-status')) _0xd('fm-st-status').textContent = msgMov;
+    let _0xps=0;
     function _0xan(){
       _0xps+=parseFloat(_0xd('velocidade').value);
       const _0xip=Math.min(Math.floor(_0xps),_0xal.caminho.length-1),_0xpt=_0xal.caminho[_0xip];
@@ -356,27 +439,83 @@
     _0xctxb.restore();_0xctxt.restore();
   }
 
-  window.salvarProjeto=function(){
+  function gerarObjetoExportacao() {
     const _0xol=_0xobs.map(_0xo=>{const _0xcp={..._0xo};delete _0xcp.imgCache;return _0xcp;});
-    const _0xbl=new Blob([JSON.stringify({objetos:_0xol,filaIndices:_0xfil,fundoPdfDataUrl:_0xfdu})],{type:'application/json'});
+    return {objetos:_0xol,filaIndices:_0xfil,fundoPdfDataUrl:_0xfdu};
+  }
+
+  window.salvarProjeto=function(){
+    const _0xbl=new Blob([JSON.stringify(gerarObjetoExportacao())],{type:'application/json'});
     const _0xa=document.createElement('a');_0xa.href=URL.createObjectURL(_0xbl);_0xa.download='folha_magica_gigante.json';_0xa.click();
   };
+
+  window.salvarParaPortal=function(){
+    const titulo = prompt('Digite o Título desta Aula da Folha Mágica para os alunos:', 'Aula Folha Mágica');
+    if(!titulo || !titulo.trim()) return;
+    const pacote = {
+      tipoPrograma: 'folha',
+      titulo: titulo.trim(),
+      dataCriacao: new Date().toISOString(),
+      ...gerarObjetoExportacao()
+    };
+    const nomeArq = `FolhaMagica_${titulo.trim().replace(/[^a-zA-Z0-9_-]/g, '_')}.json`;
+    const _0xbl=new Blob([JSON.stringify(pacote)],{type:'application/json'});
+    const _0xa=document.createElement('a');_0xa.href=URL.createObjectURL(_0xbl);_0xa.download=nomeArq;_0xa.click();
+    alert(`✅ Arquivo "${nomeArq}" salvo!\n\nEnvie para o Google Drive (como "Qualquer pessoa com o link") e cadastre no Portal (index.html ➔ Área do Desenvolvedor ➔ Folha Mágica).`);
+  };
+
+  function aplicarDadosCarregados(_0xdd) {
+    if(Array.isArray(_0xdd)){_0xobs=_0xdd;_0xfil=[];_0xobs.forEach((_0xo,_0xi)=>{if(_0xo.caminho&&_0xo.caminho.length>2)_0xfil.push(_0xi);});_0xfdu=null;}
+    else{_0xobs=_0xdd.objetos||[];_0xfil=Array.isArray(_0xdd.filaIndices)?_0xdd.filaIndices:[];_0xfdu=_0xdd.fundoPdfDataUrl||null;}
+    _0xpcf();window.setModo('apresentar');
+  }
+
   window.carregarProjeto=function(_0xe){
     const _0xf=_0xe.target.files[0];if(!_0xf)return;const _0xrd=new FileReader();
-    _0xrd.onload=_0xev=>{
-      const _0xdd=JSON.parse(_0xev.target.result);
-      if(Array.isArray(_0xdd)){_0xobs=_0xdd;_0xfil=[];_0xobs.forEach((_0xo,_0xi)=>{if(_0xo.caminho&&_0xo.caminho.length>2)_0xfil.push(_0xi);});_0xfdu=null;}
-      else{_0xobs=_0xdd.objetos||[];_0xfil=Array.isArray(_0xdd.filaIndices)?_0xdd.filaIndices:[];_0xfdu=_0xdd.fundoPdfDataUrl||null;}
-      _0xpcf();window.setModo('apresentar');
-    };
+    _0xrd.onload=_0xev=>{aplicarDadosCarregados(JSON.parse(_0xev.target.result));};
     _0xrd.readAsText(_0xf);_0xe.target.value='';
   };
+
   window.limparTudo=function(){
     if(confirm("Deseja apagar todos os desenhos, imagens, PDF e caminhos?")){
       _0xobs=[];_0xfil=[];_0xpsf=0;_0xpd=null;_0xfdu=null;_0xfic=null;_0xfp();_0xd('pdfNav').style.display='none';_0xw.scrollTo(0,0);window.setModo('desenhar');
     }
   };
+
+  /* Carregamento automático quando o aluno acessa via Portal / QR Code (?modo=show&drive=...) */
+  async function verificarModoAlunoPortal() {
+    const params = new URLSearchParams(window.location.search);
+    const driveId = params.get('drive');
+    const modoUrl = params.get('modo');
+
+    if (modoUrl === 'show' || driveId) {
+      _0xd('mainToolbar').style.display = 'none';
+      _0xd('student-fm-bar').style.display = 'flex';
+      _0xaj();
+    }
+
+    if (!driveId) return;
+
+    const overlay = _0xd('fm-loading-overlay');
+    const txt = _0xd('fm-loading-text');
+    overlay.style.display = 'flex';
+    if (params.get('titulo')) txt.textContent = params.get('titulo');
+
+    try {
+      const driveUrl = 'https://drive.google.com/uc?export=download&id=' + encodeURIComponent(driveId);
+      const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(driveUrl);
+      const resp = await fetch(proxyUrl);
+      if (!resp.ok) throw new Error('Falha ao baixar aula');
+      const dados = await resp.json();
+      aplicarDadosCarregados(dados.fm_dados || dados);
+      overlay.style.display = 'none';
+    } catch (err) {
+      overlay.innerHTML = '<h2>⚠️ Não foi possível abrir a Folha Mágica</h2><p style="color:#94a3b8;margin:10px 0 20px;">Verifique se o arquivo no Google Drive está compartilhado como "Qualquer pessoa com o link".</p><a href="index.html" class="fm-st-btn">← Voltar ao Portal</a>';
+    }
+  }
+
   _0xaj();_0xrt();
+  verificarModoAlunoPortal();
 })();
 </script>
 </body>
