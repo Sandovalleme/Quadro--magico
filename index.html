@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portal Educacional • Lousa Digital Interativa</title>
+  <title>Portal Educacional • Aulas & Desenvolvimento</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -17,170 +17,169 @@
     }
 
     header {
-      background: rgba(15, 23, 42, 0.88);
-      backdrop-filter: blur(10px);
+      background: rgba(15, 23, 42, 0.92);
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 18px 32px;
+      padding: 16px 28px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      gap: 16px;
+      gap: 14px;
     }
     .brand { display: flex; align-items: center; gap: 14px; }
     .brand-icon {
-      width: 46px; height: 46px; border-radius: 12px;
-      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      width: 44px; height: 44px; border-radius: 12px;
+      background: linear-gradient(135deg, #10b981, #3b82f6);
       display: flex; align-items: center; justify-content: center;
-      font-size: 24px; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+      font-size: 22px;
     }
-    .brand h1 { font-size: 20px; font-weight: 800; }
-    .brand p { font-size: 13px; color: #94a3b8; }
+    .brand h1 { font-size: 19px; font-weight: 800; }
+    .brand p { font-size: 12px; color: #94a3b8; }
 
-    .header-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-    .badge-status {
-      background: rgba(16, 185, 129, 0.15);
-      border: 1px solid rgba(16, 185, 129, 0.4);
-      color: #34d399; padding: 6px 12px; border-radius: 20px;
-      font-size: 12px; font-weight: 700;
+    .btn-dev-toggle {
+      background: #1e293b;
+      color: #fbbf24;
+      border: 1px solid rgba(251, 191, 36, 0.45);
+      padding: 9px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
     }
-    .btn-github {
-      background: #334155; color: #f8fafc; text-decoration: none;
-      padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 600;
-      border: 1px solid rgba(255,255,255,0.12); transition: 0.2s;
-    }
-    .btn-github:hover { background: #475569; }
+    .btn-dev-toggle:hover { background: rgba(251, 191, 36, 0.15); }
 
     main {
-      max-width: 1200px; width: 100%; margin: 0 auto;
-      padding: 32px 24px 60px; flex: 1;
+      max-width: 1160px; width: 100%; margin: 0 auto;
+      padding: 36px 22px 60px; flex: 1;
     }
+    .hidden { display: none !important; }
 
-    .hero-banner {
-      background: rgba(30, 41, 59, 0.85);
-      border: 1px solid rgba(96, 165, 250, 0.25);
-      border-radius: 18px;
-      padding: 24px 28px;
-      margin-bottom: 34px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 24px;
-      flex-wrap: wrap;
+    /* ================= TELA PÚBLICA (ALUNO) ================= */
+    .public-box {
+      max-width: 680px;
+      margin: 30px auto;
+      background: #1e293b;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      border-radius: 20px;
+      padding: 36px 28px;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
     }
-    .hero-text { flex: 1; min-width: 260px; }
-    .hero-text h2 {
-      font-size: 26px; font-weight: 800; margin-bottom: 8px;
-      background: linear-gradient(90deg, #ffffff, #93c5fd);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    }
-    .hero-text p { color: #cbd5e1; font-size: 14px; line-height: 1.55; margin-bottom: 14px; }
-    .url-pill {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: #0f172a; border: 1px solid rgba(255,255,255,0.12);
-      padding: 7px 12px; border-radius: 8px; font-size: 12px; color: #38bdf8;
-      font-family: monospace;
-    }
-    .hero-qr-box {
-      background: #ffffff; padding: 12px; border-radius: 14px;
-      display: flex; flex-direction: column; align-items: center;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
-    }
-    .hero-qr-box span {
-      color: #0f172a; font-size: 11px; font-weight: 800;
-      margin-top: 6px; text-transform: uppercase;
-    }
-
-    .tools-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(265px, 1fr));
-      gap: 20px;
-      margin-bottom: 38px;
-    }
-    .tool-card {
-      background: #1e293b; border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 16px; padding: 22px;
-      display: flex; flex-direction: column; justify-content: space-between;
-      transition: transform 0.2s ease, border-color 0.2s ease;
-    }
-    .tool-card:hover { transform: translateY(-4px); border-color: rgba(96, 165, 250, 0.5); }
-    .card-top { margin-bottom: 18px; }
-    .card-tag {
-      display: inline-block; padding: 4px 10px; border-radius: 6px;
-      font-size: 11px; font-weight: 800; text-transform: uppercase; margin-bottom: 12px;
-    }
-    .tag-prof { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
-    .tag-aluno { background: rgba(16, 185, 129, 0.2); color: #34d399; }
-    .tag-editor { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
-    .tag-qr { background: rgba(168, 85, 247, 0.2); color: #c084fc; }
-
-    .tool-card h3 { font-size: 19px; font-weight: 800; margin-bottom: 8px; }
-    .tool-card p { font-size: 13px; color: #94a3b8; line-height: 1.5; }
-
-    .btn-launch {
-      display: block; text-align: center; text-decoration: none;
-      padding: 11px 14px; border-radius: 10px; font-weight: 700;
-      font-size: 13px; color: white; transition: filter 0.2s;
-    }
-    .btn-launch:hover { filter: brightness(1.1); }
-    .btn-blue { background: linear-gradient(135deg, #2563eb, #3b82f6); }
-    .btn-green { background: linear-gradient(135deg, #059669, #10b981); }
-    .btn-amber { background: linear-gradient(135deg, #d97706, #f59e0b); }
-    .btn-purple { background: linear-gradient(135deg, #7c3aed, #9333ea); }
-
-    .section-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; color: #e2e8f0; }
-    .support-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 20px;
-    }
-    .support-box {
-      background: rgba(30, 41, 59, 0.78);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 14px; padding: 20px;
-    }
-    .support-box h4 { font-size: 15px; font-weight: 700; margin-bottom: 12px; color: #93c5fd; }
-
-    .qr-inline-wrap { display: flex; gap: 14px; align-items: center; }
-    .qr-inline-controls { flex: 1; }
-    .qr-inline-controls input {
-      width: 100%; background: #0f172a; color: #f8fafc;
-      border: 1px solid rgba(255,255,255,0.14); border-radius: 8px;
-      padding: 8px 10px; font-size: 12px; margin-bottom: 8px; outline: none;
-    }
-    .qr-inline-preview {
-      background: #ffffff; padding: 8px; border-radius: 10px;
+    .public-icon {
+      width: 68px; height: 68px; border-radius: 18px;
+      background: rgba(16, 185, 129, 0.15); color: #34d399;
       display: flex; align-items: center; justify-content: center;
-      min-width: 112px; min-height: 112px;
+      font-size: 34px; margin: 0 auto 18px;
+    }
+    .public-box h2 { font-size: 25px; font-weight: 800; margin-bottom: 12px; }
+    .public-box p { color: #cbd5e1; font-size: 15px; line-height: 1.6; margin-bottom: 24px; }
+    .btn-direct-player {
+      display: inline-block;
+      background: linear-gradient(135deg, #059669, #10b981);
+      color: #052e16;
+      text-decoration: none;
+      padding: 13px 24px;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 14px;
     }
 
-    .timer-display {
-      font-size: 32px; font-weight: 800; text-align: center;
-      background: #0f172a; padding: 12px; border-radius: 10px;
-      margin-bottom: 12px; color: #38bdf8;
+    /* ================= LOGIN DESENVOLVEDOR ================= */
+    .login-card {
+      max-width: 420px; margin: 40px auto;
+      background: #1e293b; border: 1px solid rgba(251, 191, 36, 0.4);
+      border-radius: 18px; padding: 30px; text-align: center;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5);
     }
-    .timer-controls { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
-    .btn-mini {
-      background: #334155; color: white; border: none;
-      padding: 7px 11px; border-radius: 6px; font-size: 12px;
-      font-weight: 700; cursor: pointer;
+    .login-card h2 { font-size: 20px; margin-bottom: 8px; }
+    .login-card p { font-size: 13px; color: #94a3b8; margin-bottom: 18px; }
+    .input-field {
+      width: 100%; background: #0f172a; color: #f8fafc;
+      border: 1px solid rgba(255, 255, 255, 0.18); border-radius: 10px;
+      padding: 11px 14px; font-size: 14px; margin-bottom: 12px; outline: none;
     }
-    .btn-mini:hover { background: #475569; }
+    .input-field:focus { border-color: #fbbf24; }
+    .btn-amber {
+      width: 100%; background: linear-gradient(135deg, #d97706, #f59e0b);
+      color: #0f172a; border: none; padding: 12px; border-radius: 10px;
+      font-size: 14px; font-weight: 800; cursor: pointer;
+    }
 
-    .formula-tabs { display: flex; gap: 6px; margin-bottom: 10px; }
-    .tab-btn {
-      background: #0f172a; color: #94a3b8; border: 1px solid rgba(255,255,255,0.1);
-      padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer;
+    /* ================= PAINEL RESTRITO DO DESENVOLVEDOR ================= */
+    .dev-topbar {
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      border-radius: 14px; padding: 16px 22px; margin-bottom: 26px;
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
     }
-    .tab-btn.active { background: #3b82f6; color: white; border-color: #3b82f6; }
-    .formula-content {
-      background: #0f172a; padding: 12px; border-radius: 10px;
-      font-size: 13px; line-height: 1.65; color: #e2e8f0; min-height: 98px;
+    .btn-lock {
+      background: #ef4444; color: white; border: none;
+      padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 800; cursor: pointer;
+    }
+
+    .apps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 18px;
+      margin-bottom: 32px;
+    }
+    .app-card {
+      background: #1e293b; border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px; padding: 20px;
+      display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .app-card h3 { font-size: 18px; margin-bottom: 8px; }
+    .app-card p { font-size: 13px; color: #94a3b8; line-height: 1.5; margin-bottom: 16px; }
+    .btn-open {
+      display: block; text-align: center; text-decoration: none;
+      background: #2563eb; color: white; padding: 10px; border-radius: 9px;
+      font-size: 13px; font-weight: 700;
+    }
+    .btn-open:hover { filter: brightness(1.1); }
+
+    /* Gerador de Aula Google Drive -> QR Code */
+    .drive-builder {
+      background: #1e293b;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: 18px;
+      padding: 26px;
+      display: grid;
+      grid-template-columns: 1.3fr 0.7fr;
+      gap: 24px;
+      align-items: center;
+    }
+    @media (max-width: 760px) {
+      .drive-builder { grid-template-columns: 1fr; }
+    }
+    .drive-builder h3 { font-size: 19px; color: #38bdf8; margin-bottom: 8px; }
+    .drive-builder label { display: block; font-size: 12px; font-weight: 700; color: #cbd5e1; margin-bottom: 5px; }
+
+    .qr-result-card {
+      background: #0f172a;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      padding: 20px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .qr-white-box {
+      background: #ffffff;
+      padding: 14px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+    }
+    .qr-label-preview {
+      color: #0f172a;
+      font-size: 12px;
+      font-weight: 800;
+      margin-top: 6px;
     }
 
     footer {
       text-align: center; padding: 18px; font-size: 12px;
-      color: #64748b; border-top: 1px solid rgba(255,255,255,0.06);
+      color: #64748b; border-top: 1px solid rgba(255, 255, 255, 0.06);
     }
   </style>
 </head>
@@ -190,195 +189,640 @@
     <div class="brand">
       <div class="brand-icon">🎓</div>
       <div>
-        <h1>Portal Educacional • Lousa Digital</h1>
-        <p>Ambiente Integrado de Apresentação, Animação e Acesso Rápido por QR Code</p>
+        <h1>Portal Educacional • Apresentações Interativas</h1>
+        <p>Acesso Direto às Aulas via QR Code</p>
       </div>
     </div>
-    <div class="header-actions">
-      <span class="badge-status">● GitHub Pages Ativo</span>
-      <a class="btn-github" href="https://github.com/Sandovalleme/Quadro--magico" target="_blank" rel="noopener">📂 Repositório GitHub</a>
-    </div>
+    <button id="btnToggleDev" class="btn-dev-toggle" onclick="abrirLoginOuPainel()">🔒 Área do Desenvolvedor</button>
   </header>
 
   <main>
-    <section class="hero-banner">
-      <div class="hero-text">
-        <h2>Acesso Rápido à Aula Digital</h2>
-        <p>Projete este QR Code na lousa ou TV da sala: os estudantes podem apontar a câmera do celular para abrir imediatamente o portal e acompanhar os materiais interativos.</p>
-        <div class="url-pill">🔗 https://sandovalleme.github.io/Quadro--magico/</div>
+    <!-- 1. TELA PÚBLICA (O que aparece se alguém abrir o link raiz sem QR Code de aula) -->
+    <div id="viewPublico">
+      <div class="public-box">
+        <div class="public-icon">📱</div>
+        <h2>Escaneie o QR Code da sua Aula</h2>
+        <p>
+          Cada aula (como <strong>Física Quântica</strong>, <strong>Matemática</strong> ou <strong>Programação</strong>) possui um QR Code exclusivo projetado pelo professor.<br><br>
+          Aponte a câmera do seu celular para o código da lousa para abrir diretamente a apresentação passo a passo da aula de hoje.
+        </p>
+        <a href="APRESENTACAO_ALUNO.html" class="btn-direct-player">📂 Abrir Visualizador de Aula (Arquivo Local)</a>
       </div>
-      <div class="hero-qr-box" title="QR Code de acesso a este portal">
-        <div id="portalMainQr"></div>
-        <span>Acesso Alunos</span>
+    </div>
+
+    <!-- 2. TELA DE SENHA DO DESENVOLVEDOR -->
+    <div id="viewLogin" class="hidden">
+      <div class="login-card">
+        <div style="font-size:32px; margin-bottom:10px;">🔐</div>
+        <h2>Área Restrita do Desenvolvedor</h2>
+        <p>Digite sua senha para acessar os aplicativos de criação e gerar QR Codes das aulas salvas no Google Drive.</p>
+        <input type="password" id="senhaInput" class="input-field" style="text-align:center; letter-spacing:2px;" placeholder="••••••••" onkeydown="if(event.key==='Enter') validarSenha()">
+        <div id="msgErro" style="color:#f87171; font-size:12px; font-weight:700; min-height:18px; margin-bottom:8px;"></div>
+        <button class="btn-amber" onclick="validarSenha()">🔓 Entrar no Painel</button>
+        <button onclick="voltarPublico()" style="margin-top:12px; background:none; border:none; color:#94a3b8; font-size:12px; cursor:pointer; text-decoration:underline;">Voltar</button>
       </div>
-    </section>
+    </div>
 
-    <section class="tools-grid">
-      <article class="tool-card">
-        <div class="card-top">
-          <span class="card-tag tag-prof">Painel Principal</span>
-          <h3>🖥️ Quadro Mágico</h3>
-          <p>Controle completo do professor para apresentar PDFs com máscaras, vídeos, imagens e animações passo a passo.</p>
+    <!-- 3. COFRE DO DESENVOLVEDOR (APLICATIVOS + GERADOR DRIVE -> QR CODE) -->
+    <div id="viewDev" class="hidden">
+      <div class="dev-topbar">
+        <div>
+          <strong style="color:#fbbf24;">🔓 Painel do Desenvolvedor Ativo</strong>
+          <p style="font-size:12px; color:#cbd5e1;">Crie suas aulas, salve no Google Drive e gere abaixo o QR Code exclusivo para os alunos.</p>
         </div>
-        <a href="QUADRO%20M%C3%81GICO.html" class="btn-launch btn-blue">Abrir Quadro Mágico ➔</a>
-      </article>
-
-      <article class="tool-card">
-        <div class="card-top">
-          <span class="card-tag tag-aluno">Projeção / 2º Monitor</span>
-          <h3>📺 Losa Mágica</h3>
-          <p>Tela limpa sem barras de ferramentas, sincronizada em tempo real com o Quadro Mágico para projetor ou TV.</p>
+        <div style="display:flex; gap:8px;">
+          <a href="https://drive.google.com" target="_blank" rel="noopener" style="background:#334155; color:white; text-decoration:none; padding:8px 12px; border-radius:8px; font-size:12px; font-weight:700;">☁️ Abrir Google Drive</a>
+          <button class="btn-lock" onclick="trancarPainel()">🔒 Sair e Trancar</button>
         </div>
-        <a href="LOSA%20M%C3%81GICA.html" target="_blank" class="btn-launch btn-green">Abrir Tela do Aluno ↗</a>
-      </article>
+      </div>
 
-      <article class="tool-card">
-        <div class="card-top">
-          <span class="card-tag tag-editor">Estúdio de Criação</span>
-          <h3>🪄 Folha Mágica</h3>
-          <p>Lousa infinita para desenhar esquemas, fórmulas e gravar trajetórias de animação em formato JSON.</p>
-        </div>
-        <a href="Magia.html" class="btn-launch btn-amber">Abrir Folha Mágica ➔</a>
-      </article>
-
-      <article class="tool-card">
-        <div class="card-top">
-          <span class="card-tag tag-qr">Compartilhamento</span>
-          <h3>📱 Gerador QR Code</h3>
-          <p>Crie QR Codes personalizados com legenda para qualquer link de aula, formulário ou atividade e baixe em PNG.</p>
-        </div>
-        <a href="GERADOR%20QR%20CODE.html" class="btn-launch btn-purple">Abrir Gerador Completo ➔</a>
-      </article>
-    </section>
-
-    <h3 class="section-title">🧰 Ferramentas Rápidas Integradas na Página</h3>
-    <section class="support-grid">
-      <div class="support-box">
-        <h4>📱 Gerador Rápido de QR Code</h4>
-        <div class="qr-inline-wrap">
-          <div class="qr-inline-controls">
-            <input type="text" id="inlineQrInput" value="https://sandovalleme.github.io/Quadro--magico/" placeholder="Cole qualquer link aqui..." oninput="atualizarInlineQR()">
-            <div style="display:flex; gap:6px; flex-wrap:wrap;">
-              <button class="btn-mini" onclick="setInlineLink('https://sandovalleme.github.io/Quadro--magico/')">Portal</button>
-              <button class="btn-mini" onclick="setInlineLink('https://sandovalleme.github.io/Quadro--magico/LOSA%20M%C3%81GICA.html')">Losa Aluno</button>
-              <button class="btn-mini" style="background:#10b981;" onclick="baixarInlineQR()">⬇️ PNG</button>
-            </div>
+      <!-- Seus Aplicativos Restritos -->
+      <div class="apps-grid">
+        <div class="app-card">
+          <div>
+            <h3>🖥️ Quadro Mágico</h3>
+            <p>Controle completo do professor para apresentar e exportar aulas.</p>
           </div>
-          <div class="qr-inline-preview" id="inlineQrBox"></div>
+          <a href="QUADRO%20M%C3%81GICO.html" class="btn-open">Abrir Quadro Mágico ➔</a>
+        </div>
+
+        <div class="app-card">
+          <div>
+            <h3>🪄 Folha Mágica (Magia)</h3>
+            <p>Estúdio de desenho e gravação de animações passo a passo.</p>
+          </div>
+          <a href="Magia.html" class="btn-open" style="background:#d97706;">Abrir Magia.html ➔</a>
+        </div>
+
+        <div class="app-card">
+          <div>
+            <h3>📺 Losa Mágica</h3>
+            <p>Janela espelhada limpa para projeção simultânea em sala.</p>
+          </div>
+          <a href="LOSA%20M%C3%81GICA.html" target="_blank" class="btn-open" style="background:#059669;">Abrir Losa Mágica ↗</a>
+        </div>
+
+        <div class="app-card">
+          <div>
+            <h3>📱 Gerador QR Completo</h3>
+            <p>Ferramenta avançada de QR Codes personalizados.</p>
+          </div>
+          <a href="GERADOR%20QR%20CODE.html" class="btn-open" style="background:#7c3aed;">Abrir Gerador ➔</a>
         </div>
       </div>
 
-      <div class="support-box">
-        <h4>⏱️ Cronômetro de Atividade</h4>
-        <div class="timer-display" id="timerDisplay">15:00</div>
-        <div class="timer-controls">
-          <button class="btn-mini" onclick="setTimer(5)">5m</button>
-          <button class="btn-mini" onclick="setTimer(15)">15m</button>
-          <button class="btn-mini" onclick="setTimer(45)">45m</button>
-          <button class="btn-mini" style="background:#10b981;" onclick="toggleTimer()" id="btnStartTimer">▶ Iniciar</button>
-          <button class="btn-mini" style="background:#ef4444;" onclick="resetTimer()">↺</button>
-        </div>
-      </div>
+      <!-- Gerador de QR Code exclusivo para cada aula do Google Drive -->
+      <section class="drive-builder">
+        <div>
+          <h3>🚀 Gerar QR Code de Aula do Google Drive</h3>
+          <p style="font-size:13px; color:#94a3b8; margin-bottom:16px; line-height:1.5;">
+            1. Salve o arquivo da aula no Google Drive e deixe compartilhado como <strong>"Qualquer pessoa com o link"</strong>.<br>
+            2. Cole o link abaixo para gerar o QR Code que abre <strong>somente</strong> essa apresentação para os alunos.
+          </p>
 
-      <div class="support-box">
-        <h4>📐 Consulta Rápida de Fórmulas</h4>
-        <div class="formula-tabs">
-          <button class="tab-btn active" onclick="showTab('mat', this)">Matemática</button>
-          <button class="tab-btn" onclick="showTab('fis', this)">Física</button>
-          <button class="tab-btn" onclick="showTab('web', this)">Web</button>
+          <label for="aulaTituloInput">Nome da Aula (ex: Física Quântica - Aula 01):</label>
+          <input type="text" id="aulaTituloInput" class="input-field" value="Física Quântica - Introdução" oninput="gerarQrAulaDrive()">
+
+          <label for="driveLinkInput">Link de Compartilhamento do Arquivo no Google Drive:</label>
+          <input type="text" id="driveLinkInput" class="input-field" placeholder="https://drive.google.com/file/d/1A2B3C4D5E.../view?usp=sharing" oninput="gerarQrAulaDrive()">
+
+          <div style="font-size:11px; color:#38bdf8; word-break:break-all; background:#0f172a; padding:10px; border-radius:8px;" id="linkFinalGerado">
+            Link do aluno: https://sandovalleme.github.io/Quadro--magico/APRESENTACAO_ALUNO.html
+          </div>
         </div>
-        <div class="formula-content" id="formulaBox">
-          <strong>Bhaskara:</strong> x = (-b ± √Δ) / 2a &nbsp;|&nbsp; Δ = b² - 4ac<br>
-          <strong>Pitágoras:</strong> a² = b² + c²<br>
-          <strong>Círculo:</strong> A = π · r² &nbsp;|&nbsp; C = 2 · π · r
+
+        <div class="qr-result-card">
+          <div class="qr-white-box">
+            <div id="qrAulaBox"></div>
+            <div class="qr-label-preview" id="qrAulaLegenda">Física Quântica - Introdução</div>
+          </div>
+          <div style="display:flex; gap:8px; width:100%;">
+            <button onclick="baixarQrAula()" style="flex:1; background:#10b981; color:#052e16; border:none; padding:10px; border-radius:8px; font-weight:800; font-size:12px; cursor:pointer;">⬇️ Baixar QR Code</button>
+            <a id="btnTestarAula" href="APRESENTACAO_ALUNO.html" target="_blank" style="flex:1; background:#3b82f6; color:white; text-decoration:none; padding:10px; border-radius:8px; font-weight:800; font-size:12px;">👁️ Testar Aula</a>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
   </main>
 
   <footer>
-    Portal Educacional Interativo • Hospedado no GitHub Pages (Sandovalleme/Quadro--magico)
+    Portal Educacional • Sandovalleme/Quadro--magico
   </footer>
 
   <script>
-    new QRCode(document.getElementById('portalMainQr'), {
-      text: 'https://sandovalleme.github.io/Quadro--magico/',
-      width: 108,
-      height: 108,
-      colorDark: '#0f172a',
-      colorLight: '#ffffff',
-      correctLevel: QRCode.CorrectLevel.H
-    });
+    // Senha do Desenvolvedor (altere aqui quando quiser)
+    const SENHA_DESENVOLVEDOR = "prof2026";
+    let autenticado = sessionStorage.getItem('dev_auth') === 'true';
 
-    function atualizarInlineQR() {
-      const box = document.getElementById('inlineQrBox');
-      const val = document.getElementById('inlineQrInput').value.trim() || 'https://sandovalleme.github.io/Quadro--magico/';
+    function abrirLoginOuPainel() {
+      document.getElementById('viewPublico').classList.add('hidden');
+      if (autenticado) {
+        document.getElementById('viewLogin').classList.add('hidden');
+        document.getElementById('viewDev').classList.remove('hidden');
+        gerarQrAulaDrive();
+      } else {
+        document.getElementById('viewLogin').classList.remove('hidden');
+        document.getElementById('viewDev').classList.add('hidden');
+        document.getElementById('senhaInput').value = '';
+        document.getElementById('msgErro').textContent = '';
+        setTimeout(() => document.getElementById('senhaInput').focus(), 100);
+      }
+    }
+
+    function validarSenha() {
+      const val = document.getElementById('senhaInput').value;
+      if (val === SENHA_DESENVOLVEDOR) {
+        autenticado = true;
+        sessionStorage.setItem('dev_auth', 'true');
+        abrirLoginOuPainel();
+      } else {
+        document.getElementById('msgErro').textContent = '❌ Senha incorreta.';
+      }
+    }
+
+    function trancarPainel() {
+      autenticado = false;
+      sessionStorage.removeItem('dev_auth');
+      voltarPublico();
+    }
+
+    function voltarPublico() {
+      document.getElementById('viewPublico').classList.remove('hidden');
+      document.getElementById('viewLogin').classList.add('hidden');
+      document.getElementById('viewDev').classList.add('hidden');
+    }
+
+    // Extrai automaticamente o ID de qualquer link do Google Drive
+    function extrairIdDrive(link) {
+      if (!link) return '';
+      const match1 = link.match(/\/d\/([a-zA-Z0-9_-]+)/);
+      if (match1) return match1[1];
+      const match2 = link.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+      if (match2) return match2[1];
+      return link.trim();
+    }
+
+    function gerarQrAulaDrive() {
+      const titulo = document.getElementById('aulaTituloInput').value.trim() || 'Aula Interativa';
+      const linkBruto = document.getElementById('driveLinkInput').value.trim();
+      const idDrive = extrairIdDrive(linkBruto);
+
+      const base = 'https://sandovalleme.github.io/Quadro--magico/APRESENTACAO_ALUNO.html';
+      let urlFinal = `${base}?titulo=${encodeURIComponent(titulo)}`;
+      if (idDrive) {
+        urlFinal += `&drive=${encodeURIComponent(idDrive)}`;
+      }
+
+      document.getElementById('linkFinalGerado').textContent = 'Link do aluno: ' + urlFinal;
+      document.getElementById('qrAulaLegenda').textContent = titulo;
+      document.getElementById('btnTestarAula').href = urlFinal;
+
+      const box = document.getElementById('qrAulaBox');
       box.innerHTML = '';
       new QRCode(box, {
-        text: val,
-        width: 96,
-        height: 96,
+        text: urlFinal,
+        width: 170,
+        height: 170,
         colorDark: '#0f172a',
         colorLight: '#ffffff',
-        correctLevel: QRCode.CorrectLevel.M
+        correctLevel: QRCode.CorrectLevel.H
       });
     }
 
-    function setInlineLink(url) {
-      document.getElementById('inlineQrInput').value = url;
-      atualizarInlineQR();
-    }
+    function baixarQrAula() {
+      const qrCanvas = document.querySelector('#qrAulaBox canvas');
+      if (!qrCanvas) return;
+      const titulo = document.getElementById('aulaTituloInput').value.trim() || 'Aula';
+      const out = document.createElement('canvas');
+      out.width = qrCanvas.width + 40;
+      out.height = qrCanvas.height + 68;
+      const ctx = out.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, out.width, out.height);
+      ctx.drawImage(qrCanvas, 20, 20);
+      ctx.fillStyle = '#0f172a';
+      ctx.font = 'bold 14px Segoe UI, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(titulo, out.width / 2, qrCanvas.height + 46);
 
-    function baixarInlineQR() {
-      const canvas = document.querySelector('#inlineQrBox canvas');
-      if (!canvas) return;
       const a = document.createElement('a');
-      a.download = 'qrcode-rapido.png';
-      a.href = canvas.toDataURL('image/png');
+      a.download = `QRCode-${titulo.replace(/[^a-zA-Z0-9]/g, '_')}.png`;
+      a.href = out.toDataURL('image/png');
       a.click();
     }
-
-    atualizarInlineQR();
-
-    let totalSeconds = 15 * 60, initialSeconds = 15 * 60, timerInterval = null;
-    function updateTimerDisplay() {
-      const m = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
-      const s = String(totalSeconds % 60).padStart(2, '0');
-      document.getElementById('timerDisplay').textContent = `${m}:${s}`;
+  </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Educacional • Aulas & Desenvolvimento</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
-    function setTimer(min) {
-      clearInterval(timerInterval); timerInterval = null;
-      document.getElementById('btnStartTimer').textContent = '▶ Iniciar';
-      initialSeconds = min * 60; totalSeconds = initialSeconds; updateTimerDisplay();
+
+    header {
+      background: rgba(15, 23, 42, 0.92);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 16px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
     }
-    function toggleTimer() {
-      const btn = document.getElementById('btnStartTimer');
-      if (timerInterval) {
-        clearInterval(timerInterval); timerInterval = null; btn.textContent = '▶ Continuar';
+    .brand { display: flex; align-items: center; gap: 14px; }
+    .brand-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: linear-gradient(135deg, #10b981, #3b82f6);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+    }
+    .brand h1 { font-size: 19px; font-weight: 800; }
+    .brand p { font-size: 12px; color: #94a3b8; }
+
+    .btn-dev-toggle {
+      background: #1e293b;
+      color: #fbbf24;
+      border: 1px solid rgba(251, 191, 36, 0.45);
+      padding: 9px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-dev-toggle:hover { background: rgba(251, 191, 36, 0.15); }
+
+    main {
+      max-width: 1160px; width: 100%; margin: 0 auto;
+      padding: 36px 22px 60px; flex: 1;
+    }
+    .hidden { display: none !important; }
+
+    /* ================= TELA PÚBLICA (ALUNO) ================= */
+    .public-box {
+      max-width: 680px;
+      margin: 30px auto;
+      background: #1e293b;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      border-radius: 20px;
+      padding: 36px 28px;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+    }
+    .public-icon {
+      width: 68px; height: 68px; border-radius: 18px;
+      background: rgba(16, 185, 129, 0.15); color: #34d399;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 34px; margin: 0 auto 18px;
+    }
+    .public-box h2 { font-size: 25px; font-weight: 800; margin-bottom: 12px; }
+    .public-box p { color: #cbd5e1; font-size: 15px; line-height: 1.6; margin-bottom: 24px; }
+    .btn-direct-player {
+      display: inline-block;
+      background: linear-gradient(135deg, #059669, #10b981);
+      color: #052e16;
+      text-decoration: none;
+      padding: 13px 24px;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    /* ================= LOGIN DESENVOLVEDOR ================= */
+    .login-card {
+      max-width: 420px; margin: 40px auto;
+      background: #1e293b; border: 1px solid rgba(251, 191, 36, 0.4);
+      border-radius: 18px; padding: 30px; text-align: center;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5);
+    }
+    .login-card h2 { font-size: 20px; margin-bottom: 8px; }
+    .login-card p { font-size: 13px; color: #94a3b8; margin-bottom: 18px; }
+    .input-field {
+      width: 100%; background: #0f172a; color: #f8fafc;
+      border: 1px solid rgba(255, 255, 255, 0.18); border-radius: 10px;
+      padding: 11px 14px; font-size: 14px; margin-bottom: 12px; outline: none;
+    }
+    .input-field:focus { border-color: #fbbf24; }
+    .btn-amber {
+      width: 100%; background: linear-gradient(135deg, #d97706, #f59e0b);
+      color: #0f172a; border: none; padding: 12px; border-radius: 10px;
+      font-size: 14px; font-weight: 800; cursor: pointer;
+    }
+
+    /* ================= PAINEL RESTRITO DO DESENVOLVEDOR ================= */
+    .dev-topbar {
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      border-radius: 14px; padding: 16px 22px; margin-bottom: 26px;
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+    }
+    .btn-lock {
+      background: #ef4444; color: white; border: none;
+      padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 800; cursor: pointer;
+    }
+
+    .apps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 18px;
+      margin-bottom: 32px;
+    }
+    .app-card {
+      background: #1e293b; border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px; padding: 20px;
+      display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .app-card h3 { font-size: 18px; margin-bottom: 8px; }
+    .app-card p { font-size: 13px; color: #94a3b8; line-height: 1.5; margin-bottom: 16px; }
+    .btn-open {
+      display: block; text-align: center; text-decoration: none;
+      background: #2563eb; color: white; padding: 10px; border-radius: 9px;
+      font-size: 13px; font-weight: 700;
+    }
+    .btn-open:hover { filter: brightness(1.1); }
+
+    /* Gerador de Aula Google Drive -> QR Code */
+    .drive-builder {
+      background: #1e293b;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: 18px;
+      padding: 26px;
+      display: grid;
+      grid-template-columns: 1.3fr 0.7fr;
+      gap: 24px;
+      align-items: center;
+    }
+    @media (max-width: 760px) {
+      .drive-builder { grid-template-columns: 1fr; }
+    }
+    .drive-builder h3 { font-size: 19px; color: #38bdf8; margin-bottom: 8px; }
+    .drive-builder label { display: block; font-size: 12px; font-weight: 700; color: #cbd5e1; margin-bottom: 5px; }
+
+    .qr-result-card {
+      background: #0f172a;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      padding: 20px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .qr-white-box {
+      background: #ffffff;
+      padding: 14px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+    }
+    .qr-label-preview {
+      color: #0f172a;
+      font-size: 12px;
+      font-weight: 800;
+      margin-top: 6px;
+    }
+
+    footer {
+      text-align: center; padding: 18px; font-size: 12px;
+      color: #64748b; border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <div class="brand-icon">🎓</div>
+      <div>
+        <h1>Portal Educacional • Apresentações Interativas</h1>
+        <p>Acesso Direto às Aulas via QR Code</p>
+      </div>
+    </div>
+    <button id="btnToggleDev" class="btn-dev-toggle" onclick="abrirLoginOuPainel()">🔒 Área do Desenvolvedor</button>
+  </header>
+
+  <main>
+    <!-- 1. TELA PÚBLICA (O que aparece se alguém abrir o link raiz sem QR Code de aula) -->
+    <div id="viewPublico">
+      <div class="public-box">
+        <div class="public-icon">📱</div>
+        <h2>Escaneie o QR Code da sua Aula</h2>
+        <p>
+          Cada aula (como <strong>Física Quântica</strong>, <strong>Matemática</strong> ou <strong>Programação</strong>) possui um QR Code exclusivo projetado pelo professor.<br><br>
+          Aponte a câmera do seu celular para o código da lousa para abrir diretamente a apresentação passo a passo da aula de hoje.
+        </p>
+        <a href="APRESENTACAO_ALUNO.html" class="btn-direct-player">📂 Abrir Visualizador de Aula (Arquivo Local)</a>
+      </div>
+    </div>
+
+    <!-- 2. TELA DE SENHA DO DESENVOLVEDOR -->
+    <div id="viewLogin" class="hidden">
+      <div class="login-card">
+        <div style="font-size:32px; margin-bottom:10px;">🔐</div>
+        <h2>Área Restrita do Desenvolvedor</h2>
+        <p>Digite sua senha para acessar os aplicativos de criação e gerar QR Codes das aulas salvas no Google Drive.</p>
+        <input type="password" id="senhaInput" class="input-field" style="text-align:center; letter-spacing:2px;" placeholder="••••••••" onkeydown="if(event.key==='Enter') validarSenha()">
+        <div id="msgErro" style="color:#f87171; font-size:12px; font-weight:700; min-height:18px; margin-bottom:8px;"></div>
+        <button class="btn-amber" onclick="validarSenha()">🔓 Entrar no Painel</button>
+        <button onclick="voltarPublico()" style="margin-top:12px; background:none; border:none; color:#94a3b8; font-size:12px; cursor:pointer; text-decoration:underline;">Voltar</button>
+      </div>
+    </div>
+
+    <!-- 3. COFRE DO DESENVOLVEDOR (APLICATIVOS + GERADOR DRIVE -> QR CODE) -->
+    <div id="viewDev" class="hidden">
+      <div class="dev-topbar">
+        <div>
+          <strong style="color:#fbbf24;">🔓 Painel do Desenvolvedor Ativo</strong>
+          <p style="font-size:12px; color:#cbd5e1;">Crie suas aulas, salve no Google Drive e gere abaixo o QR Code exclusivo para os alunos.</p>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <a href="https://drive.google.com" target="_blank" rel="noopener" style="background:#334155; color:white; text-decoration:none; padding:8px 12px; border-radius:8px; font-size:12px; font-weight:700;">☁️ Abrir Google Drive</a>
+          <button class="btn-lock" onclick="trancarPainel()">🔒 Sair e Trancar</button>
+        </div>
+      </div>
+
+      <!-- Seus Aplicativos Restritos -->
+      <div class="apps-grid">
+        <div class="app-card">
+          <div>
+            <h3>🖥️ Quadro Mágico</h3>
+            <p>Controle completo do professor para apresentar e exportar aulas.</p>
+          </div>
+          <a href="QUADRO%20M%C3%81GICO.html" class="btn-open">Abrir Quadro Mágico ➔</a>
+        </div>
+
+        <div class="app-card">
+          <div>
+            <h3>🪄 Folha Mágica (Magia)</h3>
+            <p>Estúdio de desenho e gravação de animações passo a passo.</p>
+          </div>
+          <a href="Magia.html" class="btn-open" style="background:#d97706;">Abrir Magia.html ➔</a>
+        </div>
+
+        <div class="app-card">
+          <div>
+            <h3>📺 Losa Mágica</h3>
+            <p>Janela espelhada limpa para projeção simultânea em sala.</p>
+          </div>
+          <a href="LOSA%20M%C3%81GICA.html" target="_blank" class="btn-open" style="background:#059669;">Abrir Losa Mágica ↗</a>
+        </div>
+
+        <div class="app-card">
+          <div>
+            <h3>📱 Gerador QR Completo</h3>
+            <p>Ferramenta avançada de QR Codes personalizados.</p>
+          </div>
+          <a href="GERADOR%20QR%20CODE.html" class="btn-open" style="background:#7c3aed;">Abrir Gerador ➔</a>
+        </div>
+      </div>
+
+      <!-- Gerador de QR Code exclusivo para cada aula do Google Drive -->
+      <section class="drive-builder">
+        <div>
+          <h3>🚀 Gerar QR Code de Aula do Google Drive</h3>
+          <p style="font-size:13px; color:#94a3b8; margin-bottom:16px; line-height:1.5;">
+            1. Salve o arquivo da aula no Google Drive e deixe compartilhado como <strong>"Qualquer pessoa com o link"</strong>.<br>
+            2. Cole o link abaixo para gerar o QR Code que abre <strong>somente</strong> essa apresentação para os alunos.
+          </p>
+
+          <label for="aulaTituloInput">Nome da Aula (ex: Física Quântica - Aula 01):</label>
+          <input type="text" id="aulaTituloInput" class="input-field" value="Física Quântica - Introdução" oninput="gerarQrAulaDrive()">
+
+          <label for="driveLinkInput">Link de Compartilhamento do Arquivo no Google Drive:</label>
+          <input type="text" id="driveLinkInput" class="input-field" placeholder="https://drive.google.com/file/d/1A2B3C4D5E.../view?usp=sharing" oninput="gerarQrAulaDrive()">
+
+          <div style="font-size:11px; color:#38bdf8; word-break:break-all; background:#0f172a; padding:10px; border-radius:8px;" id="linkFinalGerado">
+            Link do aluno: https://sandovalleme.github.io/Quadro--magico/APRESENTACAO_ALUNO.html
+          </div>
+        </div>
+
+        <div class="qr-result-card">
+          <div class="qr-white-box">
+            <div id="qrAulaBox"></div>
+            <div class="qr-label-preview" id="qrAulaLegenda">Física Quântica - Introdução</div>
+          </div>
+          <div style="display:flex; gap:8px; width:100%;">
+            <button onclick="baixarQrAula()" style="flex:1; background:#10b981; color:#052e16; border:none; padding:10px; border-radius:8px; font-weight:800; font-size:12px; cursor:pointer;">⬇️ Baixar QR Code</button>
+            <a id="btnTestarAula" href="APRESENTACAO_ALUNO.html" target="_blank" style="flex:1; background:#3b82f6; color:white; text-decoration:none; padding:10px; border-radius:8px; font-weight:800; font-size:12px;">👁️ Testar Aula</a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    Portal Educacional • Sandovalleme/Quadro--magico
+  </footer>
+
+  <script>
+    // Senha do Desenvolvedor (altere aqui quando quiser)
+    const SENHA_DESENVOLVEDOR = "prof2026";
+    let autenticado = sessionStorage.getItem('dev_auth') === 'true';
+
+    function abrirLoginOuPainel() {
+      document.getElementById('viewPublico').classList.add('hidden');
+      if (autenticado) {
+        document.getElementById('viewLogin').classList.add('hidden');
+        document.getElementById('viewDev').classList.remove('hidden');
+        gerarQrAulaDrive();
       } else {
-        if (totalSeconds <= 0) totalSeconds = initialSeconds;
-        btn.textContent = '⏸ Pausar';
-        timerInterval = setInterval(() => {
-          if (totalSeconds > 0) { totalSeconds--; updateTimerDisplay(); }
-          else { clearInterval(timerInterval); timerInterval = null; btn.textContent = '▶ Iniciar'; alert('⏰ Tempo encerrado!'); }
-        }, 1000);
+        document.getElementById('viewLogin').classList.remove('hidden');
+        document.getElementById('viewDev').classList.add('hidden');
+        document.getElementById('senhaInput').value = '';
+        document.getElementById('msgErro').textContent = '';
+        setTimeout(() => document.getElementById('senhaInput').focus(), 100);
       }
     }
-    function resetTimer() {
-      clearInterval(timerInterval); timerInterval = null;
-      document.getElementById('btnStartTimer').textContent = '▶ Iniciar';
-      totalSeconds = initialSeconds; updateTimerDisplay();
+
+    function validarSenha() {
+      const val = document.getElementById('senhaInput').value;
+      if (val === SENHA_DESENVOLVEDOR) {
+        autenticado = true;
+        sessionStorage.setItem('dev_auth', 'true');
+        abrirLoginOuPainel();
+      } else {
+        document.getElementById('msgErro').textContent = '❌ Senha incorreta.';
+      }
     }
 
-    const conteudos = {
-      mat: '<strong>Bhaskara:</strong> x = (-b ± √Δ) / 2a &nbsp;|&nbsp; Δ = b² - 4ac<br><strong>Pitágoras:</strong> a² = b² + c²<br><strong>Círculo:</strong> A = π · r² &nbsp;|&nbsp; C = 2 · π · r',
-      fis: '<strong>MRU:</strong> S = S₀ + v · t &nbsp;|&nbsp; <strong>MRUV:</strong> v = v₀ + a · t<br><strong>Torricelli:</strong> v² = v₀² + 2 · a · ΔS<br><strong>Newton:</strong> F<sub>R</sub> = m · a &nbsp;|&nbsp; <strong>Ohm:</strong> U = R · i',
-      web: '<strong>Base:</strong> &lt;!DOCTYPE html&gt;, &lt;html&gt;, &lt;head&gt;, &lt;body&gt;<br><strong>Estilo/Código:</strong> &lt;style&gt; e &lt;script&gt;<br><strong>Gráficos:</strong> &lt;canvas id="tela"&gt;&lt;/canvas&gt;'
-    };
-    function showTab(chave, botao) {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      botao.classList.add('active');
-      document.getElementById('formulaBox').innerHTML = conteudos[chave];
+    function trancarPainel() {
+      autenticado = false;
+      sessionStorage.removeItem('dev_auth');
+      voltarPublico();
+    }
+
+    function voltarPublico() {
+      document.getElementById('viewPublico').classList.remove('hidden');
+      document.getElementById('viewLogin').classList.add('hidden');
+      document.getElementById('viewDev').classList.add('hidden');
+    }
+
+    // Extrai automaticamente o ID de qualquer link do Google Drive
+    function extrairIdDrive(link) {
+      if (!link) return '';
+      const match1 = link.match(/\/d\/([a-zA-Z0-9_-]+)/);
+      if (match1) return match1[1];
+      const match2 = link.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+      if (match2) return match2[1];
+      return link.trim();
+    }
+
+    function gerarQrAulaDrive() {
+      const titulo = document.getElementById('aulaTituloInput').value.trim() || 'Aula Interativa';
+      const linkBruto = document.getElementById('driveLinkInput').value.trim();
+      const idDrive = extrairIdDrive(linkBruto);
+
+      const base = 'https://sandovalleme.github.io/Quadro--magico/APRESENTACAO_ALUNO.html';
+      let urlFinal = `${base}?titulo=${encodeURIComponent(titulo)}`;
+      if (idDrive) {
+        urlFinal += `&drive=${encodeURIComponent(idDrive)}`;
+      }
+
+      document.getElementById('linkFinalGerado').textContent = 'Link do aluno: ' + urlFinal;
+      document.getElementById('qrAulaLegenda').textContent = titulo;
+      document.getElementById('btnTestarAula').href = urlFinal;
+
+      const box = document.getElementById('qrAulaBox');
+      box.innerHTML = '';
+      new QRCode(box, {
+        text: urlFinal,
+        width: 170,
+        height: 170,
+        colorDark: '#0f172a',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    }
+
+    function baixarQrAula() {
+      const qrCanvas = document.querySelector('#qrAulaBox canvas');
+      if (!qrCanvas) return;
+      const titulo = document.getElementById('aulaTituloInput').value.trim() || 'Aula';
+      const out = document.createElement('canvas');
+      out.width = qrCanvas.width + 40;
+      out.height = qrCanvas.height + 68;
+      const ctx = out.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, out.width, out.height);
+      ctx.drawImage(qrCanvas, 20, 20);
+      ctx.fillStyle = '#0f172a';
+      ctx.font = 'bold 14px Segoe UI, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(titulo, out.width / 2, qrCanvas.height + 46);
+
+      const a = document.createElement('a');
+      a.download = `QRCode-${titulo.replace(/[^a-zA-Z0-9]/g, '_')}.png`;
+      a.href = out.toDataURL('image/png');
+      a.click();
     }
   </script>
 </body>
